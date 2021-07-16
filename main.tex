@@ -18,7 +18,7 @@
 \section{Introduction}
 \label{section:introduction}
 
-\SuperScreen is an open-source Python package developed to simulate the magnetic response of structures composed of one or more layers containing superconducting thin films. \SuperScreen solves the coupled Maxwell's and London's equations in and around superconducting films with spatially-varying penetration depth in the presence of applied magnetic fields and trapped flux using a matrix inversion method introduced by Brandt [ref.] and initially implemented by Kirtley [ref, ref] to model the magnetic response of scanning superconducting quantum interference device (SQUID) sensors.
+\SuperScreen is an open-source Python package developed to simulate the magnetic response of structures composed of one or more layers containing superconducting thin films. \SuperScreen solves the coupled Maxwell's and London's equations in and around superconducting films with spatially-varying penetration depth in the presence of applied magnetic fields and trapped flux using a matrix inversion method introduced by Brandt~\cite{brandt_thin_2005} and initially implemented by Kirtley, \emph{et al.}~\cite{kirtley_scanning_2016, kirtley_response_2016} to model the magnetic response of scanning superconducting quantum interference device (SQUID) sensors.
 
 In Section~\ref{section:model} we outline Brandt's model, and in Section~\ref{section:implementation} we describe its numerical implementation. In Section~\ref{section:overview}, we provide an overview of the structure of the \SuperScreen package, highlighting important functions, classes, and features, and discuss some important development details. In Section~\ref{section:examples}, we demonstrate how to set up and solve several types of models using \SuperScreen. Finally, in Section~\ref{section:conlusion} we discuss potential applications, extensions, and improvements to the package.
 
@@ -30,7 +30,7 @@ $H_{z,\,\mathrm{applied}}(x, y, z)$.
 
 Given $H_{z,\,\mathrm{applied}}(x, y, z)$ and information about the geometry and magnetic penetration depth of all films in a superconducting structure, we aim to calculate the thickness-integrated current density (or sheet current) $\vec{J}(x, y)$ at all points inside the films, from which one can calculate the vector magnetic field $\vec{H}(x, y, z)$ at all points both inside and outside the films.
 
-A convenient method for solving this problem was introduced in [Brandt-PRB-2005], and used in [Kirtley-RSI-2016] and [Kirtley-SST-2016] to model the magnetic response of scanning Superconducting Quantum Interference Device (SQUID) susceptometers.
+A convenient method for solving this problem was introduced in~\cite{brandt_thin_2005}, and used to model the magnetic response of scanning Superconducting Quantum Interference Device (SQUID) susceptometers~\cite{kirtley_scanning_2016, kirtley_response_2016}.
 
 In the London model of superconductivity, the magnetic field $\vec{H}(\vec{r})$ and 3D current density $\vec{j}(\vec{r})$ in a superconductor with London penetration depth $\lambda(\vec{r})$ obey the second London equation:
 $\nabla\times\vec{j}(\vec{r})=-\vec{H}(\vec{r})/\lambda^2(\vec{r})$, where
@@ -45,9 +45,9 @@ is the thickness of the film, the second London equation reduces to
 \end{equation}
 
 where $\Lambda(x, y)=\lambda^2(x, y)/d$ is the effective penetration depth
-of the superconducting film (equal to half the Pearl length [Pearl-APL-1964]).
+of the superconducting film (equal to half the Pearl length~\cite{pearl_current_1964}).
 
-It is important to note that the assumption $\vec{j}(x, y, z)\approx\vec{j}_{z_0}(x, y)$ is valid for only films that are thinner than their London penetration depth ($d<\lambda$, such that $\Lambda=\lambda^2/d>\lambda$). However the model has been applied with some success in structures with $\lambda\lesssim d$ [Kirtley-RSI-2016] [Kirtley-SST-2016]. Aside from this limitation, the method described below can in principle to used to model films with any effective penetration depth $0\leq\Lambda<\infty$.
+It is important to note that the assumption $\vec{j}(x, y, z)\approx\vec{j}_{z_0}(x, y)$ is valid for only films that are thinner than their London penetration depth ($d<\lambda$, such that $\Lambda=\lambda^2/d>\lambda$). However the model has been applied with some success in structures with $\lambda\lesssim d$~\cite{kirtley_scanning_2016,kirtley_response_2016}. Aside from this limitation, the method described below can in principle to used to model films with any effective penetration depth $0\leq\Lambda<\infty$.
 
 Because the sheet current has zero divergence in the superconducting film ($\nabla\cdot\vec{J}=0$)
 except at small contacts where current can be injected, one can express the sheet current in terms
@@ -60,7 +60,7 @@ of a scalar potential $g(x, y)$, called the stream function:
     = \left(\frac{\partial g}{\partial y}, -\frac{\partial g}{\partial x}\right).
 \end{equation}
 
-The stream function $g$ can be thought of as the local magnetization of the film, or the area density of magnetic dipole sources (see [Brandt] for more interesting properties of the stream function). We can re-write Eq.~\ref{eq:london} for a 2D film in terms of $g$:
+The stream function $g$ can be thought of as the local magnetization of the film, or the area density of magnetic dipole sources (see \cite{brandt_thin_2005} for more interesting properties of the stream function). We can re-write Eq.~\ref{eq:london} for a 2D film in terms of $g$:
 
 \begin{align}
     \label{eq:london_stream}
@@ -199,7 +199,7 @@ The matrix version of Eq.~\ref{eq:field_from_kernel} is:
 The kernel matrix $\mathbf{Q}$ and weight matrix $\mathbf{w}$ together play the role of the
 kernel function $Q_z(\vec{r},\vec{r}')$ for all points lying in the plane of the film. They are both $n\times n$ matrices determined solely by the geometry of the mesh.
 $\mathbf{h}_z$, $\mathbf{h}_{z,\,\mathrm{applied}}$, and $\mathbf{g}$ are all $n\times 1$ vectors, with each row representing the value of the quantity at the
-corresponding vertex in the mesh. There are several different methods for constructing the weight matrix $\mathbf{w}$, which are discussed in Section[] below. The kernel
+corresponding vertex in the mesh. There are several different methods for constructing the weight matrix $\mathbf{w}$, which are discussed in Section~\ref{section:implementation:laplace} below. The kernel
 matrix $\mathbf{Q}$ is defined in terms of a matrix with
 $(\mathbf{q})_{ij} = \left(4\pi|\vec{r}_i-\vec{r}_j|^3\right)^{-1}$
 (which is $\lim_{\Delta z\to 0}Q_z(\vec{r},\vec{r}')$ cf. Eq.~\ref{eq:kernels}),
@@ -210,7 +210,7 @@ and a vector $\mathbf{C}$:
     Q_{ij} = (\delta_{ij}-1)q_{ij}
     + \delta_{ij}\frac{1}{w_{ij}}\left(C_i + \sum_{l\neq i}q_{il}w_{il}\right),
 \end{equation}
-where $\delta_{ij}$ is the Kronecker delta function. The diagonal terms involving $\mathbf{C}$ are meant to work around the fact that $q_{ii}$ diverge (see [Brandt-PRB-2005] for more details), and the vector is defined as
+where $\delta_{ij}$ is the Kronecker delta function. The diagonal terms involving $\mathbf{C}$ are meant to work around the fact that $q_{ii}$ diverge (see \cite{brandt_thin_2005} for more details), and the vector is defined as
 
 \begin{equation}
     \label{eq:C_vector}
@@ -226,7 +226,7 @@ The matrix version of Eq.~\ref{eq:Heff_sub} is:
 \end{equation}
 where we exclude points in the mesh lying outside of the superconducting film, but keep points
 inside holes in the film. $\mathbf{\Lambda}$ is either a scalar or a vector defining the effective penetration depth at every included vertex in the mesh, and $\mathbf{\nabla}^2$
-is the Laplace operator (see Section[]), an $n\times n$ matrix defined such that $\mathbf{\nabla}^2\mathbf{f}$ computes the Laplacian $\nabla^2f(x,y)$ of a function $f(x,y)$ defined on the mesh.
+is the Laplace operator (see Section~\ref{section:implementation:laplace}), an $n\times n$ matrix defined such that $\mathbf{\nabla}^2\mathbf{f}$ computes the Laplacian $\nabla^2f(x,y)$ of a function $f(x,y)$ defined on the mesh.
 
 Eq.~\ref{eq:Heff_sub_num} is a matrix equation relating the applied field to the stream function
 inside a superconducting film, which can efficiently be solved (e.g. by matrix inversion or LU decomposition) for the unknown vector $\mathbf{g}$, the stream function inside the film. Since the stream function outside the film and inside holes in the film is already known, solving Eq.~\ref{eq:Heff_sub_num} gives us the stream function for the full mesh:
@@ -436,5 +436,8 @@ Instances of \mintinline{python}{superscreen.Device} and \mintinline{python}{sup
 
 \section{Conclusion}
 \label{section:conlusion}
+
+\bibliographystyle{plain}
+\bibliography{references}
 
 \end{document}
