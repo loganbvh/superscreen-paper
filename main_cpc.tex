@@ -1,27 +1,207 @@
-\documentclass{article}
-\usepackage[utf8]{inputenc}
-\usepackage{geometry}
-\geometry{letterpaper, margin=1.5in}
+%% This template can be used to write a paper for
+%% Computer Physics Communications using LaTeX.
+%% For authors who want to write a computer program description,
+%% an example Program Summary is included that only has to be
+%% completed and which will give the correct layout in the
+%% preprint and the journal.
+%% The `elsarticle' style is used and more information on this style
+%% can be found at 
+%% http://www.elsevier.com/wps/find/authorsview.authors/elsarticle.
+%%
+%%
+\documentclass[preprint,12pt]{elsarticle}
+
+%% Use the option review to obtain double line spacing
+%% \documentclass[preprint,review,12pt]{elsarticle}
+
+%% Use the options 1p,twocolumn; 3p; 3p,twocolumn; 5p; or 5p,twocolumn
+%% for a journal layout:
+% \documentclass[final,1p,times]{elsarticle}
+% \documentclass[final,1p,times,twocolumn]{elsarticle}
+% \documentclass[final,3p,times]{elsarticle}
+% \documentclass[final,3p,times,twocolumn]{elsarticle}
+%% \documentclass[final,5p,times]{elsarticle}
+% \documentclass[final,5p,times,twocolumn]{elsarticle}
+
+%% if you use PostScript figures in your article
+%% use the graphics package for simple commands
+%% \usepackage{graphics}
+%% or use the graphicx package for more complicated commands
+%% \usepackage{graphicx}
+%% or use the epsfig package if you prefer to use the old commands
+%% \usepackage{epsfig}
+
+%% The amssymb package provides various useful mathematical symbols
 \usepackage{amsmath, amssymb, bm}
+%% The amsthm package provides extended theorem environments
+%% \usepackage{amsthm}
+
+%% The lineno packages adds line numbers. Start line numbering with
+%% \begin{linenumbers}, end it with \end{linenumbers}. Or switch it on
+%% for the whole article with \linenumbers after \end{frontmatter}.
+%% \usepackage{lineno}
+
+%% natbib.sty is loaded by default. However, natbib options can be
+%% provided with \biboptions{...} command. Following options are
+%% valid:
+
+%%   round  -  round parentheses are used (default)
+%%   square -  square brackets are used   [option]
+%%   curly  -  curly braces are used      {option}
+%%   angle  -  angle brackets are used    <option>
+%%   semicolon  -  multiple citations separated by semi-colon
+%%   colon  - same as semicolon, an earlier confusion
+%%   comma  -  separated by comma
+%%   numbers-  selects numerical citations
+%%   super  -  numerical citations as superscripts
+%%   sort   -  sorts multiple citations according to order in ref. list
+%%   sort&compress   -  like sort, but also compresses numerical citations
+%%   compress - compresses without sorting
+%%
+%% \biboptions{comma,round}
+
+% \biboptions{}
+
+%% This list environment is used for the references in the
+%% Program Summary
+%%
+\newcounter{bla}
+\newenvironment{refnummer}{%
+\list{[\arabic{bla}]}%
+{\usecounter{bla}%
+ \setlength{\itemindent}{0pt}%
+ \setlength{\topsep}{0pt}%
+ \setlength{\itemsep}{0pt}%
+ \setlength{\labelsep}{2pt}%
+ \setlength{\listparindent}{0pt}%
+ \settowidth{\labelwidth}{[9]}%
+ \setlength{\leftmargin}{\labelwidth}%
+ \addtolength{\leftmargin}{\labelsep}%
+ \setlength{\rightmargin}{0pt}}}
+ {\endlist}
+ 
 \usepackage{minted}
 \usepackage{hyperref}
 
 \newcommand{\SuperScreen}{\mintinline{python}{SuperScreen}\,}
 
-\title{\texttt{SuperScreen}}
-\author{Logan Bishop-Van Horn}
-\date{\today}
+\journal{Computer Physics Communications}
 
 \begin{document}
 
-\maketitle
+\begin{frontmatter}
 
+%% Title, authors and addresses
+
+%% use the tnoteref command within \title for footnotes;
+%% use the tnotetext command for the associated footnote;
+%% use the fnref command within \author or \address for footnotes;
+%% use the fntext command for the associated footnote;
+%% use the corref command within \author for corresponding author footnotes;
+%% use the cortext command for the associated footnote;
+%% use the ead command for the email address,
+%% and the form \ead[url] for the home page:
+%%
+%% \title{Title\tnoteref{label1}}
+%% \tnotetext[label1]{}
+%% \author{Name\corref{cor1}\fnref{label2}}
+%% \ead{email address}
+%% \ead[url]{home page}
+%% \fntext[label2]{}
+%% \cortext[cor1]{}
+%% \address{Address\fnref{label3}}
+%% \fntext[label3]{}
+
+\title{\texttt{SuperScreen}: An open-source package for simulating the magnetic response of 2D superconductors}
+
+%% use optional labels to link authors explicitly to addresses:
+%% \author[label1,label2]{<author name>}
+%% \address[label1]{<address>}
+%% \address[label2]{<address>}
+
+\author[a]{Logan Bishop-Van Horn}
+\author[a,b]{Kam Moler\corref{author}}
+
+\cortext[author]{Corresponding author.\\\textit{E-mail address:} kmoler@stanford.edu}
+\address[a]{First Address}
+\address[b]{Second Address}
+
+\begin{abstract}
+%% Text of abstract
+A submitted program is expected to satisfy the following criteria: it must be of benefit to other physicists, or be an exemplar of good programming practice, or illustrate new or novel programming techniques which are of importance to computational physics community; it should be implemented in a language and executable on hardware that is widely available and well documented; it should meet accepted standards for scientific programming; it should be adequately documented and, where appropriate, supplied with a separate User Manual, which together with the manuscript should make clear the structure, functionality, installation, and operation of the program.
+
+Your manuscript and figure sources should be submitted through Editorial Manager (EM) by using the online submission tool at \\
+https://www.editorialmanager.com/comphy/.
+
+In addition to the manuscript you must supply: the program source code; a README file giving the names and a brief description of the files/directory structure that make up the package and clear instructions on the installation and execution of the program; sample input and output data for at least one comprehensive test run; and, where appropriate, a user manual.
+
+A compressed archive program file or files, containing these items, should be uploaded at the "Attach Files" stage of the EM submission.
+
+For files larger than 1Gb, if difficulties are encountered during upload the author should contact the Technical Editor at cpc.mendeley@gmail.com.
+
+\end{abstract}
+
+\begin{keyword}
+%% keywords here, in the form: keyword \sep keyword
+keyword1; keyword2; keyword3; etc.
+
+\end{keyword}
+
+\end{frontmatter}
+
+%%
+%% Start line numbering here if you want
+%%
+% \linenumbers
+
+% All CPiP articles must contain the following
+% PROGRAM SUMMARY.
+\noindent
+{\bf PROGRAM SUMMARY}
+
+\begin{small}
+\noindent
+{\em SuperScreen:}\\
+{\em CPC Library link to program files:} (to be added by Technical Editor) \\
+{\em Developer's repository link:} \href{http://www.github.com/loganbvh/superscreen}{www.github.com/loganbvh/superscreen}\\
+{\em Code Ocean capsule:} (to be added by Technical Editor)\\
+{\em Licensing provisions:} MIT\\
+{\em Programming language: Python}\\
+{\em Supplementary material:}\\
+  % Fill in if necessary, otherwise leave out.
+% {\em Journal reference of previous version:}*\\
+  %Only required for a New Version summary, otherwise leave out.
+% {\em Does the new version supersede the previous version?:}*\\
+  %Only required for a New Version summary, otherwise leave out.
+% {\em Reasons for the new version:*}\\
+  %Only required for a New Version summary, otherwise leave out.
+% {\em Summary of revisions:}*\\
+  %Only required for a New Version summary, otherwise leave out.
+{\em Nature of problem(approx. 50-250 words):}\\
+  %Describe the nature of the problem here. \\
+{\em Solution method(approx. 50-250 words):}\\
+  %Describe the method solution here.
+{\em Additional comments including restrictions and unusual features (approx. 50-250 words):}\\
+  %Provide any additional comments here.
+   \\
+
+% \begin{thebibliography}{0}
+% \bibitem{1}Reference 1         % This list should only contain those items referenced in the                 
+% \bibitem{2}Reference 2         % Program Summary section.   
+% \bibitem{3}Reference 3         % Type references in text as [1], [2], etc.
+%                               % This list is different from the bibliography at the end of 
+%                               % the Long Write-Up.
+% \end{thebibliography}
+\end{small}
+
+
+%% main text
 \section{Introduction}
 \label{section:introduction}
 
 \SuperScreen is an open-source Python package developed to simulate the magnetic response of structures composed of one or more layers containing superconducting thin films. \SuperScreen solves the coupled Maxwell's and London's equations in and around superconducting films with spatially-varying penetration depth in the presence of applied magnetic fields and trapped flux using a matrix inversion method introduced by Brandt~\cite{brandt_thin_2005} and initially implemented by Kirtley, \emph{et al.}~\cite{kirtley_scanning_2016, kirtley_response_2016} to model the magnetic response of scanning superconducting quantum interference device (SQUID) sensors.
 
-In Section~\ref{section:model} we outline Brandt's model, and in Section~\ref{section:implementation} we describe its numerical implementation. In Section~\ref{section:overview}, we provide an overview of the structure of the \SuperScreen package, highlighting important functions, classes, and features, and discuss some important development details. In Section~\ref{section:examples}, we demonstrate how to set up and solve several types of models using \SuperScreen. Finally, in Section~\ref{section:conlusion} we discuss potential applications, extensions, and improvements to the package.
+In Section~\ref{section:model} we outline Brandt's model, and in Section~\ref{section:implementation} we describe its numerical implementation. In Section~\ref{section:overview}, we provide an overview of the structure of the \SuperScreen package, highlighting notable functions, classes, and features, and discuss some important development details. In Section~\ref{section:examples}, we demonstrate how to set up and solve several types of models using \SuperScreen. Finally, in Section~\ref{section:conlusion} we discuss potential applications, extensions, and improvements to the package.
 
 \section{The Model}
 \label{section:model}
@@ -35,14 +215,13 @@ A convenient method for solving this problem was introduced by Brandt in~\cite{b
 
 In the London model of superconductivity, the magnetic field $\vec{H}(\vec{r})$ and 3D current density $\vec{j}(\vec{r})$ in a superconductor with London penetration depth $\lambda(\vec{r})$ obey the second London equation:
 $\nabla\times\vec{j}(\vec{r})=-\vec{H}(\vec{r})/\lambda^2(\vec{r})$, where
-$\nabla=\left(\frac{\partial}{\partial x}, \frac{\partial}{\partial y}, \frac{\partial}{\partial z}\right)$. Brandt's model assumes that the current density $\vec{j}$ is approximately independent of $z$, such $\vec{j}(\vec{r}) = \vec{j}(x, y, z)\approx\vec{j}_{z_0}(x, y)$ for a film lying parallel to the $x-y$ plane at vertical position $z_0$. Working now with the thickness-integrated current density (sheet current) $\vec{J}(x, y)=\vec{j}_{z_0}(x, y)\cdot d$, where $d$
+$\nabla=\left(\frac{\partial}{\partial x}, \frac{\partial}{\partial y}, \frac{\partial}{\partial z}\right)$. Brandt's model assumes that the current density $\vec{j}$ is approximately independent of $z$, such $\vec{j}(\vec{r}) = \vec{j}(x, y, z)\approx\vec{j}_{z_0}(x, y)$ for a film lying parallel to the $x-y$ plane at vertical position $z_0$. Working now with the thickness-integrated current density (sheet current) $\vec{J}(x, y)\approx\vec{j}_{z_0}(x, y)\cdot d$, where $d$
 is the thickness of the film, the second London equation reduces to
 
 \begin{equation}
     \label{eq:london}
     \nabla\times\vec{J}(x, y)=-\vec{H}(x, y)/\Lambda(x, y),
 \end{equation}
-
 where $\Lambda(x, y)=\lambda^2(x, y)/d$ is the effective penetration depth
 of the superconducting film (equal to half the Pearl length~\cite{pearl_current_1964}).
 
@@ -83,7 +262,7 @@ where $\nabla^2=\nabla\cdot\nabla$ is the Laplace operator. (The fourth line fol
     \end{split}
 \end{align}
 
-Here we assume an applied magnetic field $\vec{H}_\mathrm{applied}(\vec{r}')=H_\mathrm{z,\,\mathrm{applied}}(\vec{r}')\hat{z}$. $S$ is the film area (with $g = 0$ outside of the film), and $Q_x(\vec{r},\vec{r}')$, $Q_y(\vec{r},\vec{r}')$, and $Q_z(\vec{r},\vec{r}')$ are dipole kernel functions which give the relevant component of the magnetic field at position $\vec{r}=(x, y, z)$ due to a dipole of unit strength at position $\vec{r}'=(x', y', z')$:
+Here we assume an out-of-plane applied magnetic field $\vec{H}_\mathrm{applied}(\vec{r}')=H_\mathrm{z,\,\mathrm{applied}}(\vec{r}')\hat{z}$. $S$ is the film area (with $g = 0$ outside of the film), and $Q_x(\vec{r},\vec{r}')$, $Q_y(\vec{r},\vec{r}')$, and $Q_z(\vec{r},\vec{r}')$ are dipole kernel functions which give the relevant component of the magnetic field at position $\vec{r}=(x, y, z)$ due to a dipole of unit strength at position $\vec{r}'=(x', y', z')$:
 
 \begin{align}
     \label{eq:kernels}
@@ -306,7 +485,7 @@ $$
 \section{Package Overview}
 \label{section:overview}
 
-In this section we give a high-level overview of the \SuperScreen package. More detailed documentation and tutorials can be found at superscreen.readthedocs.io.
+In this section we give a high-level overview of the \SuperScreen package. More detailed documentation and tutorials can be found at \href{http://www.superscreen.readthedocs.io}{www.superscreen.readthedocs.io}.
 
 \subsection{Parameters}
 \label{section:overview:parameter}
@@ -381,16 +560,24 @@ The \mintinline{python}{superscreen.solve_many()} function manages the setup and
 
 \begin{itemize}
     \item{
-    \mintinline{python}{superscreen.plot_streams()}: Given a \mintinline{python}{Solution}, plots the stream function $g(x, y)$ for one or more layers in the device. See also \mintinline{python}{Solution.plot_streams()}.
+    \mintinline{python}{superscreen.plot_streams()}: Given a \mintinline{python}{Solution}, plots the stream function $g(x, y)$ for one or more layers in the device.
+    
+    See also: \mintinline{python}{Solution.plot_streams()}.
     }
     \item{
-    \mintinline{python}{superscreen.plot_currents()}: Given a \mintinline{python}{Solution}, plots the sheet current $\vec{J}(x, y)$ for one or more layers in the device. See also \mintinline{python}{Solution.plot_currents()}.
+    \mintinline{python}{superscreen.plot_currents()}: Given a \mintinline{python}{Solution}, plots the sheet current $\vec{J}(x, y)$ for one or more layers in the device.
+    
+    See also: \mintinline{python}{Solution.plot_currents()}.
     }
     \item{
-    \mintinline{python}{superscreen.plot_fields()}: Given a \mintinline{python}{Solution}, plots the total field $H_z(x, y)$ or the screening field $H_z(x, y) - H_{z,\,\mathrm{applied}}(x, y)$ for one or more layers in the device. See also \mintinline{python}{Solution.plot_fields()}.
+    \mintinline{python}{superscreen.plot_fields()}: Given a \mintinline{python}{Solution}, plots the total field $H_z(x, y)$ or the screening field $H_z(x, y) - H_{z,\,\mathrm{applied}}(x, y)$ for one or more layers in the device.
+    
+    See also: \mintinline{python}{Solution.plot_fields()}.
     }
     \item{
-    \mintinline{python}{superscreen.plot_field_at_positions()}: Given a \mintinline{python}{Solution}, plots the total field $\vec{H}(x, y, z_0)$ or $H_z(x, y, z_0)$ at any points in space (where $z_0$ is not equal to the vertical position of any of the layers in the device). See also \mintinline{python}{Solution.plot_field_at_positions()}.
+    \mintinline{python}{superscreen.plot_field_at_positions()}: Given a \mintinline{python}{Solution}, plots the total field $\vec{H}(x, y, z_0)$ or $H_z(x, y, z_0)$ at any points in space (where $z_0$ is not equal to the vertical position of any of the layers in the device).
+    
+    See also: \mintinline{python}{Solution.plot_field_at_positions()}.
     }
 \end{itemize}
 
@@ -401,7 +588,7 @@ See Section~\ref{section:examples} for examples of the figures generated by thes
 
 \mintinline{python}{Parameters}, \mintinline{python}{Layers}, \mintinline{python}{Polygons}, \mintinline{python}{Devices}, and \mintinline{python}{Solutions} all implement the equality operator, \mintinline{python}{==}. Two \mintinline{python}{Parameters} are considered equal if the Python bytecode of their underlying functions is the same and their keyword arguments are the same. Two \mintinline{python}{Layers} are equal if their name, penetration depth, thickness, and vertical position are all equal. Two \mintinline{python}{Polygons} are equal if they are in the same layer and their name and polygon vertices are equal. Two \mintinline{python}{Devices} are equal if their name, layers, films, holes, and abstract regions are all equal. Two \mintinline{python}{Solutions} are equal if their device, applied field, circulating currents, timestamp (time at which the solution was created), and all stream function and magnetic field arrays are equal. Two \mintinline{python}{Solutions} created at different times can also be compared by calling \mintinline{python}{solution.equals(other_solution, require_same_timestamp=False)}.
 
-Instances of \mintinline{python}{superscreen.Device} and \mintinline{python}{superscreen.Solution} can be saved to and loaded from disk using their respective \mintinline{python}{to_file()} and \mintinline{python}{from_file()} methods, making it straightforward to share models and simulation results. \mintinline{python}{Layers}, \mintinline{python}{Polygons}, and all metadata are serialized to JSON, a widely-used, human-readable plain text format~\cite{JSON}. Functions and \mintinline{python}{Parameters}, such as those that compute the applied field or penetration depth, are serialized in binary form using \mintinline{python}{dill}~\cite{McKerns}. \mintinline{python}{numpy} arrays, such as the mesh itself and the computed stream functions and fields, are saved in the well-established \mintinline{python}{numpy} \mintinline{python}{npz} file format. A \mintinline{python}{list} of \mintinline{python}{Solutions}, such as that returned by \mintinline{python}{superscreen.solve()} can be saved/loaded all at once using \mintinline{python}{superscreen.save_solutions()}/\mintinline{python}{superscreen.load_solutions()}.
+Instances of \mintinline{python}{superscreen.Device} and \mintinline{python}{superscreen.Solution} can be saved to and loaded from disk using their respective \mintinline{python}{to_file()} and \mintinline{python}{from_file()} methods, making it straightforward to share models and simulation results. \mintinline{python}{Layers}, \mintinline{python}{Polygons}, and all metadata are serialized to JSON, a widely-used, human-readable plain text format~\cite{JSON}. Functions and \mintinline{python}{Parameters}, such as those that compute the applied field or penetration depth, are serialized in binary form using \mintinline{python}{dill}~\cite{McKerns}. \mintinline{python}{numpy} arrays, such as the mesh itself and the computed stream functions and fields, are saved in the well-established \mintinline{python}{numpy} \mintinline{python}{npz} file format. A \mintinline{python}{list} of \mintinline{python}{Solutions}, such as that returned by \mintinline{python}{superscreen.solve()} can be saved/loaded all at once using \mintinline{python}{save_solutions()} and \mintinline{python}{load_solutions()}.
 
 \subsection{Development Details}
 \label{section:overview:development}
@@ -432,7 +619,44 @@ Instances of \mintinline{python}{superscreen.Device} and \mintinline{python}{sup
 \section{Conclusion}
 \label{section:conlusion}
 
-\bibliographystyle{IEEEtran}
+%% The Appendices part is started with the command \appendix;
+%% appendix sections are then done as normal sections
+%% \appendix
+
+%% \section{}
+%% \label{}
+
+%% References
+%%
+%% Following citation commands can be used in the body text:
+%% Usage of \cite is as follows:
+%%   \cite{key}         ==>>  [#]
+%%   \cite[chap. 2]{key} ==>> [#, chap. 2]
+%%
+
+%% References with bibTeX database:
+
+\bibliographystyle{elsarticle-num}
 \bibliography{references}
 
+%% Authors are advised to submit their bibtex database files. They are
+%% requested to list a bibtex style file in the manuscript if they do
+%% not want to use elsarticle-num.bst.
+
+%% References without bibTeX database:
+
+% \begin{thebibliography}{00}
+
+%% \bibitem must have the following form:
+%%   \bibitem{key}...
+%%
+
+% \bibitem{}
+
+% \end{thebibliography}
+
+
 \end{document}
+
+%%
+%% End of file 
