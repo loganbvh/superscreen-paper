@@ -39,7 +39,13 @@ def plot_solutions(
         if Lambda == show_Lambda:
             vmin, vmax = sc.visualization.auto_range_iqr(field, auto_range_cutoff)
             im = ax.pcolormesh(
-                xgrid, ygrid, field, shading="auto", cmap="cividis", vmin=vmin, vmax=vmax,
+                xgrid,
+                ygrid,
+                field,
+                shading="auto",
+                cmap="cividis",
+                vmin=vmin,
+                vmax=vmax,
             )
             ax.set_xlabel("$x$ [$\\mu$m]")
             ax.set_ylabel("$y$ [$\\mu$m]")

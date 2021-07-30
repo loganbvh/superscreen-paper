@@ -10,7 +10,11 @@ from plot_solutions import plot_solutions
 
 
 def make_ring(
-    inner_radius=2.5, outer_radius=5, Lambda=1, length_units="um", square=False,
+    inner_radius=2.5,
+    outer_radius=5,
+    Lambda=1,
+    length_units="um",
+    square=False,
 ):
     if square:
         outer_points = sc.geometry.square(outer_radius * 2, points_per_side=60)
@@ -95,7 +99,7 @@ if __name__ == "__main__":
     Lambda = 1
     length_units = "um"
     field_units = "mT"
-    
+
     # The method used for parallel execution.
     # Valid options are None (i.e. serial execution), "ray", and "multiprocessing".
     # Note that for models this quick to solve, you should not expect any significatnt
