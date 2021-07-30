@@ -100,7 +100,7 @@ if __name__ == "__main__":
     # Valid options are None (i.e. serial execution), "ray", and "multiprocessing".
     # Note that for models this quick to solve, you should not expect any significatnt
     # speedup from parallel processing (especially using "multiprocessing").
-    parallel_method = "ray"
+    parallel_method = None
 
     for square in (False, True):
 

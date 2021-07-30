@@ -5,7 +5,7 @@ from mpl_toolkits.axes_grid1.axes_divider import make_axes_locatable
 
 import superscreen as sc
 
-plt.rcParams["font.size"] = 14
+plt.rcParams["font.size"] = 18
 plt.rcParams["savefig.dpi"] = 150
 
 
