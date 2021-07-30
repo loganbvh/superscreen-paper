@@ -18,6 +18,7 @@ def plot_solutions(
     lw=2.5,
     show_Lambda=1,
     plot_polygons=True,
+    auto_range_cutoff=0.1,
 ):
     N = grid_shape // 2
 
@@ -36,7 +37,10 @@ def plot_solutions(
         field = fields["base"]
 
         if Lambda == show_Lambda:
-            im = ax.pcolormesh(xgrid, ygrid, field, shading="auto", cmap="cividis")
+            vmin, vmax = sc.visualization.auto_range_iqr(field, auto_range_cutoff)
+            im = ax.pcolormesh(
+                xgrid, ygrid, field, shading="auto", cmap="cividis", vmin=vmin, vmax=vmax,
+            )
             ax.set_xlabel("$x$ [$\\mu$m]")
             ax.set_ylabel("$y$ [$\\mu$m]")
             ax.set_title("Magnetic field, $\\mu_0H_z$\n$\\Lambda$ = 1 $\\mu$m")

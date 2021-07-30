@@ -61,7 +61,10 @@ if __name__ == "__main__":
     npoints = disk.points.shape[0]
     ntriangles = disk.triangles.shape[0]
     ax.set_title(f"Mesh: {npoints} points, {ntriangles}")
-    ax.figure.savefig(os.path.join(imagedir, f"{disk.name}_mesh.png"))
+    ax.figure.savefig(
+        os.path.join(imagedir, f"{disk.name}_mesh.png"),
+        bbox_inches="tight",
+    )
 
     # Define a uniform applied field.
     applied_field = sc.sources.ConstantField(1)
@@ -85,7 +88,10 @@ if __name__ == "__main__":
         )
 
     fig, axes = plot_solutions(solutions, Lambdas)
-    fig.savefig(os.path.join(imagedir, f"{disk.name}_uniform_field.png"))
+    fig.savefig(
+        os.path.join(imagedir, f"{disk.name}_uniform_field.png"),
+        bbox_inches="tight",
+    )
 
     # Simulate screening of a uniform applied magnetic field
     # by a disk with a spatially-nonuniform Lambda.
@@ -107,11 +113,24 @@ if __name__ == "__main__":
     )[-1]
 
     # Plot the fields.
-    fig, axes = solution.plot_fields(figsize=(5, 6), cross_section_ys=[-2, 0, 2])
-    fig.savefig(os.path.join(imagedir, f"{disk.name}_fields_nonuniform_lambda.png"))
+    fig, axes = solution.plot_fields(
+        figsize=(5, 6),
+        cross_section_ys=[-2, 0, 2],
+        auto_range_cutoff=0.1,
+    )
+    fig.savefig(
+        os.path.join(imagedir, f"{disk.name}_fields_nonuniform_lambda.png"),
+        bbox_inches="tight",
+    )
 
     # Plot the currents.
     fig, axes = solution.plot_currents(
-        figsize=(5, 6), cross_section_ys=[-2, 0, 2], units="mA/um"
+        figsize=(5, 6),
+        cross_section_ys=[-2, 0, 2],
+        units="mA/um",
+        auto_range_cutoff=0.1,
     )
-    fig.savefig(os.path.join(imagedir, f"{disk.name}_currents_nonuniform_lambda.png"))
+    fig.savefig(
+        os.path.join(imagedir, f"{disk.name}_currents_nonuniform_lambda.png"),
+        bbox_inches="tight",
+    )

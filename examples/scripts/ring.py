@@ -119,19 +119,35 @@ if __name__ == "__main__":
         npoints = ring.points.shape[0]
         ntriangles = ring.triangles.shape[0]
         ax.set_title(f"Mesh: {npoints} points, {ntriangles}")
-        ax.figure.savefig(os.path.join(imagedir, f"{ring.name}_mesh.png"))
+        ax.figure.savefig(
+            os.path.join(imagedir, f"{ring.name}_mesh.png"),
+            bbox_inches="tight",
+        )
 
         # Simulate a current circulating around the hole in the ring.
         circulating_currents = {"hole": "1 mA"}
 
         solution = sc.solve(device=ring, circulating_currents=circulating_currents)[-1]
-        fig, axes = solution.plot_fields(figsize=(6, 7), cross_section_ys=[0])
-        fig.savefig(os.path.join(imagedir, f"{ring.name}_plot_fields.png"))
+        fig, axes = solution.plot_fields(
+            figsize=(6, 7),
+            cross_section_ys=[0],
+            auto_range_cutoff=0.1,
+        )
+        fig.savefig(
+            os.path.join(imagedir, f"{ring.name}_plot_fields.png"),
+            bbox_inches="tight",
+        )
 
         fig, axes = solution.plot_currents(
-            figsize=(6, 7), cross_section_ys=[0], units="mA/um"
+            figsize=(6, 7),
+            cross_section_ys=[0],
+            units="mA/um",
+            auto_range_cutoff=0.1,
         )
-        fig.savefig(os.path.join(imagedir, f"{ring.name}_plot_currents.png"))
+        fig.savefig(
+            os.path.join(imagedir, f"{ring.name}_plot_currents.png"),
+            bbox_inches="tight",
+        )
 
         # Perform a surface integral of the resulting fields to calculcate the
         # flux through the ring and the ring's self-inductance.
@@ -175,7 +191,10 @@ if __name__ == "__main__":
         #     )
 
         fig, axes = plot_solutions(solutions, Lambdas)
-        fig.savefig(os.path.join(imagedir, f"{ring.name}_circulating_current.png"))
+        fig.savefig(
+            os.path.join(imagedir, f"{ring.name}_circulating_current.png"),
+            bbox_inches="tight",
+        )
 
         # Simulate the field and current distributions for a given
         # uniform applied field across a wide range of Lambdas,
@@ -208,7 +227,10 @@ if __name__ == "__main__":
         #     )
 
         fig, axes = plot_solutions(solutions, Lambdas)
-        fig.savefig(os.path.join(imagedir, f"{ring.name}_uniform_field.png"))
+        fig.savefig(
+            os.path.join(imagedir, f"{ring.name}_uniform_field.png"),
+            bbox_inches="tight",
+        )
 
         # Simulate the field and current distribution for a nonuniform applied field,
         # namely the field from an isolated vortex pinned below the plane of the ring.
@@ -240,4 +262,7 @@ if __name__ == "__main__":
         #     )
 
         fig, axes = plot_solutions(solutions, Lambdas)
-        fig.savefig(os.path.join(imagedir, f"{ring.name}_nonuniform_field.png"))
+        fig.savefig(
+            os.path.join(imagedir, f"{ring.name}_nonuniform_field.png"),
+            bbox_inches="tight",
+        )
