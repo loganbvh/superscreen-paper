@@ -79,9 +79,17 @@
  \addtolength{\leftmargin}{\labelsep}%
  \setlength{\rightmargin}{0pt}}}
  {\endlist}
- 
-\usepackage{minted}
+\usepackage{subcaption}
+\usepackage[newfloat]{minted}
 \usepackage{hyperref}
+\usepackage{tcolorbox}
+\usepackage{etoolbox}
+\BeforeBeginEnvironment{minted}{\begin{tcolorbox}}
+\AfterEndEnvironment{minted}{\end{tcolorbox}}
+\usepackage{caption}
+
+\newenvironment{code}{\captionsetup{type=listing}}{}
+\SetupFloatingEnvironment{listing}{name=Code Block}
 
 \newcommand{\SuperScreen}{\mintinline{python}{SuperScreen}\,}
 
@@ -472,7 +480,7 @@ where $\mathcal{N}(i)$ is the set of triangles $t$ adjacent to vertex $i$. The w
     }
 \end{enumerate}
 
-By default, \SuperScreen uses half-cotangent weighting. The Laplacian matrix $\mathbf{C}$ is defined in terms of the weight matrix $\mathbf{W}$: $(\mathbf{L})_{ij} = (\mathbf{W})_{ij} - \delta_{ij}\sum_{\ell}W_{i\ell}$. Finally, the Laplace operator is given by $\mathbf{\nabla}^2 = \mathbf{M}^{-1}\mathbf{L}$.
+By default, \SuperScreen uses half-cotangent weighting. The Laplacian matrix $\mathbf{C}$ is defined in terms of the weight matrix $\mathbf{W}$: $L_{ij} = W_{ij} - \delta_{ij}\sum_{\ell}W_{i\ell}$. Finally, the Laplace operator is given by $\mathbf{\nabla}^2 = \mathbf{M}^{-1}\mathbf{L}$.
 
 The matrix $\mathbf{w}$ in Eqs.~\ref{eq:field_from_kernel_num} and \ref{eq:Heff_sub_num} that is used, together with the kernel matrix $\mathbf{Q}$, to approximate the dipole kernel $Q_z(\vec{r},\vec{r}')$ (Eq.~\ref{eq:kernels}) is simply a normalized version of the weight matrix $\mathbf{W}$ used in defining the Laplace operator. The relationship between $\mathbf{w}$ and $\mathbf{W}$ is given by:
 $$
@@ -490,48 +498,148 @@ In this section we give a high-level overview of the \SuperScreen package. More 
 \subsection{Parameters}
 \label{section:overview:parameter}
 
-A \mintinline{python}{superscreen.Parameter} is a wrapper around a Python function that computes a scalar value as a function of position coordinates ($x$, $y$, and optionally $z$) based on some set of keyword arguments. Addition, subtraction, multiplication, division, and exponentiation between \mintinline{python}{Parameters}, other \mintinline{python}{Parameters}, and Python scalars (\mintinline{python}{int} and \mintinline{python}{float}) are supported. For example:
+A \mintinline{python}{superscreen.Parameter} is a wrapper around a Python function that computes a scalar value as a function of position coordinates ($x$, $y$, and optionally $z$) based on some set of keyword arguments. Addition, subtraction, multiplication, division, and exponentiation between \mintinline{python}{Parameters}, other \mintinline{python}{Parameters}, and Python scalars (\mintinline{python}{int} and \mintinline{python}{float}) are supported. For example, see Code Block~\ref{code:parameters}.
 
-\begin{minted}{python}
+\begin{code}
+\begin{minted}[fontsize=\footnotesize]{python}
 from superscreen import Parameter
 
 def f(x, y, a=1, b=0):
     return a * x**2 + b * y
     
 param = Parameter(f, a=0, b=1)
-print(param)  # Parameter<f(a=0, b=1)>
+print(param)
+# Parameter<f(a=0, b=1)>
 
 other_param = Parameter(f, a=2, b=3)
-print(other_param)  # Parameter<f(a=2, b=3)>
+print(other_param)
+# Parameter<f(a=2, b=3)>
 
-print(param(0, 0) == f(0, 0, a=0, b=1))  # True
-print(other_param(1, 2) == f(1, 2, a=2, b=3))  # True
+print(param(0, 0) == f(0, 0, a=0, b=1))
+# True
+print(other_param(1, 2) == f(1, 2, a=2, b=3))
+# True
 
 param_squared = param ** 2
-print(param_squared)  # CompositeParameter<(f(a=0, b=1) ** 2)>
+print(param_squared)
+# CompositeParameter<(f(a=0, b=1) ** 2)>
 
-print(param_squared(3, 4) == f(3, 4, a=0, b=1) ** 2) # True
+print(param_squared(3, 4) == f(3, 4, a=0, b=1) ** 2)
+# True
 print(
     (5 * param_squared / other_param)(5, 6)
     == 5 * f(5, 6, a=0, b=1) ** 2 / f(5, 6, a=2, b=3)
-)  # True
+)
+# True
 \end{minted}
-
-\mintinline{python}{Parameters} can be used to define applied magnetic fields and penetration depths that depend on position.
+\captionof{listing}{The basic usage of \mintinline{python}{Parameters}. \mintinline{python}{Parameters} can be used to conveniently define applied magnetic fields and penetration depths that depend on position.}
+\label{code:parameters}
+\end{code}
 
 \subsection{Devices}
 \label{section:overview:device}
 
 Information about the geometry and penetration depth of a superconducting structure is described by an instance of the \mintinline{python}{superscreen.Device} class. A \mintinline{python}{Device} is made up of one or more superconducting layers, each an instance of  \mintinline{python}{superscreen.Layer}. Each layer sits in a specified plane parallel to the $x-y$ plane and has its own effective penetration depth $\Lambda$, which can either be a constant or a \mintinline{python}{superscreen.Parameter} that defines $\Lambda(x, y)$, the effective penetration depth as a function of position. The effective penetration depth $\Lambda$ can instead be defined in terms of a layer's London penetration depth $\lambda$ and its thickness $d$: $\Lambda=\lambda^2/d$, in which case the London penetration depth can be either a constant or a \mintinline{python}{superscreen.Parameter}.
 
-Each layer can contain one or more superconducting films which may have one or more holes in them. Films and holes are represented by instances of the \mintinline{python}{superscreen.Polygon} class. A \mintinline{python}{Polygon} contains the name of the layer to which is belongs, an array specifying the coordinates of its vertices, and a method, \mintinline{python}{Polygon.contains_points()}, which determines whether specified coordinates lie within the polygon or not. In addition to superconducting films and holes, one may define ``abstract regions,'' which are polygons that need not correspond to a physical feature in the structure, but will still be meshed. Abstract regions can be used to define a ``bounding box" around a structure.
+Each layer can contain one or more superconducting films which may have one or more holes in them. Films and holes are represented by instances of the \mintinline{python}{superscreen.Polygon} class. A \mintinline{python}{Polygon} contains the name of the layer to which is belongs, an array specifying the coordinates of its vertices, and a method, \mintinline{python}{Polygon.contains_points()}, which determines whether specified coordinates lie within the polygon or not. In addition to superconducting films and holes, one may define ``abstract regions,'' which are polygons that need not correspond to a physical feature in the structure, but will still be meshed. Abstract regions can be used to define a ``bounding box" around a structure. The \mintinline{python}{superscreen.geometry} module provides functions for generating the underlying polygon vertices for simple geometries (circles and rectangles). See Code Block~\ref{code:device} for an example of a function that creates a square or circular superconducting ring centered at the origin.
 
-Once the layers, films, holes, and abstract regions have been defined, one can generate the computational mesh by calling \mintinline{python}{Device.make_mesh()}. The region that is meshed is defined by the convex hull of the union of all polygons in the device. After the mesh is generated, the matrices and vectors described in Section~\ref{section:implementation} can be computed and one can begin solving models.
+\begin{code}
+\begin{minted}[fontsize=\footnotesize]{python}
+import superscreen as sc
+
+def make_ring(
+    inner_radius=2.5,
+    outer_radius=5,
+    Lambda=1,
+    length_units="um",
+    square=False,
+):
+    if square:
+        name = "square_ring"
+        outer_points = sc.geometry.square(
+            outer_radius * 2, points_per_side=60
+        )
+        inner_points = sc.geometry.square(
+            inner_radius * 2, points_per_side=20
+        )
+        bbox_points = sc.geometry.square(
+            outer_radius * 2 * 1.4, points_per_side=5
+        )
+    else:
+        name = "circular_ring"
+        outer_points = sc.geometry.circle(outer_radius)
+        inner_points = sc.geometry.circle(inner_radius)
+        bbox_points = sc.geometry.circle(outer_radius * 1.4, points=2)
+
+    layers = [sc.Layer("base", Lambda=Lambda, z0=0)]
+    films = [sc.Polygon("ring", layer="base", points=outer_points)]
+    holes = [sc.Polygon("hole", layer="base", points=inner_points)]
+    abstract_regions = [
+        sc.Polygon("bounding_box", layer="base", points=bbox_points),
+    ]
+    return sc.Device(
+        name,
+        layers=layers,
+        films=films,
+        holes=holes,
+        abstract_regions=abstract_regions,
+        length_units=length_units,
+    )
+\end{minted}
+\captionof{listing}{A function that creates a \mintinline{python}{Device} representing a circular or square ring centered at the origin.}
+\label{code:device}
+\end{code}
+
+Once the layers, films, holes, and abstract regions have been defined, one can generate the computational mesh by calling \mintinline{python}{Device.make_mesh()}. The region that is meshed is defined by the convex hull of the union of all polygons in the device. Mesh generation is a two step process. First, an initial Delaunay mesh is created using \mintinline{python}{MeshPy}~\cite{Klockner}, a Python interface to Triangle~\cite{shewchuk96b, Shewchuk}, a fast compiled 2D mesh generation tool. Second (and optionally), the mesh can be further optimized using \mintinline{python}{optimesh}~\cite{nico_schlomer_adam_dobrawy_2021}. The goal of the mesh optimization step is to improve the quality of each triangular element in the mesh, where quality is defined as twice the ratio of the incircle radius to the circumcircle radius (quality $\leq1$, with equality for equilateral triangles). The local density of triangles in the mesh is determined by the density of vertices in the device's polygons, i.e. regions where there are many polygon vertices will be meshed densely. If no \mintinline{python}{optimesh} optimization is done, then every polygon vertex is guaranteed to be a mesh vertex.
+
+\begin{code}
+\begin{minted}[fontsize=\footnotesize]{python}
+# min_triangles specifies the minimum number of mesh elements.
+min_triangles = 8000
+# optimesh_steps specifies the the number of iterations of
+# optimesh optimization to perform.
+# Set optimesh_steps=None to disable optimesh optimization.
+optimesh_steps = 400
+# For more meshing options, see the docstring for Device.make_mesh().
+
+for square in (False, True):
+    ring = make_ring(square=square)
+    ring.make_mesh(
+        min_triangles=min_triangles,
+        optimesh_steps=optimesh_steps,
+    )
+    
+    ax = ring.plot_mesh(figsize=(6, 6))
+    ax = ring.plot_polygons(ax=ax, color="k")
+\end{minted}
+\captionof{listing}{Generating and visualizing the computational mesh.}
+\label{code:mesh_generation}
+\end{code}
+
+\begin{figure}
+\centering
+\begin{subfigure}{.45\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{examples/images/ring/ring_mesh.png}
+  \caption{A subfigure}
+  \label{fig:circular_ring_mesh}
+\end{subfigure}%
+\begin{subfigure}{.45\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{examples/images/ring/ring_mesh.png}
+  \caption{A subfigure}
+  \label{fig:square_ring_mesh}
+\end{subfigure}
+\caption{A figure with two subfigures}
+\label{fig:ring_mesh}
+\end{figure}
+
+After the mesh is generated, the matrices and vectors described in Section~\ref{section:implementation} can be computed and one can begin solving models.
 
 \subsection{Solvers}
 \label{section:overview:solvers}
 
-A \SuperScreen model consists of a \mintinline{python}{Device}, a function or \mintinline{python}{Parameter} that defines the applied magnetic field as a function of position $H_{z,\,\mathrm{applied}}(x, y, z)$, and (optionally) a value for the current circulating around each hole in the device due to trapped flux. These items serve as the inputs to \SuperScreen's main solver function, \mintinline{python}{superscreen.solve()}, which implements the calculation outlined in Section~\ref{section:implementation}. When simulating a device with more than one layer, one can specify the number of times to implement the iterative calculation described in Section~\ref{section:model:multilayer} in order to solve for the response of all layers self-consistently. One can also skip the iterative portion of the calculation entirely and only solve for the response of each layer to the applied field, assuming no interaction between layers.
+A \SuperScreen model consists of a \mintinline{python}{Device}, a function or \mintinline{python}{Parameter} that defines the applied magnetic field as a function of position $H_{z,\,\mathrm{applied}}(x, y, z)$, and a value for the current circulating around each hole in the device due to trapped flux (if any). These items serve as the inputs to \SuperScreen's main solver function, \mintinline{python}{superscreen.solve()}, which implements the calculation outlined in Section~\ref{section:implementation}. When simulating a device with more than one layer, one can specify the number of times to implement the iterative calculation described in Section~\ref{section:model:multilayer} in order to solve for the response of all layers self-consistently. One can also skip the iterative portion of the calculation entirely and only solve for the response of each layer to the applied field, assuming no interaction between layers.
 
 The output of \mintinline{python}{superscreen.solve()} is a \mintinline{python}{list} of \mintinline{python}{superscreen.Solution} objects, with a length of 1 plus the number of iterations used for the iterative portion of the calculation. A \mintinline{python}{Solution} encapsulates all of the information about a solved model: the \mintinline{python}{Device}, applied field, circulating currents, and calculated stream functions and magnetic fields for all layers in the device. A \mintinline{python}{Solution} also has methods for processing the simulation results, including:
 \begin{itemize}
@@ -551,7 +659,7 @@ The output of \mintinline{python}{superscreen.solve()} is a \mintinline{python}{
 
 One may wish to solve many models involving the same device while varying other aspects of the model, for example sweeping the applied field, circulating currents, or some parameter of one or more layers in the device. Fortunately, the mesh and large matrices described in Section~\ref{section:implementation} depend only on the geometry of the device parallel to the $x-y$ plane. This means that the same mesh and matrices can be re-used for models with different applied fields, circulating currents, layer heights (vertical positions), and penetration depths.
 
-The \mintinline{python}{superscreen.solve_many()} function manages the setup and execution of such a sweep. One can provide a sequence of \mintinline{python}{superscreen.Parameter} objects defining different applied fields and/or a sequence of circulating current values over which to sweep and/or a ``layer updater" function that modifies each layer in the device according to some set of keyword arguments, which can also be swept. The latter option can be used to sweep layer heights or penetration depths. Given these inputs, \mintinline{python}{superscreen.solve_many()} will generate and solve all of the corresponding models. The models can either be solved in series in a single Python process (the default), or in parallel across multiple Python processes running across multiple CPUs, or even across multiple nodes in a cluster. In any case, only a single copy of the device's mesh and large arrays is created, so the memory overhead is modest.
+The \mintinline{python}{superscreen.solve_many()} function manages the setup and execution of such a sweep. One can provide a sequence of \mintinline{python}{Parameter} objects defining different applied fields and/or a sequence of circulating current values over which to sweep and/or a ``layer updater" function that modifies each layer in the device according to some set of keyword arguments, which can also be swept. The latter option can be used to sweep layer heights or penetration depths. Given these inputs, \mintinline{python}{superscreen.solve_many()} will generate and solve all of the corresponding models. The models can either be solved in series in a single Python process (the default), or in parallel across multiple Python processes running across multiple CPUs, or even across multiple nodes in a cluster. In any case, only a single copy of the device's mesh and large arrays is created, so the memory overhead is modest.
 
 \subsection{Visualization}
 \label{section:overview:visualization}
@@ -595,13 +703,53 @@ Instances of \mintinline{python}{superscreen.Device} and \mintinline{python}{sup
 
 \SuperScreen requires Python version 3.6 or later. The package is located in a public repository on GitHub~\cite{superscreen}, and a suite of unit tests is run automatically via GitHub Actions whenever a change or proposed change (Pull Request) is made to the \mintinline{python}{main} branch of the repository. At the time of writing, the test suite is executed using Python versions 3.6, 3.7, 3.8, and 3.9, and the test coverage is XX\%. Any changes to the \mintinline{python}{main} branch of the repository also trigger an automatic re-build of the online documentation, hosted by Read the Docs at superscreen.readthedocs.io. Stable versions of the package are tagged on GitHub and uploaded to PyPI, the Python Package Index. The source code and documentation are covered by the MIT License.
 
-\SuperScreen has several important dependencies beyond the Python standard library: \mintinline{python}{numpy}~\cite{2020NumPy-Array} and \mintinline{python}{scipy}~\cite{2020SciPy-NMeth} for numerics, \mintinline{python}{pint}~\cite{Grecco} for handling physical units, \mintinline{python}{matplotlib}~\cite{Hunter_2007} for visualization, \mintinline{python}{meshpy}~\cite{Klockner,Shewchuk} and \mintinline{python}{optimesh}~\cite{Schlomer} for mesh generation, \mintinline{python}{dill}~\cite{McKerns} for serializing objects to disk and between processes, and \mintinline{python}{ray}~\cite{ray_2018} for parallel processing with shared memory.
+\SuperScreen has several important dependencies beyond the Python standard library: \mintinline{python}{numpy}~\cite{2020NumPy-Array} and \mintinline{python}{scipy}~\cite{2020SciPy-NMeth} for numerics, \mintinline{python}{pint}~\cite{Grecco} for handling physical units, \mintinline{python}{matplotlib}~\cite{Hunter_2007} for visualization, \mintinline{python}{meshpy}~\cite{Klockner,Shewchuk} and \mintinline{python}{optimesh}~\cite{nico_schlomer_adam_dobrawy_2021} for mesh generation, \mintinline{python}{dill}~\cite{McKerns} for serializing objects to disk and between processes, and \mintinline{python}{ray}~\cite{ray_2018} for parallel processing with shared memory.
 
 \section{Examples}
 \label{section:examples}
 
-\subsection{Screening: superconducting disk}
+Below we demonstrate how to solve several different classes of problems using \mintinline{python}{SuperScreen}: screening of and applied magnetic field by a single superconducting film, current distribution and self-inductance of superconducting rings, and mutual inductance of two superconducting rings. The full source code and interactive Jupyter notebooks for each of the examples can be found in the "examples" directory of the GitHub repository accompanying this paper.
+
+\subsection{Device setup}
+\label{section:example:setup}
+
+The model geometry is defined by creating an instance of \mintinline{python}{superscreen.Device}. Here we define a disk, a circular ring, and a square ring, and generate the computational mesh for each of them.
+
+\begin{minted}[fontsize=\footnotesize]{python}
+import superscreen as sc
+
+def make_disk(Lambda=1, radius=5, length_units="um"):
+    layers = [sc.Layer("base", Lambda=Lambda, z0=0)]
+    films = [
+        sc.Polygon(
+            "disk",
+            layer="base",
+            points=sc.geometry.circle(radius, points=401),
+        ),
+    ]
+    abstract_regions = [
+        sc.Polygon(
+            "bounding_box",
+            layer="base",
+            points=sc.geometry.square(
+                2 * (radius + 1), points_per_side=11
+            ),
+        ),
+    ]
+    disk = sc.Device(
+        "disk",
+        layers=layers,
+        films=films,
+        abstract_regions=abstract_regions,
+        length_units=length_units,
+    )
+    return disk
+\end{minted}
+
+\subsection{Screening}
 \label{section:example:screening}
+
+Here we simulate Meissner screening of both uniform and non-uniform applied magnetic fields by superconducting films with different geometries and penetration depths. 
 
 \begin{figure}
     \centering
@@ -617,7 +765,7 @@ Instances of \mintinline{python}{superscreen.Device} and \mintinline{python}{sup
     \label{fig:ring_uniform_field}
 \end{figure}
 
-\subsection{Inductance: superconducting ring}
+\subsection{Self-inductance}
 \label{section:examples:inductance}
 
 \begin{figure}
