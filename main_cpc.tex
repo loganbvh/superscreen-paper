@@ -618,45 +618,134 @@ for square in (False, True):
 
 \begin{figure}
 \centering
-\begin{subfigure}{.45\textwidth}
+\begin{subfigure}{.4\textwidth}
   \centering
   \includegraphics[width=\linewidth]{examples/images/ring/circular_ring_mesh.png}
-%   \caption{A subfigure}
+  \caption{Circular ring, \mintinline{python}{optimesh_steps=400}.}
   \label{fig:circular_ring_mesh}
 \end{subfigure}%
-\begin{subfigure}{.45\textwidth}
+\begin{subfigure}{.4\textwidth}
   \centering
   \includegraphics[width=\linewidth]{examples/images/ring/square_ring_mesh.png}
-%   \caption{A subfigure}
+  \caption{Square ring, \mintinline{python}{optimesh_steps=400}.}
   \label{fig:square_ring_mesh}
 \end{subfigure}
-\caption{Device geometry and mesh for a circular and square ring generated using Code Blocks~\ref{code:device} and \ref{code:mesh_generation}.}
+\begin{subfigure}{.4\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{examples/images/ring/circular_ring_mesh_no_optimesh.png}
+  \caption{Circular ring, \mintinline{python}{optimesh_steps=None}.}
+  \label{fig:circular_ring_mesh_no_opt}
+\end{subfigure}%
+\begin{subfigure}{.4\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{examples/images/ring/square_ring_mesh_no_optimesh.png}
+  \caption{Square ring, \mintinline{python}{optimesh_steps=None}.}
+  \label{fig:square_ring_mesh_no_opt}
+\end{subfigure}
+\caption{Device geometry and mesh for a circular and square ring generated using Code Blocks~\ref{code:device} and \ref{code:mesh_generation}, with (top row) and without (bottom row) \mintinline{python}{optimesh} optimization.}
 \label{fig:ring_mesh}
 \end{figure}
 
-\begin{figure}
-\centering
-\begin{subfigure}{.45\textwidth}
-  \centering
-  \includegraphics[width=\linewidth]{examples/images/ring/circular_ring_mesh.png}
-%   \caption{A subfigure}
-  \label{fig:circular_ring_mesh}
-\end{subfigure}%
-\begin{subfigure}{.45\textwidth}
-  \centering
-  \includegraphics[width=\linewidth]{examples/images/ring/square_ring_mesh.png}
-%   \caption{A subfigure}
-  \label{fig:square_ring_mesh}
-\end{subfigure}
-\caption{Device geometry and mesh for a circular and square ring generated using Code Blocks~\ref{code:device} and \ref{code:mesh_generation}.}
-\label{fig:ring_mesh}
-\end{figure}
 After the mesh is generated, the matrices and vectors described in Section~\ref{section:implementation} can be computed and one can begin solving models.
 
 \subsection{Solvers}
 \label{section:overview:solvers}
 
 A \SuperScreen model consists of a \mintinline{python}{Device}, a function or \mintinline{python}{Parameter} that defines the applied magnetic field as a function of position $H_{z,\,\mathrm{applied}}(x, y, z)$, and a value for the current circulating around each hole in the device due to trapped flux (if any). These items serve as the inputs to \SuperScreen's main solver function, \mintinline{python}{superscreen.solve()}, which implements the calculation outlined in Section~\ref{section:implementation}. When simulating a device with more than one layer, one can specify the number of times to implement the iterative calculation described in Section~\ref{section:model:multilayer} in order to solve for the response of all layers self-consistently. One can also skip the iterative portion of the calculation entirely and only solve for the response of each layer to the applied field, assuming no interaction between layers.
+
+For example, Code Block~\ref{code:ring_circulating_current} solves two models involving the \mintinline{python}{ring} device. First, Meissner screening of a spatially uniform applied magnetic field, and second, the response of the ring to trapped flux with an associated circulating current of 1 mA with no applied magnetic field. The resulting sheet current and magnetic field distributions can be visualized using the \mintinline{python}{plot_current()} and \mintinline{python}{plot_fields()} methods, which produce the images shown in Figure~\ref{fig:ring_plot_fields_currents}.
+
+\begin{code}
+\begin{minted}[fontsize=\footnotesize]{python}
+# Simulate the response to a uniform applied field of 0.2 mT
+applied_field = sc.sources.ConstantField(0.2)
+field_units = "mT"
+
+solutions = sc.solve(
+    device=ring,
+    applied_field=applied_field,
+    field_units=field_units,
+)
+assert len(solutions) == 1 # Since there is only one layer
+uniform_field = solutions[-1]
+
+# Simulate a current circulating around the hole in the ring.
+circulating_currents = {"hole": "1 mA"}
+
+solutions = sc.solve(
+    device=ring,
+    applied_field=None,
+    circulating_currents=circulating_currents
+)
+assert len(solutions) == 1 # Since there is only one layer
+trapped_flux = solutions[-1]
+
+for solution in (uniform_field, trapped_flux):
+    solution.plot_currents(
+        figsize=(6, 7), cross_section_ys=[0], units="mA/um",
+    )
+    solution.plot_fields(figsize=(6, 7), cross_section_ys=[0])
+\end{minted}
+\captionof{listing}{Solve for the current and magnetic field distributions resulting from a total current of 1 mA flowing in our \mintinline{python}{ring} device.}
+\label{code:ring_circulating_current}
+\end{code}
+
+% \begin{code}
+% \begin{minted}[fontsize=\footnotesize]{python}
+% # Simulate a current circulating around the hole in the ring.
+% circulating_currents = {"hole": "1 mA"}
+
+% solutions = sc.solve(
+%     device=ring,
+%     applied_field=None,
+%     circulating_currents=circulating_currents
+% )
+% assert len(solutions) == 1 # Since there is only one layer
+% solution = solutions[-1]
+
+% solution.plot_currents(
+%     figsize=(6, 7), cross_section_ys=[0], units="mA/um",
+% )
+
+% solution.plot_fields(
+%     figsize=(6, 7), cross_section_ys=[0],
+% )
+% \end{minted}
+% \captionof{listing}{Solve for the current and magnetic field distributions resulting from a total current of 1 mA flowing in our \mintinline{python}{ring} device.}
+% \label{code:ring_circulating_current}
+% \end{code}
+
+\begin{figure}
+\centering
+\begin{subfigure}{.4\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{examples/images/ring/circular_ring_plot_currents.png}
+  \caption{Circular ring sheet current.}
+  \label{fig:circular_ring_plot_currents}
+\end{subfigure}
+\begin{subfigure}{.4\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{examples/images/ring/circular_ring_plot_fields.png}
+  \caption{Circular ring magnetic field.}
+  \label{fig:circular_ring_plot_fields}
+\end{subfigure}
+
+\begin{subfigure}{.4\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{examples/images/ring/square_ring_plot_currents.png}
+  \caption{Square ring sheet current.}
+  \label{fig:square_ring_plot_currents}
+\end{subfigure}
+\begin{subfigure}{.4\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{examples/images/ring/square_ring_plot_fields.png}
+  \caption{Square ring magnetic field.}
+  \label{fig:square_ring_plot_fields}
+\end{subfigure}
+
+\caption{Sheet current $\vec{J}$ and magnetic field $\mu_0H_z$ distributions for the circular (top) and square (bottom) ring calculated using Code Block~\ref{code:ring_circulating_current}.}
+\label{fig:ring_circulating_current}
+\end{figure}
 
 The output of \mintinline{python}{superscreen.solve()} is a \mintinline{python}{list} of \mintinline{python}{superscreen.Solution} objects, with a length of 1 plus the number of iterations used for the iterative portion of the calculation. A \mintinline{python}{Solution} encapsulates all of the information about a solved model: the \mintinline{python}{Device}, applied field, circulating currents, and calculated stream functions and magnetic fields for all layers in the device. A \mintinline{python}{Solution} also has methods for processing the simulation results, including:
 \begin{itemize}
