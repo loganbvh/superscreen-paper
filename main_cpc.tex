@@ -710,42 +710,6 @@ Instances of \mintinline{python}{superscreen.Device} and \mintinline{python}{sup
 
 Below we demonstrate how to solve several different classes of problems using \mintinline{python}{SuperScreen}: screening of and applied magnetic field by a single superconducting film, current distribution and self-inductance of superconducting rings, and mutual inductance of two superconducting rings. The full source code and interactive Jupyter notebooks for each of the examples can be found in the "examples" directory of the GitHub repository accompanying this paper.
 
-\subsection{Device setup}
-\label{section:example:setup}
-
-The model geometry is defined by creating an instance of \mintinline{python}{superscreen.Device}. Here we define a disk, a circular ring, and a square ring, and generate the computational mesh for each of them.
-
-\begin{minted}[fontsize=\footnotesize]{python}
-import superscreen as sc
-
-def make_disk(Lambda=1, radius=5, length_units="um"):
-    layers = [sc.Layer("base", Lambda=Lambda, z0=0)]
-    films = [
-        sc.Polygon(
-            "disk",
-            layer="base",
-            points=sc.geometry.circle(radius, points=401),
-        ),
-    ]
-    abstract_regions = [
-        sc.Polygon(
-            "bounding_box",
-            layer="base",
-            points=sc.geometry.square(
-                2 * (radius + 1), points_per_side=11
-            ),
-        ),
-    ]
-    disk = sc.Device(
-        "disk",
-        layers=layers,
-        films=films,
-        abstract_regions=abstract_regions,
-        length_units=length_units,
-    )
-    return disk
-\end{minted}
-
 \subsection{Screening}
 \label{section:example:screening}
 
