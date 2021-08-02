@@ -36,6 +36,8 @@ def plot_solutions(
         xgrid, ygrid, fields = solution.grid_data("fields", grid_shape=grid_shape)
         field = fields["base"]
 
+        xvec, yvec = sc.grids_to_vecs(xgrid, ygrid)
+
         if Lambda == show_Lambda:
             vmin, vmax = sc.visualization.auto_range_iqr(field, auto_range_cutoff)
             im = ax.pcolormesh(
@@ -60,7 +62,6 @@ def plot_solutions(
             if plot_polygons:
                 solution.device.plot_polygons(ax=ax, color="w", lw=1, legend=False)
 
-        xvec, yvec = sc.grids_to_vecs(xgrid, ygrid)
         cx.plot(xvec, field[N, :], color=color, lw=lw)
 
         xgrid, ygrid, jcs = solution.current_density(

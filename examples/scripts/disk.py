@@ -1,6 +1,5 @@
 import os
 import logging
-from matplotlib.pyplot import show
 
 import numpy as np
 

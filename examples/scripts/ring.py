@@ -1,6 +1,5 @@
 import os
 import logging
-import tempfile
 
 import numpy as np
 
