@@ -49,7 +49,9 @@ def plot_solutions(
             )
             ax.set_xlabel("$x$ [$\\mu$m]")
             ax.set_ylabel("$y$ [$\\mu$m]")
-            ax.set_title("Magnetic field, $\\mu_0H_z$\n$\\Lambda$ = 1 $\\mu$m")
+            ax.set_title(
+                f"Magnetic field, $\\mu_0H_z$\n$\\Lambda$ = {show_Lambda:.2f} $\\mu$m"
+            )
             ax_divider = make_axes_locatable(ax)
             cax = ax_divider.append_axes("right", size="8%", pad="4%")
             cbar = fig.colorbar(im, cax=cax)
@@ -82,7 +84,10 @@ def plot_solutions(
             im = bx.pcolormesh(xvec, yvec, J, shading="auto", cmap="inferno")
             bx.set_xlabel("$x$ [$\\mu$m]")
             bx.set_ylabel("$y$ [$\\mu$m]")
-            bx.set_title("Sheet current, $|\\vec{J}|$\n$\\Lambda$ = 1 $\\mu$m")
+            bx.set_title(
+                "Sheet current, $|\\vec{J}|$"
+                + f"\n$\\Lambda$ = {show_Lambda:.2f} $\\mu$m"
+            )
             ax_divider = make_axes_locatable(bx)
             cax = ax_divider.append_axes("right", size="6%", pad="4%")
             cbar = fig.colorbar(im, cax=cax)

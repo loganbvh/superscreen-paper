@@ -99,6 +99,8 @@ if __name__ == "__main__":
     Lambda = 1
     length_units = "um"
     field_units = "mT"
+    # Plot the fields and currents for this value of Lambda
+    show_Lambda = 0.1
 
     # The method used for parallel execution.
     # Valid options are None (i.e. serial execution), "ray", and "multiprocessing".
@@ -167,7 +169,8 @@ if __name__ == "__main__":
 
         # Simulate the field and current distributions for a given total
         # circulating current across a wide range of Lambdas.
-        Lambdas = np.logspace(-2, 2, 11)
+        Lambdas = np.logspace(-2, 2, 13)
+        assert np.any(Lambdas == show_Lambda), "show_Lambda not in Lambdas"
 
         layer_update_kwargs = [dict(Lambda=Lambda) for Lambda in Lambdas]
 
@@ -194,7 +197,7 @@ if __name__ == "__main__":
         #         )[-1]
         #     )
 
-        fig, axes = plot_solutions(solutions, Lambdas)
+        fig, axes = plot_solutions(solutions, Lambdas, show_Lambda=show_Lambda)
         fig.savefig(
             os.path.join(imagedir, f"{ring.name}_circulating_current.png"),
             bbox_inches="tight",
@@ -230,16 +233,26 @@ if __name__ == "__main__":
         #         )[-1]
         #     )
 
-        fig, axes = plot_solutions(solutions, Lambdas)
+        fig, axes = plot_solutions(solutions, Lambdas, show_Lambda=show_Lambda)
         fig.savefig(
             os.path.join(imagedir, f"{ring.name}_uniform_field.png"),
             bbox_inches="tight",
         )
 
         # Simulate the field and current distribution for a nonuniform applied field,
-        # namely the field from an isolated vortex pinned below the plane of the ring.
-        vortex_position = (-3.75, 0, -0.5)  # x, y, z
-        applied_field = sc.Parameter(vortex_field, vortex_position=(-3.75, 0, -0.5))
+        # namely the field from several isolated vortcies pinned below
+        # the plane of the ring.
+        vortex_positions = [
+            # (x, y, z),
+            (-3.75, 0, -0.5),
+            (2.5, -2.5, -0.5),
+            (0, 5, -0.5),
+        ]
+        # Define the applied field as a sum of Parameters
+        applied_field = sum(
+            sc.Parameter(vortex_field, vortex_position=position)
+            for position in vortex_positions
+        )
 
         solutions, _ = sc.solve_many(
             device=ring,
@@ -265,7 +278,7 @@ if __name__ == "__main__":
         #         )[-1]
         #     )
 
-        fig, axes = plot_solutions(solutions, Lambdas)
+        fig, axes = plot_solutions(solutions, Lambdas, show_Lambda=show_Lambda)
         fig.savefig(
             os.path.join(imagedir, f"{ring.name}_nonuniform_field.png"),
             bbox_inches="tight",

@@ -1,5 +1,6 @@
 import os
 import logging
+from matplotlib.pyplot import show
 
 import numpy as np
 
@@ -50,6 +51,8 @@ if __name__ == "__main__":
 
     disk_radius = 5
     length_units = "um"
+    # Plot the fields and currents for this value of Lambda
+    show_Lambda = 1.0
 
     # Make the disk Device
     disk = make_disk(radius=disk_radius, length_units=length_units)
@@ -87,7 +90,7 @@ if __name__ == "__main__":
             )[-1]
         )
 
-    fig, axes = plot_solutions(solutions, Lambdas)
+    fig, axes = plot_solutions(solutions, Lambdas, show_Lambda=show_Lambda)
     fig.savefig(
         os.path.join(imagedir, f"{disk.name}_uniform_field.png"),
         bbox_inches="tight",
