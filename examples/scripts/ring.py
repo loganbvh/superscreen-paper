@@ -16,40 +16,29 @@ def make_ring(
     square=False,
 ):
     if square:
-        outer_points = sc.geometry.square(outer_radius * 2, points_per_side=60)
-        inner_points = sc.geometry.square(inner_radius * 2, points_per_side=20)
-        bbox_points = sc.geometry.square(outer_radius * 2 * 1.4, points_per_side=5)
+        name = "square_ring"
+        outer_points = sc.geometry.square(
+            outer_radius * 2, points_per_side=60
+        )
+        inner_points = sc.geometry.square(
+            inner_radius * 2, points_per_side=20
+        )
+        bbox_points = sc.geometry.square(
+            outer_radius * 2 * 1.4, points_per_side=5
+        )
     else:
+        name = "circular_ring"
         outer_points = sc.geometry.circle(outer_radius)
         inner_points = sc.geometry.circle(inner_radius)
-        bbox_points = sc.geometry.circle(outer_radius * 1.4, points=21)
+        bbox_points = sc.geometry.circle(outer_radius * 1.4, points=2)
 
-    layers = [
-        sc.Layer("base", Lambda=Lambda, z0=0),
-    ]
-    films = [
-        sc.Polygon(
-            "ring",
-            layer="base",
-            points=outer_points,
-        ),
-    ]
-    holes = [
-        sc.Polygon(
-            "hole",
-            layer="base",
-            points=inner_points,
-        ),
-    ]
+    layers = [sc.Layer("base", Lambda=Lambda, z0=0)]
+    films = [sc.Polygon("ring", layer="base", points=outer_points)]
+    holes = [sc.Polygon("hole", layer="base", points=inner_points)]
     abstract_regions = [
-        sc.Polygon(
-            "bounding_box",
-            layer="base",
-            points=bbox_points,
-        )
+        sc.Polygon("bounding_box", layer="base", points=bbox_points),
     ]
-    name = "square_ring" if square else "ring"
-    ring = sc.Device(
+    return sc.Device(
         name,
         layers=layers,
         films=films,
@@ -57,7 +46,6 @@ def make_ring(
         abstract_regions=abstract_regions,
         length_units=length_units,
     )
-    return ring
 
 
 def layer_updater(layer, Lambda=None):
@@ -123,7 +111,7 @@ if __name__ == "__main__":
         ax = ring.plot_polygons(ax=ax, color="k")
         npoints = ring.points.shape[0]
         ntriangles = ring.triangles.shape[0]
-        ax.set_title(f"Mesh: {npoints} points, {ntriangles}")
+        ax.set_title(f"{ring.name} mesh:\n{npoints} points, {ntriangles}")
         ax.figure.savefig(
             os.path.join(imagedir, f"{ring.name}_mesh.png"),
             bbox_inches="tight",
