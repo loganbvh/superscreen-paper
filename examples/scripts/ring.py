@@ -118,7 +118,7 @@ if __name__ == "__main__":
         )
 
         # Uniform applied field
-        applied_field = sc.sources.ConstantField(0.2)  # mT
+        applied_field = sc.sources.ConstantField(0.25)  # mT
 
         # Current circulating around the hole in the ring.
         circulating_currents = {"hole": "1 mA"}
@@ -205,7 +205,7 @@ if __name__ == "__main__":
         # Simulate the field and current distributions for a given
         # uniform applied field across a wide range of Lambdas,
         # assuming no trapped flux.
-        applied_field = sc.sources.ConstantField(0.2)
+        applied_field = sc.sources.ConstantField(0.25)
 
         solutions, _ = sc.solve_many(
             device=ring,
