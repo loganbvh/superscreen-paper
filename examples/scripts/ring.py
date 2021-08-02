@@ -117,30 +117,42 @@ if __name__ == "__main__":
             bbox_inches="tight",
         )
 
-        # Simulate a current circulating around the hole in the ring.
+        # Uniform applied field
+        applied_field = sc.sources.ConstantField(0.2)  # mT
+
+        # Current circulating around the hole in the ring.
         circulating_currents = {"hole": "1 mA"}
 
-        solution = sc.solve(device=ring, circulating_currents=circulating_currents)[-1]
-        fig, axes = solution.plot_fields(
-            figsize=(6, 7),
-            cross_section_ys=[0],
-            auto_range_cutoff=0.1,
-        )
-        fig.savefig(
-            os.path.join(imagedir, f"{ring.name}_plot_fields.png"),
-            bbox_inches="tight",
-        )
+        for field, current, label in [
+            (applied_field, None, "uniform"), (None, circulating_currents, "circ")
+        ]:
+            solution = sc.solve(
+                device=ring,
+                applied_field=field,
+                circulating_currents=current,
+                field_units=field_units,
+            )[-1]
 
-        fig, axes = solution.plot_currents(
-            figsize=(6, 7),
-            cross_section_ys=[0],
-            units="mA/um",
-            auto_range_cutoff=0.1,
-        )
-        fig.savefig(
-            os.path.join(imagedir, f"{ring.name}_plot_currents.png"),
-            bbox_inches="tight",
-        )
+            fig, axes = solution.plot_fields(
+                figsize=(6, 7),
+                cross_section_ys=[0],
+                auto_range_cutoff=0.1,
+            )
+            fig.savefig(
+                os.path.join(imagedir, f"{ring.name}_{label}_plot_fields.png"),
+                bbox_inches="tight",
+            )
+
+            fig, axes = solution.plot_currents(
+                figsize=(6, 7),
+                cross_section_ys=[0],
+                units="mA/um",
+                auto_range_cutoff=0.1,
+            )
+            fig.savefig(
+                os.path.join(imagedir, f"{ring.name}_{label}_plot_currents.png"),
+                bbox_inches="tight",
+            )
 
         # Perform a surface integral of the resulting fields to calculcate the
         # flux through the ring and the ring's self-inductance.
