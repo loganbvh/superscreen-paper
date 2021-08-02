@@ -541,11 +541,12 @@ print(
 
 Information about the geometry and penetration depth of a superconducting structure is described by an instance of the \mintinline{python}{superscreen.Device} class. A \mintinline{python}{Device} is made up of one or more superconducting layers, each an instance of  \mintinline{python}{superscreen.Layer}. Each layer sits in a specified plane parallel to the $x-y$ plane and has its own effective penetration depth $\Lambda$, which can either be a constant or a \mintinline{python}{superscreen.Parameter} that defines $\Lambda(x, y)$, the effective penetration depth as a function of position. The effective penetration depth $\Lambda$ can instead be defined in terms of a layer's London penetration depth $\lambda$ and its thickness $d$: $\Lambda=\lambda^2/d$, in which case the London penetration depth can be either a constant or a \mintinline{python}{superscreen.Parameter}.
 
-Each layer can contain one or more superconducting films which may have one or more holes in them. Films and holes are represented by instances of the \mintinline{python}{superscreen.Polygon} class. A \mintinline{python}{Polygon} contains the name of the layer to which is belongs, an array specifying the coordinates of its vertices, and a method, \mintinline{python}{Polygon.contains_points()}, which determines whether specified coordinates lie within the polygon or not. In addition to superconducting films and holes, one may define ``abstract regions,'' which are polygons that need not correspond to a physical feature in the structure, but will still be meshed. Abstract regions can be used to define a ``bounding box" around a structure. The \mintinline{python}{superscreen.geometry} module provides functions for generating the underlying polygon vertices for simple geometries (circles and rectangles). See Code Block~\ref{code:device} for an example of a function that creates a square or circular superconducting ring centered at the origin.
+Each layer can contain one or more superconducting films which may have one or more holes in them. Films and holes are represented by instances of the \mintinline{python}{superscreen.Polygon} class. A \mintinline{python}{Polygon} contains the name of the layer to which is belongs, an array specifying the coordinates of its vertices, and a method, \mintinline{python}{Polygon.contains_points()}, which determines whether specified coordinates lie within the polygon or not. In addition to superconducting films and holes, one may define ``abstract regions,'' which are polygons that need not correspond to a physical feature in the structure, but will still be meshed. Abstract regions can be used to define a ``bounding box" around a structure. The \mintinline{python}{superscreen.geometry} module provides functions for generating the underlying polygon vertices for simple geometries (circles and rectangles). See Code Block~\ref{code:device} for an example of a function that creates a square or circular superconducting ring centered at the origin, with an effective penetration depth $\Lambda = 1\,\mu\mathrm{m}$.
 
 \begin{code}
 \begin{minted}[fontsize=\footnotesize]{python}
 import superscreen as sc
+import superscreen.geometry as geo
 
 def make_ring(
     inner_radius=2.5,
@@ -556,26 +557,20 @@ def make_ring(
 ):
     if square:
         name = "square_ring"
-        outer_points = sc.geometry.square(
-            outer_radius * 2, points_per_side=60
-        )
-        inner_points = sc.geometry.square(
-            inner_radius * 2, points_per_side=20
-        )
-        bbox_points = sc.geometry.square(
-            outer_radius * 2 * 1.4, points_per_side=5
-        )
+        outer = geo.square(outer_radius * 2, points_per_side=60)
+        inner = geo.square(inner_radius * 2, points_per_side=20)
+        bbox = geo.square(outer_radius * 2 * 1.4, points_per_side=5)
     else:
         name = "circular_ring"
-        outer_points = sc.geometry.circle(outer_radius)
-        inner_points = sc.geometry.circle(inner_radius)
-        bbox_points = sc.geometry.circle(outer_radius * 1.4, points=21)
+        outer_points = geo.circle(outer_radius)
+        inner_points = geo.circle(inner_radius)
+        bbox = geo.circle(outer_radius * 1.4, points=21)
 
     layers = [sc.Layer("base", Lambda=Lambda, z0=0)]
     films = [sc.Polygon("ring", layer="base", points=outer_points)]
     holes = [sc.Polygon("hole", layer="base", points=inner_points)]
     abstract_regions = [
-        sc.Polygon("bounding_box", layer="base", points=bbox_points),
+        sc.Polygon("bounding_box", layer="base", points=bbox),
     ]
     return sc.Device(
         name,
@@ -720,30 +715,30 @@ for solution in (uniform_field, trapped_flux):
 \begin{subfigure}{.4\textwidth}
   \centering
   \includegraphics[width=\linewidth]{examples/images/ring/circular_ring_uniform_plot_currents.png}
-  \caption{Circular ring sheet current.}
+  \caption{Screening current, uniform applied field model.}
   \label{fig:circular_ring_plot_currents}
 \end{subfigure}
 \begin{subfigure}{.4\textwidth}
   \centering
   \includegraphics[width=\linewidth]{examples/images/ring/circular_ring_uniform_plot_fields.png}
-  \caption{Circular ring magnetic field.}
+  \caption{Total magnetic field, uniform applied field model.}
   \label{fig:circular_ring_plot_fields}
 \end{subfigure}
 
 \begin{subfigure}{.4\textwidth}
   \centering
   \includegraphics[width=\linewidth]{examples/images/ring/circular_ring_circ_plot_currents.png}
-  \caption{Square ring sheet current.}
+  \caption{Screening current, trapped flux model.}
   \label{fig:square_ring_plot_currents}
 \end{subfigure}
 \begin{subfigure}{.4\textwidth}
   \centering
   \includegraphics[width=\linewidth]{examples/images/ring/circular_ring_circ_plot_fields.png}
-  \caption{Square ring magnetic field.}
+  \caption{Total magnetic field, trapped flux model.}
   \label{fig:square_ring_plot_fields}
 \end{subfigure}
 
-\caption{Sheet current $\vec{J}$ and magnetic field $\mu_0H_z$ distributions for the circular (top) and square (bottom) ring calculated using Code Block~\ref{code:ring_circulating_current}.}
+\caption{Sheet current $\vec{J}$ and magnetic field $\mu_0H_z$ distributions for the circular ring with a uniform applied field of 0.25 mT (top) and a circulating current of 1 mA (bottom) calculated using Code Block~\ref{code:ring_circulating_current}.}
 \label{fig:ring_plot_fields_currents}
 \end{figure}
 
@@ -762,6 +757,7 @@ The output of \mintinline{python}{superscreen.solve()} is a \mintinline{python}{
     \mintinline{python}{Solution.field_at_position()}: Calculates the vector magnetic field at any point(s) in space due the applied field and the currents flowing the in the device using Eqs.~\ref{eq:field_from_kernel} and \ref{eq:kernels}.
     }
 \end{itemize}
+\mintinline{python}{Solutions} also have several visualization methods built in (see Section~\ref{section:overview:visualization}).
 
 One may wish to solve many models involving the same device while varying other aspects of the model, for example sweeping the applied field, circulating currents, or some parameter of one or more layers in the device. Fortunately, the mesh and large matrices described in Section~\ref{section:implementation} depend only on the geometry of the device parallel to the $x-y$ plane. This means that the same mesh and matrices can be re-used for models with different applied fields, circulating currents, layer heights (vertical positions), and penetration depths.
 
