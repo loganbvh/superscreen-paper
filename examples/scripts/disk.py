@@ -4,6 +4,7 @@ import logging
 import numpy as np
 
 import superscreen as sc
+import superscreen.geometry as geo
 
 from plot_solutions import plot_solutions
 
@@ -16,14 +17,14 @@ def make_disk(Lambda=1, radius=5, length_units="um"):
         sc.Polygon(
             "disk",
             layer="base",
-            points=sc.geometry.circle(radius, points=401),
+            points=geo.circle(radius, points=401),
         ),
     ]
     abstract_regions = [
         sc.Polygon(
             "bounding_box",
             layer="base",
-            points=sc.geometry.square(2 * (radius + 1), points_per_side=11),
+            points=geo.square(2 * (radius + 1), points_per_side=11),
         ),
     ]
     disk = sc.Device(

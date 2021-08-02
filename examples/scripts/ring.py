@@ -4,6 +4,7 @@ import logging
 import numpy as np
 
 import superscreen as sc
+import superscreen.geometry as geo
 
 from plot_solutions import plot_solutions
 
@@ -17,20 +18,20 @@ def make_ring(
 ):
     if square:
         name = "square_ring"
-        outer_points = sc.geometry.square(
+        outer_points = geo.square(
             outer_radius * 2, points_per_side=60
         )
-        inner_points = sc.geometry.square(
+        inner_points = geo.square(
             inner_radius * 2, points_per_side=20
         )
-        bbox_points = sc.geometry.square(
+        bbox_points = geo.square(
             outer_radius * 2 * 1.4, points_per_side=5
         )
     else:
         name = "circular_ring"
-        outer_points = sc.geometry.circle(outer_radius)
-        inner_points = sc.geometry.circle(inner_radius)
-        bbox_points = sc.geometry.circle(outer_radius * 1.4, points=21)
+        outer_points = geo.circle(outer_radius)
+        inner_points = geo.circle(inner_radius)
+        bbox_points = geo.circle(outer_radius * 1.4, points=21)
 
     layers = [sc.Layer("base", Lambda=Lambda, z0=0)]
     films = [sc.Polygon("ring", layer="base", points=outer_points)]
