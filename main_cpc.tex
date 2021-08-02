@@ -569,7 +569,7 @@ def make_ring(
         name = "circular_ring"
         outer_points = sc.geometry.circle(outer_radius)
         inner_points = sc.geometry.circle(inner_radius)
-        bbox_points = sc.geometry.circle(outer_radius * 1.4, points=2)
+        bbox_points = sc.geometry.circle(outer_radius * 1.4, points=21)
 
     layers = [sc.Layer("base", Lambda=Lambda, z0=0)]
     films = [sc.Polygon("ring", layer="base", points=outer_points)]
@@ -620,13 +620,13 @@ for square in (False, True):
 \centering
 \begin{subfigure}{.45\textwidth}
   \centering
-  \includegraphics[width=\linewidth]{examples/images/ring/ring_mesh.png}
+  \includegraphics[width=\linewidth]{examples/images/ring/circular_ring_mesh.png}
   \caption{A subfigure}
   \label{fig:circular_ring_mesh}
 \end{subfigure}%
 \begin{subfigure}{.45\textwidth}
   \centering
-  \includegraphics[width=\linewidth]{examples/images/ring/ring_mesh.png}
+  \includegraphics[width=\linewidth]{examples/images/ring/square_ring_mesh.png}
   \caption{A subfigure}
   \label{fig:square_ring_mesh}
 \end{subfigure}
@@ -760,7 +760,7 @@ Here we simulate Meissner screening of both uniform and non-uniform applied magn
 
 \begin{figure}
     \centering
-    \includegraphics[scale=.40]{examples/images/ring/ring_uniform_field.png}
+    \includegraphics[scale=.40]{examples/images/ring/circular_ring_uniform_field.png}
     \caption{Caption}
     \label{fig:ring_uniform_field}
 \end{figure}
@@ -770,7 +770,7 @@ Here we simulate Meissner screening of both uniform and non-uniform applied magn
 
 \begin{figure}
     \centering
-    \includegraphics[scale=.40]{examples/images/ring/ring_circulating_current.png}
+    \includegraphics[scale=.40]{examples/images/ring/circular_ring_circulating_current.png}
     \caption{Caption}
     \label{fig:ring_circ_current}
 \end{figure}
