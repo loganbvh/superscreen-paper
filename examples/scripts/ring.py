@@ -111,7 +111,7 @@ if __name__ == "__main__":
         ax = ring.plot_polygons(ax=ax, color="k")
         npoints = ring.points.shape[0]
         ntriangles = ring.triangles.shape[0]
-        ax.set_title(f"{ring.name} mesh:\n{npoints} points, {ntriangles}")
+        ax.set_title(f"{ring.name} mesh:\n{npoints} points, {ntriangles} triangles")
         ax.figure.savefig(
             os.path.join(imagedir, f"{ring.name}_mesh.png"),
             bbox_inches="tight",

@@ -62,7 +62,7 @@ if __name__ == "__main__":
     ax = disk.plot_polygons(ax=ax, color="k")
     npoints = disk.points.shape[0]
     ntriangles = disk.triangles.shape[0]
-    ax.set_title(f"{disk.name} mesh:\n{npoints} points, {ntriangles}")
+    ax.set_title(f"{disk.name} mesh:\n{npoints} points, {ntriangles} triangles")
     ax.figure.savefig(
         os.path.join(imagedir, f"{disk.name}_mesh.png"),
         bbox_inches="tight",
