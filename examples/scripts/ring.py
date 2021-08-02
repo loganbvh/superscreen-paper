@@ -30,7 +30,7 @@ def make_ring(
         name = "circular_ring"
         outer_points = sc.geometry.circle(outer_radius)
         inner_points = sc.geometry.circle(inner_radius)
-        bbox_points = sc.geometry.circle(outer_radius * 1.4, points=2)
+        bbox_points = sc.geometry.circle(outer_radius * 1.4, points=21)
 
     layers = [sc.Layer("base", Lambda=Lambda, z0=0)]
     films = [sc.Polygon("ring", layer="base", points=outer_points)]
