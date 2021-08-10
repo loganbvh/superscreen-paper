@@ -59,8 +59,8 @@ if __name__ == "__main__":
     disk.make_mesh(min_triangles=8000, optimesh_steps=100)
 
     # Plot the disk's mesh and polygons
-    ax = disk.plot_mesh(figsize=(6, 6))
-    ax = disk.plot_polygons(ax=ax, color="k")
+    ax = disk.plot_mesh(figsize=(6, 6), color="k", alpha=0.5)
+    ax = disk.plot_polygons(ax=ax, linewidth=4)
     npoints = disk.points.shape[0]
     ntriangles = disk.triangles.shape[0]
     ax.set_title(f"{disk.name} mesh:\n{npoints} points, {ntriangles} triangles")

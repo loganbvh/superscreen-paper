@@ -106,17 +106,22 @@ if __name__ == "__main__":
             length_units=length_units,
             square=square,
         )
-        ring.make_mesh(min_triangles=8000, optimesh_steps=400)
+        for optimesh_steps in [None, 400]:
+            if optimesh_steps is None:
+                save_path = os.path.join(
+                    imagedir, f"{ring.name}_mesh_no_optimesh.png"
+                )
+            else:
+                save_path = os.path.join(imagedir, f"{ring.name}_mesh.png")
 
-        ax = ring.plot_mesh(figsize=(6, 6))
-        ax = ring.plot_polygons(ax=ax, color="k")
-        npoints = ring.points.shape[0]
-        ntriangles = ring.triangles.shape[0]
-        ax.set_title(f"{ring.name} mesh:\n{npoints} points, {ntriangles} triangles")
-        ax.figure.savefig(
-            os.path.join(imagedir, f"{ring.name}_mesh.png"),
-            bbox_inches="tight",
-        )
+            ring.make_mesh(min_triangles=8000, optimesh_steps=optimesh_steps)
+
+            ax = ring.plot_mesh(figsize=(6, 6), color="k", alpha=0.5)
+            ax = ring.plot_polygons(ax=ax, linewidth=4)
+            npoints = ring.points.shape[0]
+            ntriangles = ring.triangles.shape[0]
+            ax.set_title(f"{ring.name} mesh:\n{npoints} points, {ntriangles} triangles")
+            ax.figure.savefig(save_path, bbox_inches="tight", dpi=150)
 
         # Uniform applied field
         applied_field = sc.sources.ConstantField(0.25)  # mT

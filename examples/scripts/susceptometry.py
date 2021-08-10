@@ -31,36 +31,46 @@ def susceptibility_analytical(z, Lambda, a=8.4):
 
 def sensor_and_sample(
     *,
-    field_coil_inner_radius,
-    field_coil_outer_radius,
+    field_coil_mean_radius,
     field_coil_Lambda,
-    pickup_loop_inner_radius,
-    pickup_loop_outer_radius,
+    pickup_loop_mean_radius,
     pickup_loop_Lambda,
-    sample_size,
+    line_width,
     sample_Lambda,
     sample_z0=-1,
     length_units="um",
 ):
     layers = [
-        sc.Layer("fc_layer", Lambda=field_coil_Lambda, z0=0.57),
-        sc.Layer("pl_layer", Lambda=pickup_loop_Lambda, z0=0),
+        sc.Layer("fc_layer", Lambda=field_coil_Lambda, z0=0),
+        sc.Layer("pl_layer", Lambda=pickup_loop_Lambda, z0=-0.4),
         sc.Layer("sample_layer", Lambda=sample_Lambda, z0=sample_z0)
     ]
+    field_coil_outer_radius = field_coil_mean_radius + line_width / 2
+    field_coil_inner_radius = field_coil_mean_radius - line_width / 2
+    pickup_loop_outer_radius = pickup_loop_mean_radius + line_width / 2
+    pickup_loop_inner_radius = pickup_loop_mean_radius - line_width / 2
     films = [
         sc.Polygon(
-            "field_coil", layer="fc_layer", points=geo.circle(field_coil_outer_radius)
+            "field_coil",
+            layer="fc_layer",
+            points=geo.circle(field_coil_outer_radius, points=301),
         ),
         sc.Polygon(
-            "pickup_loop", layer="pl_layer", points=geo.circle(pickup_loop_outer_radius)
+            "pickup_loop",
+            layer="pl_layer",
+            points=geo.circle(pickup_loop_outer_radius),
         ),
         sc.Polygon(
-            "sample", layer="sample_layer", points=geo.square(sample_size)
+            "sample",
+            layer="sample_layer",
+            points=geo.circle(field_coil_mean_radius * 1.5, points=21),
         ),
     ]
     holes = [
         sc.Polygon(
-            "fc_hole", layer="fc_layer", points=geo.circle(field_coil_inner_radius)
+            "fc_hole",
+            layer="fc_layer",
+            points=geo.circle(field_coil_inner_radius, points=201),
         ),
         sc.Polygon(
             "pl_hole", layer="pl_layer", points=geo.circle(pickup_loop_inner_radius)
@@ -89,7 +99,7 @@ def sweep_sample_height(device, sample_heights, ncpus, solve_iterations):
     start_time = time.time()
     layer_update_kwargs = [dict(z0=z0) for z0 in sample_heights]
 
-    if parallel_method == "ray":
+    if parallel_method == "ray" and not ray.is_initialized():
         ray.init(num_cpus=ncpus)
 
     solutions, _ = sc.solve_many(
@@ -107,7 +117,6 @@ def sweep_sample_height(device, sample_heights, ncpus, solve_iterations):
     elapsed_seconds = stop_time - start_time
 
     if parallel_method == "ray":
-        ray.shutdown()
         parallel_method_str = f"ray:{ncpus}"
     else:
         parallel_method_str = "None"
@@ -126,39 +135,60 @@ if __name__ == "__main__":
     
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "max_ncpus",
+        "--max_cpus",
         type=int,
         help="Maximum number of CPUs to use. 0 means no parallelism.",
     )
     parser.add_argument(
-        "sample_Lambda",
+        "--fc_radius",
+        type=float,
+        help="Field coil mean radius, (inner + outer) / 2, in microns.",
+    )
+    parser.add_argument(
+        "--pl_radius",
+        type=float,
+        help="Pickup loop mean radius, (inner + outer) / 2, in microns.",
+    )
+    parser.add_argument(
+        "--line_width",
+        type=float,
+        help="Field coil and pickup loop line width, (outer - inner), in microns.",
+    )
+    parser.add_argument(
+        "--fc_Lambda",
+        type=float,
+        help="Field coil effective penetration depth in microns."
+    )
+    parser.add_argument(
+        "--pl_Lambda",
+        type=float,
+        help="Pickup loop effective penetration depth in microns.",
+    )
+    parser.add_argument(
+        "--sample_Lambda",
         type=float,
         help="Sample layer effective penetration depth in microns."
     )
     args = parser.parse_args()
 
-    ncpus = range(args.max_ncpus + 1)
+    ncpus = range(args.max_cpus + 1)
 
-    sample_Lambda = args.sample_Lambda
-
-    sample_heights = -np.linspace(1, 20, 20)
+    sample_heights = -np.arange(1, 22, 2)
 
     device = sensor_and_sample(
-        field_coil_inner_radius=5.5,
-        field_coil_outer_radius=8.0,
-        field_coil_Lambda=0.08**2 / 0.20,
-        pickup_loop_inner_radius=1.7,
-        pickup_loop_outer_radius=2.7,
-        pickup_loop_Lambda=0.08**2 / 0.23,
-        sample_size=30,
-        sample_Lambda=sample_Lambda,
+        field_coil_mean_radius=args.fc_radius,
+        field_coil_Lambda=args.fc_Lambda,
+        pickup_loop_mean_radius=args.pl_radius,
+        pickup_loop_Lambda=args.pl_Lambda,
+        line_width=args.line_width,
+        sample_Lambda=args.sample_Lambda,
         length_units="um",
     )
 
-    device.make_mesh(min_triangles=8000, optimesh_steps=400)
+    device.make_mesh(min_triangles=8000, optimesh_steps=50)
 
-    ax = device.plot_mesh(figsize=(6, 6))
-    ax = device.plot_polygons(ax=ax, color="k", legend=False)
+    ax = device.plot_mesh(figsize=(6, 6), color="k", alpha=0.5)
+    ax = device.plot_polygons(ax=ax)
     npoints = device.points.shape[0]
     ntriangles = device.triangles.shape[0]
     ax.set_title(f"{device.name} mesh:\n{npoints} points, {ntriangles} triangles")
@@ -171,7 +201,7 @@ if __name__ == "__main__":
     circulating_currents = {"fc_hole": "1 mA"}
     I_fc = device.ureg(circulating_currents["fc_hole"])
 
-    solve_iterations = 4
+    solve_iterations = 2
 
     # Calculcate field coil - pickup loop mutual inductance
     # when the sample is very far from the sensor
@@ -189,16 +219,20 @@ if __name__ == "__main__":
     print(f"\t{mutual_no_sample:.3f~P}")
     mutual_no_sample = mutual_no_sample.magnitude
 
+    # Field coil effective radius
+    ri_fc = args.fc_radius - args.line_width / 2
+    ro_fc = args.fc_radius + args.line_width / 2
+    # a_eff = np.sqrt((ro_fc ** 2 + ri_fc ** 2) / 2)
+    a_eff = (ri_fc + ro_fc) / 2
+
     susc_analytical = susceptibility_analytical(
         -sample_heights,
-        sample_Lambda,
-        a=(5.5 + 8.0) / 2,
+        args.sample_Lambda,
+        a=a_eff,
     )
 
     report = []
-
     lines = [f"num_cpus, elapsed_seconds"]
-
     for ncpu in ncpus:
 
         solutions, elapsed_seconds, parallel_method = sweep_sample_height(
@@ -214,7 +248,7 @@ if __name__ == "__main__":
 
         title = [
             "Normalized susceptibility vs. analytical expression",
-            f" ($\\Lambda$ = {sample_Lambda:.1f} $\\mu$m)"
+            f" ($\\Lambda$ = {args.sample_Lambda:.1f} $\\mu$m)"
             f"\nparallel_method = {parallel_method}",
         ]
         title.append(f"\nElapsed time: {elapsed_seconds:.3f} seconds")
@@ -240,4 +274,4 @@ if __name__ == "__main__":
     print("\n\n".join(report))
 
     with open("result.csv", "w") as f:
-        f.writelines(lines)
+        f.write("\n".join(lines))
