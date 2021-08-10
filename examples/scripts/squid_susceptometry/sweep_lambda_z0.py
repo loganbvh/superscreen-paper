@@ -1,4 +1,7 @@
 import os
+
+os.environ["OPENBLAS_NUM_THREADS"] = "1"
+
 import time
 import logging
 import tempfile
