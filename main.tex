@@ -1,27 +1,208 @@
-\documentclass{article}
-\usepackage[utf8]{inputenc}
-\usepackage{geometry}
-\geometry{letterpaper, margin=1.5in}
-\usepackage{amsmath, amssymb, bm}
-\usepackage{minted}
+%% This template can be used to write a paper for
+%% Computer Physics Communications using LaTeX.
+%% For authors who want to write a computer program description,
+%% an example Program Summary is included that only has to be
+%% completed and which will give the correct layout in the
+%% preprint and the journal.
+%% The `elsarticle' style is used and more information on this style
+%% can be found at 
+%% http://www.elsevier.com/wps/find/authorsview.authors/elsarticle.
+%%
+
+%% Use the option review to obtain double line spacing
+% \documentclass[preprint,12pt]{elsarticle}
+
+%% Use the options 1p,twocolumn; 3p; 3p,twocolumn; 5p; or 5p,twocolumn
+%% for a journal layout:
+% \documentclass[final,1p,times]{elsarticle}
+% \documentclass[final,1p,times,twocolumn]{elsarticle}
+\documentclass[final,3p,times]{elsarticle}
+% \documentclass[final,3p,times,twocolumn]{elsarticle}
+%% \documentclass[final,5p,times]{elsarticle}
+% \documentclass[final,5p,times,twocolumn]{elsarticle}
+
+\usepackage{subcaption}
+\usepackage[newfloat]{minted}
 \usepackage{hyperref}
+\usepackage{tcolorbox}
+\usepackage{etoolbox}
+\BeforeBeginEnvironment{minted}{\begin{center}\begin{tcolorbox}[width=0.9\textwidth]}
+\AfterEndEnvironment{minted}{\end{tcolorbox}\end{center}}
+\usepackage{caption}
+\usepackage{xspace}
+\usepackage[toc,page]{appendix}
 
-\newcommand{\SuperScreen}{\mintinline{python}{SuperScreen}\,}
+\newcommand{\inline}[1]{\mintinline{python}{#1}\xspace}
+\newcommand{\SuperScreen}{\inline{SuperScreen}}
 
-\title{\texttt{SuperScreen}}
-\author{Logan Bishop-Van Horn}
-\date{\today}
+\newenvironment{code}{\captionsetup{type=listing}}{\hfill}
+\SetupFloatingEnvironment{listing}{name=Code Block}
+
+%% if you use PostScript figures in your article
+%% use the graphics package for simple commands
+%% \usepackage{graphics}
+%% or use the graphicx package for more complicated commands
+%% \usepackage{graphicx}
+%% or use the epsfig package if you prefer to use the old commands
+%% \usepackage{epsfig}
+
+%% The amssymb package provides various useful mathematical symbols
+\usepackage{amsmath, amssymb, bm}
+%% The amsthm package provides extended theorem environments
+%% \usepackage{amsthm}
+
+%% The lineno packages adds line numbers. Start line numbering with
+%% \begin{linenumbers}, end it with \end{linenumbers}. Or switch it on
+%% for the whole article with \linenumbers after \end{frontmatter}.
+%% \usepackage{lineno}
+
+%% natbib.sty is loaded by default. However, natbib options can be
+%% provided with \biboptions{...} command. Following options are
+%% valid:
+
+%%   round  -  round parentheses are used (default)
+%%   square -  square brackets are used   [option]
+%%   curly  -  curly braces are used      {option}
+%%   angle  -  angle brackets are used    <option>
+%%   semicolon  -  multiple citations separated by semi-colon
+%%   colon  - same as semicolon, an earlier confusion
+%%   comma  -  separated by comma
+%%   numbers-  selects numerical citations
+%%   super  -  numerical citations as superscripts
+%%   sort   -  sorts multiple citations according to order in ref. list
+%%   sort&compress   -  like sort, but also compresses numerical citations
+%%   compress - compresses without sorting
+%%
+%% \biboptions{comma,round}
+
+% \biboptions{}
+
+%% This list environment is used for the references in the
+%% Program Summary
+%%
+\newcounter{bla}
+\newenvironment{refnummer}{%
+\list{[\arabic{bla}]}%
+{\usecounter{bla}%
+ \setlength{\itemindent}{0pt}%
+ \setlength{\topsep}{0pt}%
+ \setlength{\itemsep}{0pt}%
+ \setlength{\labelsep}{2pt}%
+ \setlength{\listparindent}{0pt}%
+ \settowidth{\labelwidth}{[9]}%
+ \setlength{\leftmargin}{\labelwidth}%
+ \addtolength{\leftmargin}{\labelsep}%
+ \setlength{\rightmargin}{0pt}}}
+ {\endlist}
+
+\journal{Computer Physics Communications}
 
 \begin{document}
 
-\maketitle
+\begin{frontmatter}
 
+%% Title, authors and addresses
+
+%% use the tnoteref command within \title for footnotes;
+%% use the tnotetext command for the associated footnote;
+%% use the fnref command within \author or \address for footnotes;
+%% use the fntext command for the associated footnote;
+%% use the corref command within \author for corresponding author footnotes;
+%% use the cortext command for the associated footnote;
+%% use the ead command for the email address,
+%% and the form \ead[url] for the home page:
+%%
+%% \title{Title\tnoteref{label1}}
+%% \tnotetext[label1]{}
+%% \author{Name\corref{cor1}\fnref{label2}}
+%% \ead{email address}
+%% \ead[url]{home page}
+%% \fntext[label2]{}
+%% \cortext[cor1]{}
+%% \address{Address\fnref{label3}}
+%% \fntext[label3]{}
+
+\title{\texttt{SuperScreen}: An open-source package for simulating the magnetic response of two-dimensional superconductors}
+
+%% use optional labels to link authors explicitly to addresses:
+%% \author[label1,label2]{<author name>}
+%% \address[label1]{<address>}
+%% \address[label2]{<address>}
+
+\author[a]{Logan Bishop-Van Horn}
+\author[a,b]{Kam Moler\corref{author}}
+
+\cortext[author]{Corresponding author.\\\textit{E-mail address:} kmoler@stanford.edu}
+\address[a]{First Address}
+\address[b]{Second Address}
+
+\begin{abstract}
+Quantitative understanding of the spatial distribution of magnetic fields and screening currents in two-dimensional (2D) superconductors and mesoscopic superconducting devices is critical to interpreting the results of magnetic measurements of such systems.
+Here we introduce \SuperScreen, an open-source Python package for simulating the magnetic response of two-dimensional superconductors to applied time-independent magnetic fields. Given an applied magnetic field, \SuperScreen solves for Meissner screening currents and the resulting magnetic fields in structures composed of one or more superconducting thin films of arbitrary geometry with spatially inhomogeneous magnetic penetration depth using a matrix inversion method introduced by Brandt~\cite{brandt_thin_2005}. \SuperScreen can be used to model screening effects and calculate self- and mutual-inductance in superconducting circuits, and simulate the magnetic response of inhomogeneous 2D superconductors.
+
+\end{abstract}
+
+\begin{keyword}
+%% keywords here, in the form: keyword \sep keyword
+superconductivity\sep Meissner screening\sep thin film
+
+\end{keyword}
+
+\end{frontmatter}
+
+%%
+%% Start line numbering here if you want
+%%
+% \linenumbers
+
+% All CPiP articles must contain the following
+% PROGRAM SUMMARY.
+\noindent
+{\bf PROGRAM SUMMARY}
+
+\begin{small}
+\noindent
+{\em SuperScreen}\\
+{\em CPC Library link to program files:} (to be added by Technical Editor) \\
+{\em Developer's repository link:} \href{http://www.github.com/loganbvh/superscreen}{www.github.com/loganbvh/superscreen}\\
+{\em Code Ocean capsule:} (to be added by Technical Editor)\\
+{\em Licensing provisions:} MIT\\
+{\em Programming language: Python}\\
+% {\em Supplementary material:}\\
+  % Fill in if necessary, otherwise leave out.
+% {\em Journal reference of previous version:}*\\
+  %Only required for a New Version summary, otherwise leave out.
+% {\em Does the new version supersede the previous version?:}*\\
+  %Only required for a New Version summary, otherwise leave out.
+% {\em Reasons for the new version:*}\\
+  %Only required for a New Version summary, otherwise leave out.
+% {\em Summary of revisions:}*\\
+  %Only required for a New Version summary, otherwise leave out.
+{\em Nature of problem:} \SuperScreen solves for Meissner screening currents in structures composed of 2D or thin film superconductors in the presence of an applied magnetic field.\\
+  %Describe the nature of the problem here. \\
+{\em Solution method:} The package solves the 2D London equations inside superconducting regions and Maxwell's equations outside the superconductor using a matrix inversion method introduced by Brandt~\cite{brandt_thin_2005}.\\
+  %Describe the method solution here.
+% {\em Additional comments including restrictions and unusual features (approx. 50-250 words):}\\
+  %Provide any additional comments here.
+   \\
+
+% \begin{thebibliography}{0}
+% \bibitem{1}Reference 1         % This list should only contain those items referenced in the                 
+% \bibitem{2}Reference 2         % Program Summary section.   
+% \bibitem{3}Reference 3         % Type references in text as [1], [2], etc.
+%                               % This list is different from the bibliography at the end of 
+%                               % the Long Write-Up.
+% \end{thebibliography}
+\end{small}
+
+
+%% main text
 \section{Introduction}
 \label{section:introduction}
 
 \SuperScreen is an open-source Python package developed to simulate the magnetic response of structures composed of one or more layers containing superconducting thin films. \SuperScreen solves the coupled Maxwell's and London's equations in and around superconducting films with spatially-varying penetration depth in the presence of applied magnetic fields and trapped flux using a matrix inversion method introduced by Brandt~\cite{brandt_thin_2005} and initially implemented by Kirtley, \emph{et al.}~\cite{kirtley_scanning_2016, kirtley_response_2016} to model the magnetic response of scanning superconducting quantum interference device (SQUID) sensors.
 
-In Section~\ref{section:model} we outline Brandt's model, and in Section~\ref{section:implementation} we describe its numerical implementation. In Section~\ref{section:overview}, we provide an overview of the structure of the \SuperScreen package, highlighting important functions, classes, and features, and discuss some important development details. In Section~\ref{section:examples}, we demonstrate how to set up and solve several types of models using \SuperScreen. Finally, in Section~\ref{section:conlusion} we discuss potential applications, extensions, and improvements to the package.
+In Section~\ref{section:model} we outline Brandt's model, and in Section~\ref{section:implementation} we describe its numerical implementation. In Section~\ref{section:overview}, we provide an overview of the structure of the \SuperScreen package, highlighting notable functions, classes, and features, and discuss some important development details. Finally, in Section~\ref{section:conlusion} we conclude with potential applications, extensions, and improvements to the package.
 
 \section{The Model}
 \label{section:model}
@@ -35,14 +216,13 @@ A convenient method for solving this problem was introduced by Brandt in~\cite{b
 
 In the London model of superconductivity, the magnetic field $\vec{H}(\vec{r})$ and 3D current density $\vec{j}(\vec{r})$ in a superconductor with London penetration depth $\lambda(\vec{r})$ obey the second London equation:
 $\nabla\times\vec{j}(\vec{r})=-\vec{H}(\vec{r})/\lambda^2(\vec{r})$, where
-$\nabla=\left(\frac{\partial}{\partial x}, \frac{\partial}{\partial y}, \frac{\partial}{\partial z}\right)$. Brandt's model assumes that the current density $\vec{j}$ is approximately independent of $z$, such $\vec{j}(\vec{r}) = \vec{j}(x, y, z)\approx\vec{j}_{z_0}(x, y)$ for a film lying parallel to the $x-y$ plane at vertical position $z_0$. Working now with the thickness-integrated current density (sheet current) $\vec{J}(x, y)=\vec{j}_{z_0}(x, y)\cdot d$, where $d$
+$\nabla=\left(\frac{\partial}{\partial x}, \frac{\partial}{\partial y}, \frac{\partial}{\partial z}\right)$. Brandt's model assumes that the current density $\vec{j}$ is approximately independent of $z$, such $\vec{j}(\vec{r}) = \vec{j}(x, y, z)\approx\vec{j}_{z_0}(x, y)$ for a film lying parallel to the $x-y$ plane at vertical position $z_0$. Working now with the thickness-integrated current density (sheet current) $\vec{J}(x, y)\approx\vec{j}_{z_0}(x, y)\cdot d$, where $d$
 is the thickness of the film, the second London equation reduces to
 
 \begin{equation}
     \label{eq:london}
     \nabla\times\vec{J}(x, y)=-\vec{H}(x, y)/\Lambda(x, y),
 \end{equation}
-
 where $\Lambda(x, y)=\lambda^2(x, y)/d$ is the effective penetration depth
 of the superconducting film (equal to half the Pearl length~\cite{pearl_current_1964}).
 
@@ -83,7 +263,7 @@ where $\nabla^2=\nabla\cdot\nabla$ is the Laplace operator. (The fourth line fol
     \end{split}
 \end{align}
 
-Here we assume an applied magnetic field $\vec{H}_\mathrm{applied}(\vec{r}')=H_\mathrm{z,\,\mathrm{applied}}(\vec{r}')\hat{z}$. $S$ is the film area (with $g = 0$ outside of the film), and $Q_x(\vec{r},\vec{r}')$, $Q_y(\vec{r},\vec{r}')$, and $Q_z(\vec{r},\vec{r}')$ are dipole kernel functions which give the relevant component of the magnetic field at position $\vec{r}=(x, y, z)$ due to a dipole of unit strength at position $\vec{r}'=(x', y', z')$:
+Here we assume an out-of-plane applied magnetic field $\vec{H}_\mathrm{applied}(\vec{r}')=H_\mathrm{z,\,\mathrm{applied}}(\vec{r}')\hat{z}$. $S$ is the film area (with $g = 0$ outside of the film), and $Q_x(\vec{r},\vec{r}')$, $Q_y(\vec{r},\vec{r}')$, and $Q_z(\vec{r},\vec{r}')$ are dipole kernel functions which give the relevant component of the magnetic field at position $\vec{r}=(x, y, z)$ due to a dipole of unit strength at position $\vec{r}'=(x', y', z')$:
 
 \begin{align}
     \label{eq:kernels}
@@ -184,7 +364,7 @@ denotes matrix multiplication, with $(\mathbf{A}\mathbf{B})_{ij}=\sum_{k=1}^\ell
 ($\ell$ being the number of columns in $\mathbf{A}$ and the number of rows in $\mathbf{B}$). Column vectors are treated as matrices with $\ell$ rows and 1 column. On the other hand, we denote element-wise multiplication with a dot: $(\mathbf{A}\cdot\mathbf{B})_{ij}=A_{ij}B_{ij}$ for two matrices
 and $(\mathbf{A}\cdot\mathbf{v})_{ij}=(\mathbf{v}\cdot\mathbf{A})_{ij}=A_{ij}v_{i}$ for a matrix $\mathbf{A}$ and a column vector $\mathbf{v}$.
 
-The matrix version of Eq.~\ref{eq:field_from_kernel} is:
+The matrix version of Eq.~\ref{eq:field_from_kernel} is
 
 \begin{equation}
     \label{eq:field_from_kernel_num}
@@ -196,18 +376,16 @@ The matrix version of Eq.~\ref{eq:field_from_kernel} is:
 The kernel matrix $\mathbf{Q}$ and weight matrix $\mathbf{w}$ together play the role of the
 kernel function $Q_z(\vec{r},\vec{r}')$ for all points lying in the plane of the film. They are both $n\times n$ matrices determined solely by the geometry of the mesh.
 $\mathbf{h}_z$, $\mathbf{h}_{z,\,\mathrm{applied}}$, and $\mathbf{g}$ are all $n\times 1$ vectors, with each row representing the value of the quantity at the
-corresponding vertex in the mesh. There are several different methods for constructing the weight matrix $\mathbf{w}$, which are discussed in Section~\ref{section:implementation:laplace} below. The kernel
-matrix $\mathbf{Q}$ is defined in terms of a matrix $\mathbf{q}$ with
-$q_{ij} = \left(4\pi|\vec{r}_i-\vec{r}_j|^3\right)^{-1}$
-(which is $\lim_{\Delta z\to 0}Q_z(\vec{r},\vec{r}')$ cf. Eq.~\ref{eq:kernels}),
-and a vector $\mathbf{C}$:
+corresponding vertex in the mesh. There are several different methods for constructing the weight matrix $\mathbf{w}$, which are discussed in~\ref{section:implementation:laplace}. The kernel matrix $\mathbf{Q}$ is given by
 
 \begin{equation}
     \label{eq:kernel_matrix}
     Q_{ij} = (\delta_{ij}-1)q_{ij}
     + \delta_{ij}\frac{1}{w_{ij}}\left(C_i + \sum_{l\neq i}q_{il}w_{il}\right),
 \end{equation}
-where $\delta_{ij}$ is the Kronecker delta function. The diagonal terms involving $\mathbf{C}$ are meant to work around the fact that $q_{ii}$ diverge (see \cite{brandt_thin_2005} for more details), and the vector is defined as
+where $q_{ij} = \left(4\pi|\vec{r}_i-\vec{r}_j|^3\right)^{-1}$
+(which is $\lim_{\Delta z\to 0}Q_z(\vec{r},\vec{r}')$ cf. Eq.~\ref{eq:kernels}),
+and $\delta_{ij}$ is the Kronecker delta function. The diagonal terms involving the vector $\mathbf{C}$ are meant to work around the fact that $q_{ii}$ diverge (see \cite{brandt_thin_2005} for more details), and $\mathbf{C}$ is given by
 
 \begin{equation}
     \label{eq:C_vector}
@@ -215,7 +393,7 @@ where $\delta_{ij}$ is the Kronecker delta function. The diagonal terms involvin
 \end{equation}
 where $\Delta x=(x_\mathrm{max}-x_\mathrm{min})/2$ and $\Delta y=(y_\mathrm{max}-y_\mathrm{min})/2$ are half the side lengths of a rectangle bounding the modeled film and $(\bar{x}, \bar{y})$ are the coordinates of the center of the rectangle.
 
-The matrix version of Eq.~\ref{eq:Heff_sub} is:
+The matrix version of Eq.~\ref{eq:Heff_sub} is
 
 \begin{equation}
     \label{eq:Heff_sub_num}
@@ -223,7 +401,7 @@ The matrix version of Eq.~\ref{eq:Heff_sub} is:
 \end{equation}
 where we exclude points in the mesh lying outside of the superconducting film but keep points
 inside holes in the film. $\mathbf{\Lambda}$ is either a scalar or a vector defining the effective penetration depth at every included vertex in the mesh, and $\mathbf{\nabla}^2$
-is the Laplace operator, an $n\times n$ matrix defined such that $\mathbf{\nabla}^2\mathbf{f}$ computes the Laplacian $\nabla^2f(x,y)$ of a function $f(x,y)$ defined on the mesh  (see Section~\ref{section:implementation:laplace}).
+is the Laplace operator, an $n\times n$ matrix defined such that $\mathbf{\nabla}^2\mathbf{f}$ computes the Laplacian $\nabla^2f(x,y)$ of a function $f(x,y)$ defined on the mesh  (see~\ref{section:implementation:laplace}).
 
 Eq.~\ref{eq:Heff_sub_num} is a matrix equation relating the applied field to the stream function
 inside a superconducting film, which can efficiently be solved (e.g. by matrix inversion or LU decomposition) for the unknown vector $\mathbf{g}$, the stream function inside the film. Since the stream function outside the film and inside holes in the film is already known, solving Eq.~\ref{eq:Heff_sub_num} gives us the stream function for the full mesh:
@@ -246,7 +424,329 @@ the sheet current flowing in the film can be computed from Eq.~\ref{eq:stream}, 
 from Eq.~\ref{eq:field_from_kernel_num}, and the full vector magnetic field $\vec{H}(x, y, z)$
 at any point in space can be computed from Eq.~\ref{eq:field_from_kernel}.
 
-\subsection{Laplace operator}
+\section{Package Overview}
+\label{section:overview}
+
+In this section we give a high-level overview of the \SuperScreen package. More detailed documentation and tutorials can be found online in [ref. for online documentation].
+
+\subsection{Development Details}
+\label{section:overview:development}
+
+\SuperScreen requires Python version 3.6 or later. The package is located in a public repository on GitHub~\cite{superscreen}, and a suite of unit tests is run automatically via GitHub Actions whenever a change or proposed change (Pull Request) is made to the \inline{main} branch of the repository. At the time of writing, the test suite is executed using Python versions 3.6, 3.7, 3.8, and 3.9, and the test coverage is XX\%. Any changes to the \inline{main} branch of the repository also trigger an automatic re-build of the online documentation, which is hosted by Read the Docs at superscreen.readthedocs.io [ref. for online documentation]. Stable versions of the package are tagged on GitHub and uploaded to PyPI, the Python Package Index [ref for pypi]. The source code and documentation are covered by the MIT License.
+
+\SuperScreen has several important dependencies beyond the Python standard library: \inline{numpy}~\cite{2020NumPy-Array} and \inline{scipy}~\cite{2020SciPy-NMeth} for numerics, \inline{pint}~\cite{Grecco} for handling physical units, \inline{matplotlib}~\cite{Hunter_2007} for visualization, \inline{meshpy}~\cite{Klockner,Shewchuk,shewchuk96b} and \inline{optimesh}~\cite{nico_schlomer_adam_dobrawy_2021} for mesh generation, \inline{dill}~\cite{McKerns} for serializing objects to disk and between processes, and \inline{ray}~\cite{ray_2018,ray-docs} for parallel processing with shared memory (see~\ref{section:parallel}).
+
+\subsection{Parameters}
+\label{section:overview:parameter}
+
+A \inline{superscreen.Parameter} is a wrapper around a Python function that computes a scalar value as a function of position coordinates ($x$, $y$, and optionally $z$) based on some set of keyword arguments. Addition, subtraction, multiplication, division, and exponentiation between \inline{Parameters}, other \inline{Parameters}, and Python scalars (\inline{int} and \inline{float}) are supported. For example, see Code Block~\ref{code:parameters}. \inline{Parameters} can be used to conveniently define applied magnetic fields and penetration depths that depend on position, and make it possible to serialize wrapped Python functions for storage or inter-process communication.
+
+\begin{code}
+\begin{minted}[fontsize=\small]{python}
+from superscreen import Parameter
+
+def f(x, y, a=1, b=0):
+    return a * x**2 + b * y
+    
+param = Parameter(f, a=0, b=1)
+print(param)
+# Parameter<f(a=0, b=1)>
+
+other_param = Parameter(f, a=2, b=3)
+print(other_param)
+# Parameter<f(a=2, b=3)>
+
+print(param(0, 0) == f(0, 0, a=0, b=1))
+# True
+print(other_param(1, 2) == f(1, 2, a=2, b=3))
+# True
+
+param_squared = param ** 2
+print(param_squared)
+# CompositeParameter<(f(a=0, b=1) ** 2)>
+
+print(param_squared(3, 4) == f(3, 4, a=0, b=1) ** 2)
+# True
+print(
+    (5 * param_squared / other_param)(5, 6)
+    == 5 * f(5, 6, a=0, b=1) ** 2 / f(5, 6, a=2, b=3)
+)
+# True
+\end{minted}
+\captionof{listing}{The basic usage of \inline{superscreen.Parameters}.}
+\label{code:parameters}
+\end{code}
+
+\subsection{Devices}
+\label{section:overview:device}
+
+Information about the geometry and penetration depth of a superconducting structure is described by an instance of the \inline{superscreen.Device} class. A \inline{Device} is made up of one or more superconducting layers, each represented by an instance of  \inline{superscreen.Layer}. Each layer sits in a specified plane parallel to the $x-y$ plane and has its own effective penetration depth $\Lambda$, which can either be a constant or a \inline{superscreen.Parameter} that defines $\Lambda(x, y)$, the effective penetration depth as a function of position. The effective penetration depth $\Lambda$ can instead be defined in terms of a layer's London penetration depth $\lambda$ and its thickness $d$: $\Lambda=\lambda^2/d$, in which case the London penetration depth can be either a constant or a \inline{superscreen.Parameter}.
+
+Each layer can contain one or more superconducting films which may have one or more holes in them. Films and holes are represented by instances of the \inline{superscreen.Polygon} class. A \inline{Polygon} contains the name of the layer to which is belongs, an array specifying the coordinates of its vertices, and a method, \inline{Polygon.contains_points()}, which determines whether specified coordinates lie within the polygon or not. In addition to superconducting films and holes, one may define ``abstract regions,'' which are polygons that need not correspond to a physical feature in the structure, but will still be meshed. Abstract regions can be used to define a ``bounding box" around a structure. The \inline{superscreen.geometry} module provides functions for generating the underlying polygon vertices for simple geometries (circles and rectangles). See Code Block~\ref{code:device} for an example of a function that creates a square or circular superconducting ring centered at the origin, with an effective penetration depth $\Lambda = 1\,\mu\mathrm{m}$.
+
+\begin{code}
+\begin{minted}[fontsize=\small]{python}
+import superscreen as sc
+import superscreen.geometry as geo
+
+def make_ring(
+    inner_radius=2.5,
+    outer_radius=5,
+    Lambda=1,
+    length_units="um",
+    square=False,
+):
+    if square:
+        name = "square_ring"
+        outer = geo.square(outer_radius * 2, points_per_side=60)
+        inner = geo.square(inner_radius * 2, points_per_side=20)
+        bbox = geo.square(outer_radius * 2 * 1.4, points_per_side=5)
+    else:
+        name = "circular_ring"
+        outer_points = geo.circle(outer_radius)
+        inner_points = geo.circle(inner_radius)
+        bbox = geo.circle(outer_radius * 1.4, points=21)
+
+    layers = [sc.Layer("base", Lambda=Lambda, z0=0)]
+    films = [sc.Polygon("ring", layer="base", points=outer_points)]
+    holes = [sc.Polygon("hole", layer="base", points=inner_points)]
+    abstract_regions = [
+        sc.Polygon("bounding_box", layer="base", points=bbox),
+    ]
+    return sc.Device(
+        name,
+        layers=layers,
+        films=films,
+        holes=holes,
+        abstract_regions=abstract_regions,
+        length_units=length_units,
+    )
+\end{minted}
+\captionof{listing}{A function that creates a \inline{Device} representing a circular or square ring centered at the origin.}
+\label{code:device}
+\end{code}
+
+Once the layers, films, holes, and abstract regions have been defined, one can generate the computational mesh by calling \inline{Device.make_mesh()}. The region that is meshed is defined by the convex hull of the union of all polygons in the device. Mesh generation is a two step process. First, an initial Delaunay mesh is created using \inline{meshpy}~\cite{Klockner}, a Python interface to Triangle~\cite{shewchuk96b, Shewchuk}, a fast compiled 2D mesh generation tool. Second (and optionally), the mesh can be further optimized using \inline{optimesh}~\cite{nico_schlomer_adam_dobrawy_2021}. The goal of the mesh optimization step is to improve the quality of each triangular element in the mesh, where quality is defined as twice the ratio of the incircle radius to the circumcircle radius (quality $\leq1$, with equality for equilateral triangles). The local density of triangles in the mesh is determined by the density of vertices in the device's polygons and the total number of triangles. Regions where there are many polygon vertices will be meshed more densely than regions with few polygon vertices. If no \inline{optimesh} optimization is done, then every polygon vertex is guaranteed to be a mesh vertex.
+
+See Code Block~\ref{code:mesh_generation} for a demonstration of \inline{Device.make_mesh()} and Figure~\ref{fig:ring_mesh} to view the resulting meshes both with and without \inline{optimesh} optimization. After the mesh has been generated, the matrices and vectors described in Section~\ref{section:implementation} can be computed and one can begin solving models.
+
+\begin{code}
+\begin{minted}[fontsize=\small]{python}
+# min_triangles specifies the minimum number of mesh elements.
+min_triangles = 8000
+# optimesh_steps specifies the the number of iterations of
+# optimesh optimization to perform.
+# Set optimesh_steps=None to disable optimesh optimization.
+optimesh_steps = 400
+# For more meshing options, see the docstring for Device.make_mesh().
+
+for square in (False, True):
+    ring = make_ring(square=square)
+    ring.make_mesh(
+        min_triangles=min_triangles,
+        optimesh_steps=optimesh_steps,
+    )
+    ax = ring.plot_mesh(figsize=(6, 6), color="k", alpha=0.5)
+    ax = ring.plot_polygons(ax=ax)
+\end{minted}
+\captionof{listing}{Generating and visualizing the computational mesh.}
+\label{code:mesh_generation}
+\end{code}
+
+
+\begin{figure}[!h]
+\centering
+\begin{subfigure}{.235\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{examples/images/ring/circular_ring_mesh.png}
+  \caption{\inline{optimesh_steps=400}.}
+  \label{fig:circular_ring_mesh}
+\end{subfigure}%
+\begin{subfigure}{.235\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{examples/images/ring/circular_ring_mesh_no_optimesh.png}
+  \caption{\inline{optimesh_steps=None}.}
+  \label{fig:circular_ring_mesh_no_opt}
+\end{subfigure}%
+\begin{subfigure}{.235\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{examples/images/ring/square_ring_mesh.png}
+  \caption{\inline{optimesh_steps=400}.}
+  \label{fig:square_ring_mesh}
+\end{subfigure}
+\begin{subfigure}{.235\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{examples/images/ring/square_ring_mesh_no_optimesh.png}
+  \caption{\inline{optimesh_steps=None}.}
+  \label{fig:square_ring_mesh_no_opt}
+\end{subfigure}
+\caption{Device geometry and mesh for a circular (a, b) and square ring (c, d) generated using Code Blocks~\ref{code:device} and \ref{code:mesh_generation}, with (a, c) and without (b, d) \inline{optimesh} optimization.}
+\label{fig:ring_mesh}
+\end{figure}
+
+\subsection{Solvers}
+\label{section:overview:solvers}
+
+A \SuperScreen model consists of a \inline{Device}, a function or \inline{Parameter} that defines the applied magnetic field as a function of position $H_{z,\,\mathrm{applied}}(x, y, z)$, and a value for the current circulating around each hole in the device due to trapped flux (if any). These items serve as the inputs to \SuperScreen's main solver function, \inline{superscreen.solve()}, which implements the calculation outlined in Section~\ref{section:implementation}. When simulating a device with more than one layer, one can specify the number of times to implement the iterative calculation described in Section~\ref{section:model:multilayer} in order to solve for the response of all layers self-consistently. One can also skip the iterative portion of the calculation entirely and only solve for the response of each layer to the applied field, assuming no interaction between layers.
+
+\begin{code}
+\begin{minted}[fontsize=\small]{python}
+# Simulate the response to a uniform applied field of 0.25 mT
+applied_field = sc.sources.ConstantField(0.25)
+field_units = "mT"
+
+solutions = sc.solve(
+    device=ring,
+    applied_field=applied_field,
+    field_units=field_units,
+)
+assert len(solutions) == 1 # Since there is only one layer
+uniform_field = solutions[-1]
+
+# Simulate a current circulating around the hole in the ring.
+circulating_currents = {"hole": "1 mA"}
+
+solutions = sc.solve(
+    device=ring,
+    applied_field=None,
+    circulating_currents=circulating_currents
+)
+assert len(solutions) == 1 # Since there is only one layer
+trapped_flux = solutions[-1]
+
+for solution in (uniform_field, trapped_flux):
+    solution.plot_currents(
+        figsize=(6, 7), cross_section_ys=[0], units="mA/um",
+    )
+    solution.plot_fields(figsize=(6, 7), cross_section_ys=[0])
+\end{minted}
+\captionof{listing}{Solves for the current and magnetic field distributions for the \inline{ring} device given a uniform applied field, and circulating current with no applied field.}
+\label{code:ring_circulating_current}
+\end{code}
+
+Code Block~\ref{code:ring_circulating_current} solves two models involving the \inline{ring} device. First, Meissner screening of a spatially uniform applied out-of-plane magnetic field and second, the response of the ring to trapped flux with an associated circulating current of 1 mA (with no applied magnetic field). The resulting sheet current and magnetic field distributions can be visualized using the \inline{plot_current()} and \inline{plot_fields()} methods, which produce the images shown in Figure~\ref{fig:ring_plot_fields_currents}.
+
+
+\begin{figure}[!h]
+\centering
+\begin{subfigure}{.235\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{examples/images/ring/circular_ring_uniform_plot_currents.png}
+  \caption{Uniform applied field.}
+  \label{fig:circular_ring_plot_currents}
+\end{subfigure}
+\begin{subfigure}{.235\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{examples/images/ring/circular_ring_uniform_plot_fields.png}
+  \caption{Uniform applied field.}
+  \label{fig:circular_ring_plot_fields}
+\end{subfigure}
+\begin{subfigure}{.235\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{examples/images/ring/circular_ring_circ_plot_currents.png}
+  \caption{Trapped flux.}
+  \label{fig:square_ring_plot_currents}
+\end{subfigure}
+\begin{subfigure}{.235\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{examples/images/ring/circular_ring_circ_plot_fields.png}
+  \caption{Trapped flux.}
+  \label{fig:square_ring_plot_fields}
+\end{subfigure}
+
+\caption{Sheet current $\vec{J}$ (a, c) and magnetic field $\mu_0H_z$ (b, d) distributions for the circular ring with a uniform field of 0.25 mT applied out-of-plane (a, b) and a circulating current of 1 mA (c, d) calculated using Code Block~\ref{code:ring_circulating_current}.}
+\label{fig:ring_plot_fields_currents}
+\end{figure}
+
+The output of \inline{superscreen.solve()} is a \inline{list} of \inline{superscreen.Solution} objects, with a length of 1 plus the number of iterations used for the iterative portion of the calculation. A \inline{Solution} encapsulates all of the information about a solved model: the \inline{Device}, applied field, circulating currents, and calculated stream functions and magnetic fields for all layers in the device. A \inline{Solution} also has methods for processing the simulation results, including:
+\begin{itemize}
+    \item{
+    \inline{Solution.grid_data()}: Interpolates the calculated stream functions and magnetic fields for each layer from the triangular mesh to a rectangular grid.
+    }
+    \item{
+    \inline{Solution.current_density()}: Interpolates the stream functions to a rectangular grid and calculates the current density (sheet current) $\vec{J}(x, y)$ in each layer using Eq.~\ref{eq:stream}.
+    }
+    \item{
+    \inline{Solution.polygon_flux()}: Calculates the total flux through each polygon in the device (films, holes, and abstract regions).
+    }
+    \item{
+    \inline{Solution.field_at_position()}: Calculates the vector magnetic field at any point(s) in space due the applied field and the currents flowing the in the device using Eqs.~\ref{eq:field_from_kernel} and \ref{eq:kernels}.
+    }
+\end{itemize}
+\inline{Solutions} also have several visualization methods built in (see Section~\ref{section:overview:visualization}).
+
+One may wish to solve many models involving the same device while varying other aspects of the model, for example sweeping the applied field, circulating currents, or some parameter of one or more layers in the device. Fortunately, the mesh and large matrices described in Section~\ref{section:implementation} depend only on the geometry of the device parallel to the $x-y$ plane. This means that the same mesh and matrices can be re-used for models with different applied fields, circulating currents, layer heights (vertical positions), and penetration depths.
+
+The \inline{superscreen.solve_many()} function manages the setup and execution of such a sweep. One can provide a sequence of \inline{Parameter} objects defining different applied fields and/or a sequence of circulating current values over which to sweep and/or a ``layer updater" function that modifies each layer in the device according to some set of keyword arguments, which can also be swept. The latter option can be used to sweep layer heights or penetration depths. Given these inputs, \inline{superscreen.solve_many()} will generate and solve all of the corresponding models. The models can either be solved in series in a single Python process (the default), or in parallel in multiple Python processes running across multiple CPUs, or even across multiple nodes in a cluster (see~\ref{section:parallel}).
+
+\subsection{Visualization}
+\label{section:overview:visualization}
+
+\SuperScreen offers several functions for visualizing the results of simulations (which are also aliased as methods on \inline{superscreen.Solution}):
+
+\begin{itemize}
+    \item{
+    \inline{superscreen.plot_streams()}: Given a \inline{Solution}, plots the stream function $g(x, y)$ for one or more layers in the device.
+    
+    See also: \inline{Solution.plot_streams()}.
+    }
+    \item{
+    \inline{superscreen.plot_currents()}: Given a \inline{Solution}, plots the sheet current $\vec{J}(x, y)$ for one or more layers in the device.
+    
+    See also: \inline{Solution.plot_currents()}.
+    }
+    \item{
+    \inline{superscreen.plot_fields()}: Given a \inline{Solution}, plots the total field $H_z(x, y)$ or the screening field $H_z(x, y) - H_{z,\,\mathrm{applied}}(x, y)$ for one or more layers in the device.
+    
+    See also: \inline{Solution.plot_fields()}.
+    }
+    \item{
+    \inline{superscreen.plot_field_at_positions()}: Given a \inline{Solution}, plots the total field $\vec{H}(x, y, z_0)$ or $H_z(x, y, z_0)$ at any points in space (where $z_0$ is not equal to the vertical position of any of the layers in the device).
+    
+    See also: \inline{Solution.plot_field_at_positions()}.
+    }
+\end{itemize}
+
+See Code Block~\ref{code:ring_circulating_current} and  Figure~\ref{fig:ring_plot_fields_currents} for an example of the usage and output of \inline{plot_fields()} and \inline{plot_currents()}.
+
+\subsection{Comparison \& Persistence}
+\label{section:overview:persistence}
+
+\inline{Parameters}, \inline{Layers}, \inline{Polygons}, \inline{Devices}, and \inline{Solutions} all implement the equality operator, \inline{==}. Two \inline{Parameters} are considered equal if the Python bytecode of their underlying functions is the same and their keyword arguments are the same. Two \inline{Layers} are equal if their name, penetration depth, thickness, and vertical position are all equal. Two \inline{Polygons} are equal if they are in the same layer and their name and polygon vertices are equal. Two \inline{Devices} are equal if their name, layers, films, holes, and abstract regions are all equal. Two \inline{Solutions} are equal if their device, applied field, circulating currents, timestamp (time at which the solution was created), and all stream function and magnetic field arrays are equal. Two \inline{Solutions} created at different times can also be compared using the  \inline{solution.equals()} method.
+
+Instances of \inline{superscreen.Device} and \inline{superscreen.Solution} can be saved to and loaded from disk using their respective \inline{to_file()} and \inline{from_file()} methods, making it straightforward to share models and simulation results. \inline{Layers}, \inline{Polygons}, and all metadata are serialized to JSON, a widely-used, human-readable plain text format~\cite{JSON}. Functions and \inline{Parameters}, such as those that compute the applied field or penetration depth, are serialized in binary form using \inline{dill}~\cite{McKerns}. \inline{Numpy} arrays, such as the mesh itself and the computed stream functions and fields, are saved in the well-established \inline{numpy} \inline{npz} file format. A \inline{list} of \inline{Solutions}, such as that returned by \inline{superscreen.solve()} can be saved/loaded all at once using \inline{save_solutions()} and \inline{load_solutions()}.
+
+\section{Example application: Scanning SQUID susceptometry}
+\label{section:application}
+In scanning superconducting quantum interference device (SQUID) susceptometry, the diamagnetic susceptibility of a superconducting sample is measured by bringing the sample close to a pair of superconducting loops. The first loop, called the ``pickup loop" is attached to a SQUID circuit that sensitively measures the magnetic flux threading the loop. The second loop, called the ``field coil," carries a known current and applies a known magnetic field to both the pickup loop and the sample. The superconducting sample screens the magnetic field from the field coil, modifying the amount of flux threading the pickup loop. Thus the mutual inductance between the field coil and pickup loop provides a measure of the sample's diamagnetic susceptibility, which is in turn a measure of the sample's penetration depth.
+
+Analysis developed to interpret the results of scanning SQUID susceptometry measurements makes several simplifying assumptions that are not always satisfied: 1) the sample's effective penetration depth $\Lambda$ (or Pearl length $2\Lambda$) is spatially homogeneous, 2) the sample is much larger than the field coil, and 3) the field coil and pickup loop can be approximated as one-dimensional coaxial, coplanar circular loops~\cite{Kirtley_Kalisky_2012}.
+
+Figure X shows a \inline{Device} representing field coil and pickup loop of an actual scanning SQUID sensor. In addition to the field coil and pickup loop, there are superconducting shields that limit the amount of magnetic flux that can penetrate the leads connecting the loops to the rest of the circuit. There are three relevant layers of superconducting films: the base electrode (``BE"), which is furthest from the sample contains the field coil; the first wiring layer (``W1"), which contains the pickup loop and a shield covering the field coil leads; and the second wiring layer (``W2"), which is closest to the sample and contains a shield covering the pickup loop leads. The device also contains a layer and film representing the superconducting sample.
+
+To model a SQUID susceptometry measurement, we first calculate $M_0$, the mutual inductance between the field coil and pickup loop in the absence of the sample. This can be done by temporarily setting the sample layer effective penetration depth to a very large value such that it essentially does not screen the field from the field coil. We then model the field from a known current flowing in the field coil following Section~\ref{section:model:holes} and self-consistently calculate the response of both the sample and the other superconducting layers of the SQUID sensor following Section~\ref{section:model:multilayer}. To ensure that the 2D current distribution in the field coil is approximately uniform (as we would expect for a real applied current), we set the field coil layer effective penetration depth to be greater than the width of the field coil conductor.
+
+Once $M_0$ is known, we can ``turn on" the sample's diamagnetic response by setting its effective penetration depth $\Lambda$ to the desired value and compute $M(z, \Lambda)$ for a given vertical distance $z$ between the sample and the SQUID as described in the previous paragraph. The SQUID susceptibility signal is then $M(z, \Lambda) - M_0$, the change in mutual inductance between the field coil and pickup loop due to the presence of the sample (usually given in units of $\Phi_0/\mathrm{A}$, where $\Phi_0$ is the superconducting flux quantum). The susceptibility can also be normalized to the bare mutual inductance $M_0$, giving a dimensionless susceptibility $\chi(z, \Lambda)=[M(z, \Lambda) - M_0] / M_0$.  
+
+\section{Conclusion}
+\label{section:conlusion}
+
+The ability to model and visualize screening effects in inhomogeneous 2D superconductors and devices constructed from superconducting thin films can help to build intuition about these systems, aid in interpretation of measurement results, and enable optimization of measurement and device design. \SuperScreen is an open-source, user-friendly, portable, and efficient tool that solves this problem. Applications of the package include calculating self- and mutual-inductance in mesoscopic superconducting circuits, and modeling the magnetic interaction between inhomogeneous superconducting samples and superconducting sensors such as scanning SQUID susceptometers~\cite{kirtley_scanning_2016}.
+
+There are two important limitations to the applicability of \SuperScreen and the matrix inversion method on which it is based~\cite{brandt_thin_2005}. First, strictly speaking all superconducting films should be in the 2D limit, with London penetration depth $\lambda$ less than film thickness $d$, such that the out-of-plane current density is approximately constant. There are cases where the model reproduces experimental results despite violation of this condition (e.g. the calculations in Section~\ref{section:application} and in~\cite{kirtley_scanning_2016,kirtley_response_2016}), but great care must be taking in interpreting results in these cases. Second, as a London model, Brandt's method assumes that all superconducting films behave linearly and without dissipation. Care should also be taken to ensure that for a given model the mesh is of sufficient density and quality that, to within the desired precision, the results of simulations do not depend on mesh size.
+
+Potential improvements to \SuperScreen include: more sophisticated mesh generation (e.g. automated local mesh refinement based on device geometry), automated determination of solution convergence for models with multiple layers, an improved interface for generating complex device geometries, and further optimization for memory and CPU efficiency (especially in the context of parallel processing).
+
+%% The Appendices part is started with the command \appendix;
+%% appendix sections are then done as normal sections
+%% \appendix
+
+%% \section{}
+%% \label{}
+
+\appendix
+
+\section{Laplace operator}
 \label{section:implementation:laplace}
 
 The definition of the discrete Laplace operator $\mathbf{\nabla}^2$ (also called the Laplace-Beltrami operator) deserves special attention, as it reduces the problem of solving a partial differential equation $\nabla^2g(x,y)=f(x,y)$ to the problem of solving a matrix equation
@@ -293,146 +793,117 @@ where $\mathcal{N}(i)$ is the set of triangles $t$ adjacent to vertex $i$. The w
     }
 \end{enumerate}
 
-By default, \SuperScreen uses half-cotangent weighting. The Laplacian matrix $\mathbf{C}$ is defined in terms of the weight matrix $\mathbf{W}$: $(\mathbf{L})_{ij} = (\mathbf{W})_{ij} - \delta_{ij}\sum_{\ell}W_{i\ell}$. Finally, the Laplace operator is given by $\mathbf{\nabla}^2 = \mathbf{M}^{-1}\mathbf{L}$.
+By default, \SuperScreen uses half-cotangent weighting. The Laplacian matrix $\mathbf{L}$ is defined in terms of the weight matrix $\mathbf{W}$: $L_{ij} = W_{ij} - \delta_{ij}\sum_{\ell}W_{i\ell}$. Finally, the Laplace operator is given by $\mathbf{\nabla}^2 = \mathbf{M}^{-1}\mathbf{L}$.
 
 The matrix $\mathbf{w}$ in Eqs.~\ref{eq:field_from_kernel_num} and \ref{eq:Heff_sub_num} that is used, together with the kernel matrix $\mathbf{Q}$, to approximate the dipole kernel $Q_z(\vec{r},\vec{r}')$ (Eq.~\ref{eq:kernels}) is simply a normalized version of the weight matrix $\mathbf{W}$ used in defining the Laplace operator. The relationship between $\mathbf{w}$ and $\mathbf{W}$ is given by:
 $$
     w_{ij} = \begin{cases}
         1&\text{if }i = j\\
-        W_{ij} / \sum_{i\neq j} W_{ij}&\text{otherwise}
+        W_{ij} / \sum_{i\neq j} W_{ij}&\text{otherwise.}
     \end{cases}
 $$
 
-\section{Package Overview}
-\label{section:overview}
+\section{Parallel processing}
+\label{section:parallel}
+As discussed above, one can solve many models involving the same \inline{Device} in parallel across multiple CPUs using the \inline{superscreen.solve_many()} function. The recommended method for parallel processing is using \inline{ray}, a library for distributed computing using shared memory~\cite{ray_2018}. Note that at the time of writing, \inline{ray} support for Windows is experimental and under active development. \SuperScreen also supports parallel processing using the \inline{multiprocessing} module from the Python standard library, however this is generally less efficient than \inline{ray} in this application.
 
-In this section we give a high-level overview of the \SuperScreen package. More detailed documentation and tutorials can be found at superscreen.readthedocs.io.
+There are three ways to invoke \inline{ray} from \SuperScreen when running on a single machine, e.g. a multi-core CPU. The first is to simply pass the keyword argument \inline{parallel_method="ray"} when calling \inline{solve_many()}. This will automatically create a \inline{ray} cluster using all available physical CPU cores, solve the models in parallel, and then shut down the cluster before returning. The second method is to manually create a \inline{ray} cluster using the \inline{ray} Python application programming interface (API) prior to calling \inline{solve_many(..., parallel_method="ray")}, as demonstrated in Code Block~\ref{code:ray-python}. The third method is to start a \inline{ray} cluster using the command line interface (CLI), then connect to the existing cluster using the Python API prior to calling \inline{solve_many(..., parallel_method="ray")}, as demonstrated in Code Block~\ref{code:ray-cli}. One of the latter two methods should be used for finer control over the \inline{ray} cluster (number of CPUs to utilize, etc.).
 
-\subsection{Parameters}
-\label{section:overview:parameter}
+\begin{code}
+\begin{minted}[fontsize=\small]{python}
+# Assume that we have already created a Device and put all
+# other inputs to superscreen.solve_many() into a dictionary
+# called other_kwargs.
 
-A \mintinline{python}{superscreen.Parameter} is a wrapper around a Python function that computes a scalar value as a function of position coordinates ($x$, $y$, and optionally $z$) based on some set of keyword arguments. Addition, subtraction, multiplication, division, and exponentiation between \mintinline{python}{Parameters}, other \mintinline{python}{Parameters}, and Python scalars (\mintinline{python}{int} and \mintinline{python}{float}) are supported. For example:
+import psutil
+import ray
 
-\begin{minted}{python}
-from superscreen import Parameter
+# Specify the number of CPUs/cores to allocate.
+num_cpus = 3
+# Use at most N processes for a machine with N physical CPUs.
+num_cpus = min(num_cpus, psutil.cpu_count(logical=False))
 
-def f(x, y, a=1, b=0):
-    return a * x**2 + b * y
-    
-param = Parameter(f, a=0, b=1)
-print(param)  # Parameter<f(a=0, b=1)>
+# Start a ray cluster
+ray.init(num_cpus=num_cpus)
+# Solve the models
+solutions, paths = superscreen.solve_many(
+    parallel_method="ray",
+    **other_kwargs,
+)
+# Shutdown the ray cluster
+ray.shutdown()
+\end{minted}
+\captionof{listing}{Starting and stopping \inline{ray} outside of \inline{superscreen.solve_many()} using the Python API. See the ``API and Package Reference" section of the \inline{ray} documentation for additional options in \inline{ray.init()}~\cite{ray-docs}.}
+\label{code:ray-python}
+\end{code}
 
-other_param = Parameter(f, a=2, b=3)
-print(other_param)  # Parameter<f(a=2, b=3)>
-
-print(param(0, 0) == f(0, 0, a=0, b=1))  # True
-print(other_param(1, 2) == f(1, 2, a=2, b=3))  # True
-
-param_squared = param ** 2
-print(param_squared)  # CompositeParameter<(f(a=0, b=1) ** 2)>
-
-print(param_squared(3, 4) == f(3, 4, a=0, b=1) ** 2) # True
-print(
-    (5 * param_squared / other_param)(5, 6)
-    == 5 * f(5, 6, a=0, b=1) ** 2 / f(5, 6, a=2, b=3)
-)  # True
+\begin{minipage}{\textwidth}
+\begin{code}
+\begin{minted}[fontsize=\small]{bash}
+# Start a ray cluster from the command line, e.g. bash
+ray start --head --num=cpus=3
 \end{minted}
 
-\mintinline{python}{Parameters} can be used to define applied magnetic fields and penetration depths that depend on position.
+\begin{minted}[fontsize=\small]{python}
+# Assume that we have already created a Device and put all
+# other inputs to superscreen.solve_many() into a dictionary
+# called other_kwargs.
+import ray
+# Connect to the existing ray cluster.
+# If more than one ray cluster is running, specify
+# which to connect to using address="{ip}:{port}".
+ray.init(address="auto")
+# Solve the models.
+solutions, paths = superscreen.solve_many(
+    parallel_method="ray",
+    **other_kwargs,
+)
+\end{minted}
 
-\subsection{Devices}
-\label{section:overview:device}
+\begin{minted}[fontsize=\small]{bash}
+# Shut down the ray cluster from the command line
+ray stop
+\end{minted}
+\captionof{listing}{Starting and stopping \inline{ray} outside of \inline{superscreen.solve_many()} using the command line interface. See the \inline{ray} documentation for additional options in \inline{ray start}~\cite{ray-docs}.}
+\label{code:ray-cli}
+\end{code}
+\end{minipage}
 
-Information about the geometry and penetration depth of a superconducting structure is described by an instance of the \mintinline{python}{superscreen.Device} class. A \mintinline{python}{Device} is made up of one or more superconducting layers, each an instance of  \mintinline{python}{superscreen.Layer}. Each layer sits in a specified plane parallel to the $x-y$ plane and has its own effective penetration depth $\Lambda$, which can either be a constant or a \mintinline{python}{superscreen.Parameter} that defines $\Lambda(x, y)$, the effective penetration depth as a function of position. The effective penetration depth $\Lambda$ can instead be defined in terms of a layer's London penetration depth $\lambda$ and its thickness $d$: $\Lambda=\lambda^2/d$, in which case the London penetration depth can be either a constant or a \mintinline{python}{superscreen.Parameter}.
+Running \inline{superscreen.solve_many()} in parallel across multiple nodes in a computing cluster is a simple extension to the method outlined in Code Block~\ref{code:ray-cli}, although the specifics depend upon the infrastructure of the cluster, e.g. job management software. See the ``Multi-Node Ray" section of the \inline{ray} documentation for more details~\cite{ray-docs}.
 
-Each layer can contain one or more superconducting films which may have one or more holes in them. Films and holes are represented by instances of the \mintinline{python}{superscreen.Polygon} class. A \mintinline{python}{Polygon} contains the name of the layer to which is belongs, an array specifying the coordinates of its vertices, and a method, \mintinline{python}{Polygon.contains_points()}, which determines whether specified coordinates lie within the polygon or not. In addition to superconducting films and holes, one may define ``abstract regions,'' which are polygons that need not correspond to a physical feature in the structure, but will still be meshed. Abstract regions can be used to define a ``bounding box" around a structure.
+Maybe demonstrate scaling on Sherlock here.
 
-Once the layers, films, holes, and abstract regions have been defined, one can generate the computational mesh by calling \mintinline{python}{Device.make_mesh()}. The region that is meshed is defined by the convex hull of the union of all polygons in the device. After the mesh is generated, the matrices and vectors described in Section~\ref{section:implementation} can be computed and one can begin solving models.
+%% References
+%%
+%% Following citation commands can be used in the body text:
+%% Usage of \cite is as follows:
+%%   \cite{key}         ==>>  [#]
+%%   \cite[chap. 2]{key} ==>> [#, chap. 2]
+%%
 
-\subsection{Solvers}
-\label{section:overview:solvers}
+%% References with bibTeX database:
 
-A \SuperScreen model consists of a \mintinline{python}{Device}, a function or \mintinline{python}{Parameter} that defines the applied magnetic field as a function of position $H_{z,\,\mathrm{applied}}(x, y, z)$, and (optionally) a value for the current circulating around each hole in the device due to trapped flux. These items serve as the inputs to \SuperScreen's main solver function, \mintinline{python}{superscreen.solve()}, which implements the calculation outlined in Section~\ref{section:implementation}. When simulating a device with more than one layer, one can specify the number of times to implement the iterative calculation described in Section~\ref{section:model:multilayer} in order to solve for the response of all layers self-consistently. One can also skip the iterative portion of the calculation entirely and only solve for the response of each layer to the applied field, assuming no interaction between layers.
-
-The output of \mintinline{python}{superscreen.solve()} is a \mintinline{python}{list} of \mintinline{python}{superscreen.Solution} objects, with a length of 1 plus the number of iterations used for the iterative portion of the calculation. A \mintinline{python}{Solution} encapsulates all of the information about a solved model: the \mintinline{python}{Device}, applied field, circulating currents, and calculated stream functions and magnetic fields for all layers in the device. A \mintinline{python}{Solution} also has methods for processing the simulation results, including:
-\begin{itemize}
-    \item{
-    \mintinline{python}{Solution.grid_data()}: Interpolates the calculated stream functions and magnetic fields for each layer from the triangular mesh to a rectangular grid.
-    }
-    \item{
-    \mintinline{python}{Solution.current_density()}: Interpolates the stream functions to a rectangular grid and calculates the current density (sheet current) $\vec{J}(x, y)$ in each layer using Eq.~\ref{eq:stream}.
-    }
-    \item{
-    \mintinline{python}{Solution.polygon_flux()}: Calculates the total flux through each polygon in the device (films, holes, and abstract regions).
-    }
-    \item{
-    \mintinline{python}{Solution.field_at_position()}: Calculates the vector magnetic field at any point(s) in space due the applied field and the currents flowing the in the device using Eqs.~\ref{eq:field_from_kernel} and \ref{eq:kernels}.
-    }
-\end{itemize}
-
-One may wish to solve many models involving the same device while varying other aspects of the model, for example sweeping the applied field, circulating currents, or some parameter of one or more layers in the device. Fortunately, the mesh and large matrices described in Section~\ref{section:implementation} depend only on the geometry of the device parallel to the $x-y$ plane. This means that the same mesh and matrices can be re-used for models with different applied fields, circulating currents, layer heights (vertical positions), and penetration depths.
-
-The \mintinline{python}{superscreen.solve_many()} function manages the setup and execution of such a sweep. One can provide a sequence of \mintinline{python}{superscreen.Parameter} objects defining different applied fields and/or a sequence of circulating current values over which to sweep and/or a ``layer updater" function that modifies each layer in the device according to some set of keyword arguments, which can also be swept. The latter option can be used to sweep layer heights or penetration depths. Given these inputs, \mintinline{python}{superscreen.solve_many()} will generate and solve all of the corresponding models. The models can either be solved in series in a single Python process (the default), or in parallel across multiple Python processes running across multiple CPUs, or even across multiple nodes in a cluster. In any case, only a single copy of the device's mesh and large arrays is created, so the memory overhead is modest.
-
-\subsection{Visualization}
-\label{section:overview:visualization}
-
-\SuperScreen offers several functions for visualizing the results of simulations (which are also aliased as methods on \mintinline{python}{superscreen.Solution}):
-
-\begin{itemize}
-    \item{
-    \mintinline{python}{superscreen.plot_streams()}: Given a \mintinline{python}{Solution}, plots the stream function $g(x, y)$ for one or more layers in the device. See also \mintinline{python}{Solution.plot_streams()}.
-    }
-    \item{
-    \mintinline{python}{superscreen.plot_currents()}: Given a \mintinline{python}{Solution}, plots the sheet current $\vec{J}(x, y)$ for one or more layers in the device. See also \mintinline{python}{Solution.plot_currents()}.
-    }
-    \item{
-    \mintinline{python}{superscreen.plot_fields()}: Given a \mintinline{python}{Solution}, plots the total field $H_z(x, y)$ or the screening field $H_z(x, y) - H_{z,\,\mathrm{applied}}(x, y)$ for one or more layers in the device. See also \mintinline{python}{Solution.plot_fields()}.
-    }
-    \item{
-    \mintinline{python}{superscreen.plot_field_at_positions()}: Given a \mintinline{python}{Solution}, plots the total field $\vec{H}(x, y, z_0)$ or $H_z(x, y, z_0)$ at any points in space (where $z_0$ is not equal to the vertical position of any of the layers in the device). See also \mintinline{python}{Solution.plot_field_at_positions()}.
-    }
-\end{itemize}
-
-See Section~\ref{section:examples} for examples of the figures generated by these functions.
-
-\subsection{Comparison \& Persistence}
-\label{section:overview:persistence}
-
-\mintinline{python}{Parameters}, \mintinline{python}{Layers}, \mintinline{python}{Polygons}, \mintinline{python}{Devices}, and \mintinline{python}{Solutions} all implement the equality operator, \mintinline{python}{==}. Two \mintinline{python}{Parameters} are considered equal if the Python bytecode of their underlying functions is the same and their keyword arguments are the same. Two \mintinline{python}{Layers} are equal if their name, penetration depth, thickness, and vertical position are all equal. Two \mintinline{python}{Polygons} are equal if they are in the same layer and their name and polygon vertices are equal. Two \mintinline{python}{Devices} are equal if their name, layers, films, holes, and abstract regions are all equal. Two \mintinline{python}{Solutions} are equal if their device, applied field, circulating currents, timestamp (time at which the solution was created), and all stream function and magnetic field arrays are equal. Two \mintinline{python}{Solutions} created at different times can also be compared by calling \mintinline{python}{solution.equals(other_solution, require_same_timestamp=False)}.
-
-Instances of \mintinline{python}{superscreen.Device} and \mintinline{python}{superscreen.Solution} can be saved to and loaded from disk using their respective \mintinline{python}{to_file()} and \mintinline{python}{from_file()} methods, making it straightforward to share models and simulation results. \mintinline{python}{Layers}, \mintinline{python}{Polygons}, and all metadata are serialized to JSON, a widely-used, human-readable plain text format~\cite{JSON}. Functions and \mintinline{python}{Parameters}, such as those that compute the applied field or penetration depth, are serialized in binary form using \mintinline{python}{dill}~\cite{McKerns}. \mintinline{python}{numpy} arrays, such as the mesh itself and the computed stream functions and fields, are saved in the well-established \mintinline{python}{numpy} \mintinline{python}{npz} file format. A \mintinline{python}{list} of \mintinline{python}{Solutions}, such as that returned by \mintinline{python}{superscreen.solve()} can be saved/loaded all at once using \mintinline{python}{superscreen.save_solutions()}/\mintinline{python}{superscreen.load_solutions()}.
-
-\subsection{Development Details}
-\label{section:overview:development}
-
-\SuperScreen requires Python version 3.6 or later. The package is located in a public repository on GitHub~\cite{superscreen}, and a suite of unit tests is run automatically via GitHub Actions whenever a change or proposed change (Pull Request) is made to the \mintinline{python}{main} branch of the repository. At the time of writing, the test suite is executed using Python versions 3.6, 3.7, 3.8, and 3.9, and the test coverage is XX\%. Any changes to the \mintinline{python}{main} branch of the repository also trigger an automatic re-build of the online documentation, hosted by Read the Docs at superscreen.readthedocs.io. Stable versions of the package are tagged on GitHub and uploaded to PyPI, the Python Package Index. The source code and documentation are covered by the MIT License.
-
-\SuperScreen has several important dependencies beyond the Python standard library: \mintinline{python}{numpy}~\cite{2020NumPy-Array} and \mintinline{python}{scipy}~\cite{2020SciPy-NMeth} for numerics, \mintinline{python}{pint}~\cite{Grecco} for handling physical units, \mintinline{python}{matplotlib}~\cite{Hunter_2007} for visualization, \mintinline{python}{meshpy}~\cite{Klockner,Shewchuk} and \mintinline{python}{optimesh}~\cite{Schlomer} for mesh generation, \mintinline{python}{dill}~\cite{McKerns} for serializing objects to disk and between processes, and \mintinline{python}{ray}~\cite{ray_2018} for parallel processing with shared memory.
-
-\section{Examples}
-\label{section:examples}
-
-\subsection{Screening}
-\label{section:example:screening}
-
-\subsection{Inductance}
-\label{section:examples:inductance}
-
-\subsection{Mutual Inductance}
-\label{section:examples:mutual-inductance}
-
-\subsection{SQUID Susceptometry}
-\label{section:examples:susceptometry}
-
-\subsection{Parallel Processing}
-\label{section:examples:parallel}
-
-
-\section{Conclusion}
-\label{section:conlusion}
-
-\bibliographystyle{IEEEtran}
+\bibliographystyle{elsarticle-num}
 \bibliography{references}
 
+%% Authors are advised to submit their bibtex database files. They are
+%% requested to list a bibtex style file in the manuscript if they do
+%% not want to use elsarticle-num.bst.
+
+%% References without bibTeX database:
+
+% \begin{thebibliography}{00}
+
+%% \bibitem must have the following form:
+%%   \bibitem{key}...
+%%
+
+% \bibitem{}
+
+% \end{thebibliography}
+
+
 \end{document}
+
+%%
+%% End of file 
