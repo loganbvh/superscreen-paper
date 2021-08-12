@@ -722,11 +722,56 @@ In scanning superconducting quantum interference device (SQUID) susceptometry, t
 
 Analysis developed to interpret the results of scanning SQUID susceptometry measurements makes several simplifying assumptions that are not always satisfied: 1) the sample's effective penetration depth $\Lambda$ (or Pearl length $2\Lambda$) is spatially homogeneous, 2) the sample is much larger than the field coil, and 3) the field coil and pickup loop can be approximated as one-dimensional coaxial, coplanar circular loops~\cite{Kirtley_Kalisky_2012}.
 
-Figure X shows a \inline{Device} representing field coil and pickup loop of an actual scanning SQUID sensor. In addition to the field coil and pickup loop, there are superconducting shields that limit the amount of magnetic flux that can penetrate the leads connecting the loops to the rest of the circuit. There are three relevant layers of superconducting films: the base electrode (``BE"), which is furthest from the sample contains the field coil; the first wiring layer (``W1"), which contains the pickup loop and a shield covering the field coil leads; and the second wiring layer (``W2"), which is closest to the sample and contains a shield covering the pickup loop leads. The device also contains a layer and film representing the superconducting sample.
+\begin{figure}[!h]
+\centering
+\begin{subfigure}{.35\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{examples/images/squid_susceptometry/squid_with_sample_mesh.png}
+%   \caption{Device polygons and mesh for the SQUID susceptometer model.}
+  \label{fig:squid_mesh}
+\end{subfigure}%
+\hspace{10pt}
+\begin{subfigure}{.5\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{examples/images/squid_susceptometry/squid_with_sample_M0_convergence.png}
+%   \caption{Fractional change in flux though all polygons vs. solver iteration with a current of $1\,\mathrm{mA}$ flowing in the field coil (\inline{fc}). The mutual inductance $M_0$ is given by the flux through the pickup loop (\inline{pl_hull}) divided by the field coil current.}
+  \label{fig:squid_convergence}
+\end{subfigure}%
+\caption{Left: Device polygons and mesh for the SQUID susceptometer model. Right: Fractional change in flux though all polygons vs. solver iteration with a current of $1\,\mathrm{mA}$ flowing in the field coil (\inline{fc}). The mutual inductance $M_0$ is given by the flux through the pickup loop (\inline{pl_hull}) divided by the field coil current.}
+\label{fig:susceptometry}
+\end{figure}
 
-To model a SQUID susceptometry measurement, we first calculate $M_0$, the mutual inductance between the field coil and pickup loop in the absence of the sample. This can be done by temporarily setting the sample layer effective penetration depth to a very large value such that it essentially does not screen the field from the field coil. We then model the field from a known current flowing in the field coil following Section~\ref{section:model:holes} and self-consistently calculate the response of both the sample and the other superconducting layers of the SQUID sensor following Section~\ref{section:model:multilayer}. To ensure that the 2D current distribution in the field coil is approximately uniform (as we would expect for a real applied current), we set the field coil layer effective penetration depth to be greater than the width of the field coil conductor.
+Figure X shows a \inline{Device} representing field coil and pickup loop of an actual scanning SQUID sensor. In addition to the field coil and pickup loop, there are superconducting shields that limit the amount of magnetic flux that can penetrate the leads connecting the loops to the rest of the circuit (the rest of the circuit is not modeled). There are three relevant layers of superconducting films: the base electrode (``BE"), which is furthest from the sample contains the field coil; the first wiring layer (``W1"), which contains the pickup loop and a shield covering the field coil leads; and the second wiring layer (``W2"), which is closest to the sample and contains a shield covering the pickup loop leads. The device also contains a layer and film representing the superconducting sample.
+
+To model a SQUID susceptometry measurement, we first calculate $M_0$, the mutual inductance between the field coil and pickup loop in the absence of the sample. This can be done by temporarily setting the sample layer effective penetration depth to a very large value such that it essentially does not screen the field from the field coil (in this case, we set $\Lambda = 10^5\,\mu\mathrm{m}$). We then model the field from a known current flowing in the field coil following Section~\ref{section:model:holes} and self-consistently calculate the response of both the sample and the other superconducting layers of the SQUID sensor following Section~\ref{section:model:multilayer}. To ensure that the 2D current distribution in the field coil is approximately uniform (as we would expect for a real applied current), we set the field coil layer effective penetration depth to be greater than the width of the field coil conductor.
 
 Once $M_0$ is known, we can ``turn on" the sample's diamagnetic response by setting its effective penetration depth $\Lambda$ to the desired value and compute $M(z, \Lambda)$ for a given vertical distance $z$ between the sample and the SQUID as described in the previous paragraph. The SQUID susceptibility signal is then $M(z, \Lambda) - M_0$, the change in mutual inductance between the field coil and pickup loop due to the presence of the sample (usually given in units of $\Phi_0/\mathrm{A}$, where $\Phi_0$ is the superconducting flux quantum). The susceptibility can also be normalized to the bare mutual inductance $M_0$, giving a dimensionless susceptibility $\chi(z, \Lambda)=[M(z, \Lambda) - M_0] / M_0$.  
+
+\begin{figure}[!h]
+\centering
+\begin{subfigure}{\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{examples/images/squid_susceptometry/squid_with_sample_currents_Lambda=1_00__um__z_0=-1_00__um.png}
+%   \caption{Device polygons and mesh for the SQUID susceptometer model.}
+  \label{fig:squid_mesh}
+\end{subfigure}%
+
+\begin{subfigure}{\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{examples/images/squid_susceptometry/squid_with_sample_currents_Lambda=1_00__um__z_0=-10_00__um.png}
+%   \caption{Fractional change in flux though all polygons vs. solver iteration with a current of $1\,\mathrm{mA}$ flowing in the field coil (\inline{fc}). The mutual inductance $M_0$ is given by the flux through the pickup loop (\inline{pl_hull}) divided by the field coil current.}
+  \label{fig:squid_convergence}
+\end{subfigure}%
+
+\begin{subfigure}{\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{examples/images/squid_susceptometry/squid_with_sample_currents_Lambda=10_00__um__z_0=-1_00__um.png}
+%   \caption{Fractional change in flux though all polygons vs. solver iteration with a current of $1\,\mathrm{mA}$ flowing in the field coil (\inline{fc}). The mutual inductance $M_0$ is given by the flux through the pickup loop (\inline{pl_hull}) divided by the field coil current.}
+  \label{fig:squid_convergence}
+\end{subfigure}%
+\caption{Left: Device polygons and mesh for the SQUID susceptometer model. Right: Fractional change in flux though all polygons vs. solver iteration with a current of $1\,\mathrm{mA}$ flowing in the field coil (\inline{fc}). The mutual inductance $M_0$ is given by the flux through the pickup loop (\inline{pl_hull}) divided by the field coil current.}
+\label{fig:susceptometry}
+\end{figure}
 
 \section{Conclusion}
 \label{section:conlusion}
