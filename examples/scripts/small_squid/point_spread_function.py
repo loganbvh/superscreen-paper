@@ -1,7 +1,9 @@
 import os
+import time
 import itertools
 import tempfile
 
+import ray
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -40,9 +42,19 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
+        "--num_cpus",
+        type=int,
+        default=0,
+    )
+    parser.add_argument(
+        "--outdir",
+        type=str,
+        default=None,
+    )
+    parser.add_argument(
         "--vortex_height",
         type=float,
-        default=-2.0,
+        default=-0.2,
         help="Height of the vortex relative to the SQUID."
     )
     parser.add_argument(
@@ -76,9 +88,9 @@ if __name__ == "__main__":
         help="Linear pixel size in microns."
     )
     parser.add_argument(
-        "--use_ray",
-        type=bool,
-        default=True,
+        "--job_id",
+        type=str,
+        default=None,
     )
     args = parser.parse_args()
 
@@ -116,11 +128,19 @@ if __name__ == "__main__":
         VortexField(x0=x0, y0=y0, z0=z0) for x0, y0 in itertools.product(xs, ys)
     ]
 
-    parallel_method = "ray" if args.use_ray else None
+    if args.num_cpus == 0:
+        parallel_method = None
+    else:
+        parallel_method = "ray"
+        ray.init(num_cpus=args.num_cpus)
 
-    arrays = device.get_arrays(dense=False)
+    if args.outdir is None:
+        save_context = tempfile.TemporaryDirectory()
+    else:
+        outdir = os.path.join(args.outdir, time.strftime("%y%m%d_%H%M%S_small_squid_psf"))
+        save_context = sc.io.NullContextManager(outdir)
 
-    with tempfile.TemporaryDirectory() as directory:
+    with save_context as directory:
         _, paths = sc.solve_many(
             device=device,
             applied_fields=applied_fields,
@@ -136,12 +156,14 @@ if __name__ == "__main__":
         records = []
         for path, vortex in zip(paths, applied_fields):
             solution = sc.Solution.from_file(os.path.join(directory, path))
-            solution.device.set_arrays(arrays)
             flux_dict = solution.polygon_flux(units="Phi_0", with_units=False)
             flux_dict["x0"] = vortex.kwargs["x0"]
             flux_dict["y0"] = vortex.kwargs["y0"]
             flux_dict["z0"] = vortex.kwargs["z0"]
             records.append(flux_dict)
+
+    if parallel_method == "ray":
+        ray.shutdown()
 
     df = pd.DataFrame.from_records(records).set_index(["x0", "y0", "z0"])
     df.index.name = "Vortex position"
@@ -154,3 +176,7 @@ if __name__ == "__main__":
             "vortex_image.csv",
         )
     )
+
+    if args.job_id is not None and args.outdir is not None:
+        with open(f"{args.job_id}_final.tmp", "w") as f:
+            f.write(outdir)
