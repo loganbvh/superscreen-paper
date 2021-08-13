@@ -165,7 +165,7 @@ def huber_geometry(interp_points=101):
 
 def huber_squid():
 
-    interp_points = 151
+    interp_points = 101
 
     # See Nick Koshnick thesis
     # bottom of page 29 and table 3.2 on page 32).
@@ -200,8 +200,8 @@ def huber_squid():
         sc.Polygon(
             "bounding_box",
             layer="W1",
-            # points=sc.geometry.circle(18, center=(2, -2)),
-            points=sc.geometry.square(30, center=(2, -2), points_per_side=100),
+            points=sc.geometry.circle(20),
+            # points=sc.geometry.square(30, center=(2, -2)),
         ),
         sc.Polygon("pl_hull", layer="W1", points=polygons["pl_hull"]),
     ]
@@ -220,24 +220,27 @@ def huber_squid():
 def squid_with_sample(sample_Lambda=10, sample_height=-1):
 
     squid = huber_squid()
-    layers = squid.layers
+    layers = squid.layers_list
     films = squid.films
     abstract_regions = squid.abstract_regions
 
     # Add the sample layer and film
-    layers["sample_layer"] = sc.Layer(
-        "sample_layer", Lambda=sample_Lambda, z0=sample_height,
+    layers.insert(
+        0,
+        sc.Layer(
+            "sample_layer", Lambda=sample_Lambda, z0=sample_height,
+        )
     )
     films["sample"] = sc.Polygon(
         "sample",
         layer="sample_layer",
-        # points=sc.geometry.circle(18, center=(2, -2)),
-        points=sc.geometry.square(30, center=(2, -2), points_per_side=100),
+        points=sc.geometry.circle(20),
+        # points=sc.geometry.square(30, center=(2, -2)),
     )
     # Remove the old bounding box
     del abstract_regions["bounding_box"]
 
-    squid.layers = layers
+    squid.layers_list = layers
     squid.films = films
     squid.abstract_regions = abstract_regions
     squid.name = "squid_with_sample"
