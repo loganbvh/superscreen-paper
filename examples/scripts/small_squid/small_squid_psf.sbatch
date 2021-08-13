@@ -17,3 +17,14 @@ python point_spread_function.py \
     --max_thickness="0.2" \
     --pixel_size="0.25" \
     --job_id $SLURM_JOB_ID
+
+# Read in results base directory from file
+finalfile="${SLURM_JOB_ID}_final.tmp"
+basedir=$(<"${finalfile}")
+# Move the stdout log to the results directory
+mv "slurm-${SLURM_JOB_ID}.out" "$basedir"
+# Copy the python script and this shell script to the results directory
+cp "point_spread_function.py" "${basedir}/"
+cp "$0" "${basedir}/"
+# Remove temporary file
+rm "$finalfile"
