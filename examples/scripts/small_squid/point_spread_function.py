@@ -118,8 +118,8 @@ if __name__ == "__main__":
     )
 
     # Vortex positions
-    xs = np.arange(-1, 1 + args.pixel_size, args.pixel_size)
-    ys = np.arange(-2.5, 1 + args.pixel_size, args.pixel_size)
+    xs = np.arange(-1.25, 1.25 + args.pixel_size, args.pixel_size)
+    ys = np.arange(-2.00, 1.00 + args.pixel_size, args.pixel_size)
 
     # Vertical location of the vortex relative to the SQUID
     z0 = args.vortex_height
@@ -155,7 +155,7 @@ if __name__ == "__main__":
         # Calculate and plot polygon flux vs. solve iteration
         records = []
         for path, vortex in zip(paths, applied_fields):
-            solution = sc.Solution.from_file(os.path.join(directory, path))
+            solution = sc.Solution.from_file(path)
             flux_dict = solution.polygon_flux(units="Phi_0", with_units=False)
             flux_dict["x0"] = vortex.kwargs["x0"]
             flux_dict["y0"] = vortex.kwargs["y0"]
@@ -170,12 +170,10 @@ if __name__ == "__main__":
     df.columns.name = "Polygon flux [Phi_0]"
     print(df)
 
-    df.to_csv(
-        os.path.join(
-            os.path.abspath(os.path.dirname(__file__)),
-            "vortex_image.csv",
+    if args.outdir is not None:
+        df.to_csv(
+            os.path.join(outdir, "vortex_image.csv")
         )
-    )
 
     if args.job_id is not None and args.outdir is not None:
         with open(f"{args.job_id}_final.tmp", "w") as f:
