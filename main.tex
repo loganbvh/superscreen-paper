@@ -122,29 +122,32 @@
 %% \address{Address\fnref{label3}}
 %% \fntext[label3]{}
 
-\title{\texttt{SuperScreen}: An open-source package for simulating the magnetic response of two-dimensional superconductors}
+\title{\texttt{SuperScreen}: An open-source package for simulating the magnetic response of two-dimensional superconducting devices}
 
 %% use optional labels to link authors explicitly to addresses:
 %% \author[label1,label2]{<author name>}
 %% \address[label1]{<address>}
 %% \address[label2]{<address>}
 
-\author[a]{Logan Bishop-Van Horn}
-\author[a,b]{Kam Moler\corref{author}}
+\author[PHYS,SIMES]{Logan Bishop-Van Horn}
+\author[AP,SIMES,GLAM]{Kathryn A. Moler\corref{author}}
 
 \cortext[author]{Corresponding author.\\\textit{E-mail address:} kmoler@stanford.edu}
-\address[a]{First Address}
-\address[b]{Second Address}
+
+\address[PHYS]{Department of Physics, Stanford University, Stanford, California 94305, USA}
+\address[AP]{Department of Applied Physics, Stanford University, Stanford, California 94305, USA}
+\address[SIMES]{Stanford Institute for Materials and Energy Sciences, SLAC National Accelerator Laboratory, 2575 Sand Hill Road, Menlo Park, California 94025, USA}
+\address[GLAM]{Geballe Laboratory for Advanced Materials, Stanford University, Stanford, California 94305, USA}
 
 \begin{abstract}
-Quantitative understanding of the spatial distribution of magnetic fields and screening currents in two-dimensional (2D) superconductors and mesoscopic superconducting devices is critical to interpreting the results of magnetic measurements of such systems.
-Here we introduce \SuperScreen, an open-source Python package for simulating the magnetic response of two-dimensional superconductors to applied time-independent magnetic fields. Given an applied magnetic field, \SuperScreen solves for Meissner screening currents and the resulting magnetic fields in structures composed of one or more superconducting thin films of arbitrary geometry with spatially inhomogeneous magnetic penetration depth using a matrix inversion method introduced by Brandt~\cite{brandt_thin_2005}. \SuperScreen can be used to model screening effects and calculate self- and mutual-inductance in superconducting circuits, and simulate the magnetic response of inhomogeneous 2D superconductors.
+Quantitative understanding of the spatial distribution of magnetic fields and screening currents in two-dimensional (2D) superconductors and mesoscopic thin film superconducting devices is critical to interpreting the results of magnetic measurements of such systems.
+Here we introduce \SuperScreen, an open-source Python package for simulating the magnetic response of two-dimensional superconductors to applied time-independent magnetic fields. Given an applied magnetic field, \SuperScreen solves for Meissner screening currents and the resulting magnetic fields in structures composed of one or more superconducting thin films of arbitrary geometry with spatially inhomogeneous magnetic penetration depth using a matrix inversion method introduced by Brandt and Clem~\cite{Brandt_Clem_2004, brandt_thin_2005}. \SuperScreen can be used to model screening effects and calculate self- and mutual-inductance in superconducting circuits, and simulate the magnetic response of inhomogeneous 2D superconductors.
 
 \end{abstract}
 
 \begin{keyword}
 %% keywords here, in the form: keyword \sep keyword
-superconductivity\sep Meissner screening\sep thin film
+superconductivity\sep Meissner screening\sep thin film\sep London equations
 
 \end{keyword}
 
@@ -180,7 +183,7 @@ superconductivity\sep Meissner screening\sep thin film
   %Only required for a New Version summary, otherwise leave out.
 {\em Nature of problem:} \SuperScreen solves for Meissner screening currents in structures composed of 2D or thin film superconductors in the presence of an applied magnetic field.\\
   %Describe the nature of the problem here. \\
-{\em Solution method:} The package solves the 2D London equations inside superconducting regions and Maxwell's equations outside the superconductor using a matrix inversion method introduced by Brandt~\cite{brandt_thin_2005}.\\
+{\em Solution method:} The package solves the 2D London equations inside superconducting regions and Maxwell's equations outside the superconductor using a matrix inversion method introduced by Brandt and Clem~\cite{Brandt_Clem_2004,brandt_thin_2005}.\\
   %Describe the method solution here.
 % {\em Additional comments including restrictions and unusual features (approx. 50-250 words):}\\
   %Provide any additional comments here.
@@ -200,7 +203,7 @@ superconductivity\sep Meissner screening\sep thin film
 \section{Introduction}
 \label{section:introduction}
 
-\SuperScreen is an open-source Python package developed to simulate the magnetic response of structures composed of one or more layers containing superconducting thin films. \SuperScreen solves the coupled Maxwell's and London's equations in and around superconducting films with spatially-varying penetration depth in the presence of applied magnetic fields and trapped flux using a matrix inversion method introduced by Brandt~\cite{brandt_thin_2005} and initially implemented by Kirtley, \emph{et al.}~\cite{kirtley_scanning_2016, kirtley_response_2016} to model the magnetic response of scanning superconducting quantum interference device (SQUID) sensors.
+\SuperScreen is an open-source Python package developed to simulate the static magnetic response of structures composed of one or more layers containing superconducting thin films. \SuperScreen solves the coupled Maxwell's and London's equations in and around superconducting films with spatially-varying penetration depth in the presence of applied magnetic fields, pinned vortices, and trapped flux using a matrix inversion method introduced by Brandt and Clem~\cite{Brandt_Clem_2004,brandt_thin_2005} and initially implemented by Kirtley, \emph{et al.} to model the magnetic response of scanning superconducting quantum interference device (SQUID) sensors.~\cite{kirtley_scanning_2016, kirtley_response_2016}
 
 In Section~\ref{section:model} we outline Brandt's model, and in Section~\ref{section:implementation} we describe its numerical implementation. In Section~\ref{section:overview}, we provide an overview of the structure of the \SuperScreen package, highlighting notable functions, classes, and features, and discuss some important development details. Finally, in Section~\ref{section:conlusion} we conclude with potential applications, extensions, and improvements to the package.
 
@@ -208,15 +211,11 @@ In Section~\ref{section:model} we outline Brandt's model, and in Section~\ref{se
 \label{section:model}
 
 The goal of \SuperScreen is to model the magnetic response of a thin superconducting film, or a structure composed of multiple superconducting films (which may or may not lie in the same plane), to an applied inhomogeneous out-of-plane magnetic field
-$H_{z,\,\mathrm{applied}}(x, y, z)$.
+$H_{z,\,\mathrm{applied}}(x, y, z)$. Given $H_{z,\,\mathrm{applied}}(x, y, z)$ and information about the geometry and magnetic penetration depth of all films in a superconducting structure, we aim to calculate the thickness-integrated current density (or sheet current) $\vec{J}(x, y)$ at all points inside the films, from which one can calculate the vector magnetic field $\vec{H}(x, y, z)$ at all points both inside and outside the films.
 
-Given $H_{z,\,\mathrm{applied}}(x, y, z)$ and information about the geometry and magnetic penetration depth of all films in a superconducting structure, we aim to calculate the thickness-integrated current density (or sheet current) $\vec{J}(x, y)$ at all points inside the films, from which one can calculate the vector magnetic field $\vec{H}(x, y, z)$ at all points both inside and outside the films.
-
-A convenient method for solving this problem was introduced by Brandt in~\cite{brandt_thin_2005}, and subsequently used to model the magnetic response of scanning Superconducting Quantum Interference Device (SQUID) susceptometers~\cite{kirtley_scanning_2016, kirtley_response_2016}.
-
-In the London model of superconductivity, the magnetic field $\vec{H}(\vec{r})$ and 3D current density $\vec{j}(\vec{r})$ in a superconductor with London penetration depth $\lambda(\vec{r})$ obey the second London equation:
+A convenient method for solving this problem was introduced by Brandt and Clem in Ref.~\cite{Brandt_Clem_2004}, expanded by Brandt in Ref.~\cite{brandt_thin_2005}, and subsequently used to model the magnetic response of scanning Superconducting Quantum Interference Device (SQUID) susceptometers~\cite{kirtley_scanning_2016, kirtley_response_2016}. In the London model of superconductivity, the magnetic field $\vec{H}(\vec{r})$ and 3D current density $\vec{j}(\vec{r})$ in a superconductor with London penetration depth $\lambda(\vec{r})$ obey the second London equation:
 $\nabla\times\vec{j}(\vec{r})=-\vec{H}(\vec{r})/\lambda^2(\vec{r})$, where
-$\nabla=\left(\frac{\partial}{\partial x}, \frac{\partial}{\partial y}, \frac{\partial}{\partial z}\right)$. Brandt's model assumes that the current density $\vec{j}$ is approximately independent of $z$, such $\vec{j}(\vec{r}) = \vec{j}(x, y, z)\approx\vec{j}_{z_0}(x, y)$ for a film lying parallel to the $x-y$ plane at vertical position $z_0$. Working now with the thickness-integrated current density (sheet current) $\vec{J}(x, y)\approx\vec{j}_{z_0}(x, y)\cdot d$, where $d$
+$\nabla=\left(\frac{\partial}{\partial x}, \frac{\partial}{\partial y}, \frac{\partial}{\partial z}\right)$. Brandt's model assumes that the current density $\vec{j}$ is approximately independent of $z$, such that  $\vec{j}(\vec{r}) = \vec{j}(x, y, z)\approx\vec{j}_{z_0}(x, y)$ for a film lying parallel to the $x-y$ plane at vertical position $z_0$. Working now with the thickness-integrated current density (sheet current) $\vec{J}(x, y)=\vec{j}_{z_0}(x, y)\cdot d$, where $d$
 is the thickness of the film, the second London equation reduces to
 
 \begin{equation}
@@ -228,7 +227,7 @@ of the superconducting film (equal to half the Pearl length~\cite{pearl_current_
 
 It is important to note that the assumption $\vec{j}(x, y, z)\approx\vec{j}_{z_0}(x, y)$ is valid for only films that are thinner than their London penetration depth ($d<\lambda$, such that $\Lambda=\lambda^2/d>\lambda$). However the model has been applied with some success in structures with $\lambda\lesssim d$~\cite{kirtley_scanning_2016,kirtley_response_2016}. Aside from this limitation, the method described below can in principle to used to model films with any effective penetration depth $0\leq\Lambda<\infty$.
 
-Because the sheet current has zero divergence in the superconducting film ($\nabla\cdot\vec{J}=0$)
+Because the sheet current has zero divergence inside the superconducting film ($\nabla\cdot\vec{J}=0$)
 except at small contacts where current can be injected, one can express the sheet current in terms
 of a scalar potential $g(x, y)$, called the stream function:
 
@@ -239,7 +238,7 @@ of a scalar potential $g(x, y)$, called the stream function:
     = \left(\frac{\partial g}{\partial y}, -\frac{\partial g}{\partial x}\right).
 \end{equation}
 
-The stream function $g$ can be thought of as the local magnetization of the film, or the area density of magnetic dipole sources (see \cite{brandt_thin_2005} for more interesting properties of the stream function). We can re-write Eq.~\ref{eq:london} for a 2D film in terms of $g$:
+The stream function $g$ can be thought of as the local magnetization of the film, or the area density of magnetic dipole sources (see Ref.~\cite{brandt_thin_2005} for more interesting properties of the stream function). We can rewrite Eq.~\ref{eq:london}, which gives the magnetic field inside of a 2D film, in terms of $g$:
 
 \begin{align}
     \label{eq:london_stream}
@@ -247,23 +246,22 @@ The stream function $g$ can be thought of as the local magnetization of the film
         \vec{H}(x, y) &= -\Lambda\left[\nabla\times\vec{J}(x, y)\right]\\
         &= -\Lambda\left[\nabla\times\left(\nabla\times(g\hat{z})\right)\right]\\
         &= -\Lambda\left[\nabla(\nabla\cdot(g\hat{z}))-\nabla^2(g\hat{z})\right]\\
-        &=\Lambda\nabla^2g(x,y)\hat{z}\\
-        &=H_z(x, y)\hat{z}
+        &=\Lambda\nabla^2g(x,y)\hat{z}
     \end{split}
 \end{align}
-where $\nabla^2=\nabla\cdot\nabla$ is the Laplace operator. (The fourth line follows from the fact that $\nabla\cdot\left[g(x,y)\hat{z}\right] = 0$). From Ampere's Law, the three components of the magnetic field at position $\vec{r}=(x, y, z)$ due to a sheet of current lying in the $x-y$ plane (at vertical position $z'$) with stream function $g(x', y')$ are given by:
+where $\nabla^2=\nabla\cdot\nabla$ is the Laplace operator. (The last line follows from the fact that $\nabla\cdot\left[g(x,y)\hat{z}\right] = 0$). From Ampere's Law, the three components of the magnetic field $\vec{H}(\vec{r})$ at position $\vec{r}=(x, y, z)$ due to a sheet of current lying in the $x-y$ plane (at vertical position $z'$) with stream function $g(x', y')$ are given by:
 
 \begin{align}
     \label{eq:field_from_kernel}
     \begin{split}
-        H_x(\vec{r}) &= \int_S Q_x(\vec{r},\vec{r}')g(x', y')\,\mathrm{d}^2r'\\
-        H_y(\vec{r}) &= \int_S Q_y(\vec{r},\vec{r}')g(x', y')\,\mathrm{d}^2r'\\
+        H_x(\vec{r}) &= \int_F Q_x(\vec{r},\vec{r}')g(x', y')\,\mathrm{d}^2r'\\
+        H_y(\vec{r}) &= \int_F Q_y(\vec{r},\vec{r}')g(x', y')\,\mathrm{d}^2r'\\
         H_z(\vec{r}) &= H_{z,\,\mathrm{applied}}(\vec{r})
-        + \int_S Q_z(\vec{r},\vec{r}')g(x', y')\,\mathrm{d}^2r'  
+        + \int_F Q_z(\vec{r},\vec{r}')g(x', y')\,\mathrm{d}^2r'  
     \end{split}
 \end{align}
 
-Here we assume an out-of-plane applied magnetic field $\vec{H}_\mathrm{applied}(\vec{r}')=H_\mathrm{z,\,\mathrm{applied}}(\vec{r}')\hat{z}$. $S$ is the film area (with $g = 0$ outside of the film), and $Q_x(\vec{r},\vec{r}')$, $Q_y(\vec{r},\vec{r}')$, and $Q_z(\vec{r},\vec{r}')$ are dipole kernel functions which give the relevant component of the magnetic field at position $\vec{r}=(x, y, z)$ due to a dipole of unit strength at position $\vec{r}'=(x', y', z')$:
+Here we assume an out-of-plane applied magnetic field $\vec{H}_\mathrm{applied}(\vec{r}')=H_\mathrm{z,\,\mathrm{applied}}(\vec{r}')\hat{z}$. $F$ is the film area (with $g = 0$ outside of the film), and $Q_x(\vec{r},\vec{r}')$, $Q_y(\vec{r},\vec{r}')$, and $Q_z(\vec{r},\vec{r}')$ are dipole kernel functions which give the respective component of the magnetic field at position $\vec{r}=(x, y, z)$ due to a dipole of unit strength at position $\vec{r}'=(x', y', z')$:
 
 \begin{align}
     \label{eq:kernels}
@@ -283,29 +281,30 @@ Comparing Eq.~\ref{eq:london_stream} and Eq.~\ref{eq:field_from_kernel}, we have
 \begin{align}
     \label{eq:integral_equation}
     \begin{split}
-        \underbrace{H_z(\vec{r}) = \vec{H}(\vec{r})\cdot\hat{z}
+        \underbrace{\vec{H}(\vec{r})\cdot\hat{z} = H_z(\vec{r})
         = \Lambda\nabla^2g(x, y)}_{z-\text{component of the total field}}
         = \underbrace{H_{z,\,\mathrm{applied}}(\vec{r})}_{\text{applied field}}
-        + \underbrace{\int_S Q_z(\vec{r},\vec{r}')g(\vec{r}')\,\mathrm{d}^2r'}_{\text{screening field}},
+        + \underbrace{\int_F Q_z(\vec{r},\vec{r}')g(\vec{r}')\,\mathrm{d}^2r'}_{\text{screening field}},
     \end{split}
 \end{align}
-(where now $\vec{r}$ and $\vec{r}'$ are 2D vectors, i.e. $\Delta z=0$, since the film is in the same plane as itself). From Eq.~\ref{eq:integral_equation}, we arrive at an integral equation relating the stream function $g$ for points inside the superconductor to the applied field $H_{z,\,\mathrm{applied}}$:
+where now $\vec{r}$ and $\vec{r}'$ are 2D vectors, i.e. $z-z'=0$ since the film is in the same plane as itself. From Eq.~\ref{eq:integral_equation}, we arrive at an integral equation relating the stream function $g$ for points inside the superconductor to the applied field $H_{z,\,\mathrm{applied}}$:
 
 \begin{equation}
     \label{eq:applied_to_stream}
     H_{z,\,\mathrm{applied}}(\vec{r})
-    = -\int_S\left[
+    = -\int_F\left[
         Q_z(\vec{r},\vec{r}')-\delta(\vec{r}-\vec{r}')\Lambda(\vec{r}')\nabla^2\right
-    ]g(\vec{r}')\,\mathrm{d}^2r'
+    ]g(\vec{r}')\,\mathrm{d}^2r',
 \end{equation}
+where $\delta$ is the 2D Dirac delta function.
 
-The goal, then, is to solve (invert) Eq.~\ref{eq:applied_to_stream} for a given $H_{z,\,\mathrm{applied}}$ and film geometry $S$ to obtain $g$ for all points inside the film (with $g=0$ enforced outside the film). Once $g(\vec{r})$ is known, the full vector magnetic field $\vec{H}(\vec{r})$ can be calculated at any point $\vec{r}$
+The goal, then, is to solve (invert) Eq.~\ref{eq:applied_to_stream} for a given $H_{z,\,\mathrm{applied}}$ and film geometry $F$ to obtain $g$ for all points inside the film (with the boundary condition $g=0$ enforced outside the film). Once $g(\vec{r})$ is known, the full vector magnetic field $\vec{H}(\vec{r})$ can be calculated at any point $\vec{r}$
 from Eqs.~\ref{eq:field_from_kernel} and \ref{eq:kernels}.
 
 \subsection{Films with holes}
 \label{section:model:holes}
 
-In films that have holes (regions of vacuum completely surrounded by superconductor), each hole $k$ can contain a trapped flux $\Phi_k$, with an associated circulating current $I_{\mathrm{circ},\,k}$. The (hypothetical) applied field that would cause such a circulating current is given by Eq.~\ref{eq:applied_to_stream} if we set $g(\vec{r})=I_{\mathrm{circ},\,k}$ for all points $\vec{r}$ lying inside hole $k$:
+In films that have holes (regions of vacuum completely surrounded by superconductor), each hole $k$ can contain a trapped flux $\Phi_k$, with an associated circulating current $I_{\mathrm{circ},\,k}$. The (hypothetical) applied field that would cause such a circulating current is given by Eq.~\ref{eq:applied_to_stream} if we set $g=I_{\mathrm{circ},\,k}$ for all points lying inside hole $k$:
 
 \begin{equation}
     \label{eq:Heff}
@@ -319,10 +318,35 @@ In this case, we modify the left-hand side of Eq.~\ref{eq:applied_to_stream} as 
 \begin{equation}
     \label{eq:Heff_sub}
     H_{z,\,\mathrm{applied}}(\vec{r}) - \sum_{\mathrm{holes}\,k} H_{z,\,\mathrm{eff},\,k}(\vec{r})
-    = -\int_S\left[
+    = -\int_F\left[
         Q_z(\vec{r},\vec{r}')-\delta(\vec{r}-\vec{r}')\Lambda(\vec{r}')\nabla^2\right
     ]g(\vec{r}')\,\mathrm{d}^2r'.
 \end{equation}
+
+\subsection{The fluxoid}
+\label{section:model:fluxoid}
+
+The fluxoid $\Phi^f_S$ for a 2D region $S$ with 1D boundary $\partial S$ is given by the sum of flux through $S$ and the line integral of sheet current around $\partial S$~\cite{brandt_thin_2005,Clem_Brandt_2005,tinkham2004introduction}:
+
+\begin{equation}
+    \Phi^f_S = \underbrace{\int_S\mu_0H_z(\vec{r})\,\mathrm{d}^2r}_\text{``flux part''} + \underbrace{\oint_{\partial S}\mu_0\Lambda(\vec{r})\vec{J}(\vec{r})\cdot\mathrm{d}\vec{r}}_\text{``supercurrent part''}.
+    \label{eq:fluxoid}
+\end{equation}
+
+The fluxoid should vanish for a region $S$ completely contained within a superconducting film that contains no holes or vortices. Similarly, the fluxoid $\Phi^f_S$ should have the same value for any region containing a given hole or collection of vortices in a superconducting film. This path-independence of the fluxoid follows from the static London equation (Eq.~\ref{eq:london}) on which the present model is based. However, because Eq.~\ref{eq:london} does not relate the supercurrent density $\vec{J}$ to the phase of a complex order parameter as in Ginzburg-Landau (GL) theory, or invoke the semi-classical Bohr-Sommerfeld quantization rule as London did~\cite{tinkham2004introduction}, within this model the fluxoid is in no way constrained to be an integer multiple of the flux quantum $\Phi_0=h/2e$.
+
+\subsection{Vortices}
+\label{section:model:vortices}
+In addition to being trapped in holes (see Section~\ref{section:model:holes}), flux may be trapped in a superconducting film in the form of vortices. The presence of vortices trapped in a film at positions $\vec{r}_v$ modifies Eq.~\ref{eq:applied_to_stream} as follows:
+
+\begin{equation}
+    \label{eq:applied_to_stream_vortices}
+    H_{z,\,\mathrm{applied}}(\vec{r}) - \sum_{\mathrm{vortices}\,v}\frac{\Phi_v}{\mu_0}\delta(\vec{r}-\vec{r}_v)
+    = -\int_F\left[
+        Q_z(\vec{r},\vec{r}')-\delta(\vec{r}-\vec{r}')\Lambda(\vec{r}')\nabla^2\right
+    ]g(\vec{r}')\,\mathrm{d}^2r',
+\end{equation}
+where $\delta$ is the 2D Dirac delta function and each vortex $v$ is associated with a flux $\Phi_v$ (typically $\Phi_v=n\Phi_0=nh/2e$, where $n$ is an integer, $\Phi_0$ is the magnetic flux quantum, $h$ is the Planck constant, and $e$ is the elementary charge). By solving Eq.~\ref{eq:applied_to_stream_vortices} to obtain $g(\vec{r})$, one can compute the supercurrent density in the film due to both an applied field and trapped vortices. For a simply-connected region $S$ containing a set of vortices $v$ each associated with a flux $\Phi_v$, the fluxoid should be equal to $\Phi^f_S=\sum_{\mathrm{vortices}\,v}\Phi_v$. It is important to note that this 2D London model does not contain the physics associated with how and where vortices nucleate in superconductors, nor is it included in the model that the flux carried by vortices must be quantized in units of $\Phi_0$, both which are captured phenomenologically by GL theory. The numerical solution to Eq.~\ref{eq:applied_to_stream_vortices} is described at the end of Section~\ref{section:implementation}.
 
 \subsection{Multi-layer structures}
 \label{section:model:multilayer}
@@ -344,8 +368,9 @@ the stream functions and fields for all layers can be computed self-consistently
             H_{z,\,\mathrm{applied}}(\vec{r}, z_\ell) \to
             H_{z,\,\mathrm{applied}}(\vec{r}, z_\ell)
             + \sum_{m\neq\ell}
-            \int_S Q_z(\vec{r},\vec{r}')g_m(\vec{r}')\,\mathrm{d}^2r.
+            \int_{F_m} Q_z(\vec{r},\vec{r}')g_m(\vec{r}')\,\mathrm{d}^2r',
         $$
+        where $F_m$ is surface of all films in layer $m$ and $g_m$ is the stream function for layer $m$.
     }
     \item{
         Repeat steps 1-3 until the solution converges.
@@ -357,9 +382,9 @@ Convergence can be quantified by, for example, calculating the total magnetic fl
 \section{Numerical Implementation}
 \label{section:implementation}
 
-In order to numerically solve Eq.~\ref{eq:field_from_kernel} and Eq.~\ref{eq:Heff_sub}, we have to discretize the films, holes, and the vacuum regions surrounding them. We use a triangular
+In order to numerically solve Eq.~\ref{eq:field_from_kernel} and Eq.~\ref{eq:applied_to_stream}, we have to discretize the films, holes, and the vacuum regions surrounding them. We use a triangular
 (Delaunay) mesh, consisting of $n$ points (or vertices)
-which together form $m$ triangles. Below we denote column vectors and matrices using bold font. $\mathbf{A}\mathbf{B}$
+which together form $t$ triangles. Below we denote column vectors and matrices using bold font. $\mathbf{A}\mathbf{B}$
 denotes matrix multiplication, with $(\mathbf{A}\mathbf{B})_{ij}=\sum_{k=1}^\ell A_{ik}B_{kj}$
 ($\ell$ being the number of columns in $\mathbf{A}$ and the number of rows in $\mathbf{B}$). Column vectors are treated as matrices with $\ell$ rows and 1 column. On the other hand, we denote element-wise multiplication with a dot: $(\mathbf{A}\cdot\mathbf{B})_{ij}=A_{ij}B_{ij}$ for two matrices
 and $(\mathbf{A}\cdot\mathbf{v})_{ij}=(\mathbf{v}\cdot\mathbf{A})_{ij}=A_{ij}v_{i}$ for a matrix $\mathbf{A}$ and a column vector $\mathbf{v}$.
@@ -376,7 +401,7 @@ The matrix version of Eq.~\ref{eq:field_from_kernel} is
 The kernel matrix $\mathbf{Q}$ and weight matrix $\mathbf{w}$ together play the role of the
 kernel function $Q_z(\vec{r},\vec{r}')$ for all points lying in the plane of the film. They are both $n\times n$ matrices determined solely by the geometry of the mesh.
 $\mathbf{h}_z$, $\mathbf{h}_{z,\,\mathrm{applied}}$, and $\mathbf{g}$ are all $n\times 1$ vectors, with each row representing the value of the quantity at the
-corresponding vertex in the mesh. There are several different methods for constructing the weight matrix $\mathbf{w}$, which are discussed in~\ref{section:implementation:laplace}. The kernel matrix $\mathbf{Q}$ is given by
+corresponding vertex in the mesh. There are several different methods for constructing the weight matrix $\mathbf{w}$, which are discussed in~\ref{appendix:laplace}. The kernel matrix $\mathbf{Q}$ is given by
 
 \begin{equation}
     \label{eq:kernel_matrix}
@@ -401,15 +426,15 @@ The matrix version of Eq.~\ref{eq:Heff_sub} is
 \end{equation}
 where we exclude points in the mesh lying outside of the superconducting film but keep points
 inside holes in the film. $\mathbf{\Lambda}$ is either a scalar or a vector defining the effective penetration depth at every included vertex in the mesh, and $\mathbf{\nabla}^2$
-is the Laplace operator, an $n\times n$ matrix defined such that $\mathbf{\nabla}^2\mathbf{f}$ computes the Laplacian $\nabla^2f(x,y)$ of a function $f(x,y)$ defined on the mesh  (see~\ref{section:implementation:laplace}).
+is the Laplace operator, an $n\times n$ matrix defined such that $\mathbf{\nabla}^2\mathbf{f}$ computes the Laplacian $\nabla^2f(x,y)$ of a function $f(x,y)$ defined on the mesh  (see~\ref{appendix:laplace}).
 
 Eq.~\ref{eq:Heff_sub_num} is a matrix equation relating the applied field to the stream function
-inside a superconducting film, which can efficiently be solved (e.g. by matrix inversion or LU decomposition) for the unknown vector $\mathbf{g}$, the stream function inside the film. Since the stream function outside the film and inside holes in the film is already known, solving Eq.~\ref{eq:Heff_sub_num} gives us the stream function for the full mesh:
+inside a superconducting film, which can efficiently be solved (e.g. by matrix inversion or LU decomposition) for the unknown vector $\mathbf{g}$, the stream function inside the film. Since the stream function outside the film and inside holes in the film is already known, solving Eq.~\ref{eq:Heff_sub_num} gives us the stream function for the full mesh. Defining $\mathbf{K} = \left(\mathbf{Q}\cdot\mathbf{w}-\mathbf{\Lambda}\cdot\mathbf{\nabla}^2\right)^{-1}$, we have
 
 \begin{equation}
     \label{eq:full_stream}
     \mathbf{g} = \begin{cases}
-        \left(-[\mathbf{Q}\cdot\mathbf{w}-\mathbf{\Lambda}\cdot\mathbf{\nabla}^2]\right)^{-1}
+        -\mathbf{K}
         \left(\mathbf{h}_{z,\,\mathrm{applied}} - \sum_{\mathrm{holes}\,k}\mathbf{h}_{z,\,\mathrm{eff},\,k}\right)
             & \text{inside the film}\\
         I_{\mathrm{circ},\,k}
@@ -419,20 +444,22 @@ inside a superconducting film, which can efficiently be solved (e.g. by matrix i
     \end{cases}
 \end{equation}
 
+If there is a vortex with flux $\Phi_j$ located in a film at position $\vec{r}_j$ indexed as mesh vertex $j$, then for each position $\vec{r}_i$ within that film, we add to the stream function $g_i$ the quantity $\mu_0^{-1}\Phi_jK_{ij} / M_{jj}$, where $K_{ij}$ is an element of the inverse matrix defined above, and $M_{jj}$ is an element of the ``mass matrix'' which assigns an effective area to the mesh vertex at which the vortex is located (see \ref{appendix:laplace} for the definition of the mass matrix). This process amounts to numerically inverting Eq.~\ref{eq:applied_to_stream_vortices}.
+
 Once the stream function $\mathbf{g}$ is known for the full mesh,
 the sheet current flowing in the film can be computed from Eq.~\ref{eq:stream}, the $z$-component of the total field in the plane of the film can be computed
 from Eq.~\ref{eq:field_from_kernel_num}, and the full vector magnetic field $\vec{H}(x, y, z)$
-at any point in space can be computed from Eqs.~\ref{eq:field_from_kernel} and ~\ref{eq:kernels}.
+at any point in space can be computed from Eqs.~\ref{eq:field_from_kernel} and ~\ref{eq:kernels}. Multiply-connected films and multi-layer structures are solved as described in Sections~\ref{section:model:holes} and \ref{section:model:multilayer} respectively.
 
 \section{Package Overview}
 \label{section:overview}
 
-In this section we give a high-level overview of the \SuperScreen package. More detailed documentation and tutorials can be found online in [ref. for online documentation].
+In this section we give a high-level overview of the \SuperScreen package. Further details can be found in the online documentation~\cite{superscreen-rtd}.
 
 \subsection{Development Details}
 \label{section:overview:development}
 
-\SuperScreen requires Python version 3.6 or later. The package is located in a public repository on GitHub~\cite{superscreen}, and a suite of unit tests is run automatically via GitHub Actions whenever a change or proposed change (Pull Request) is made to the \inline{main} branch of the repository. At the time of writing, the test suite is executed using Python versions 3.6, 3.7, 3.8, and 3.9, and the test coverage is XX\%. Any changes to the \inline{main} branch of the repository also trigger an automatic re-build of the online documentation, which is hosted by Read the Docs at superscreen.readthedocs.io [ref. for online documentation]. Stable versions of the package are tagged on GitHub and uploaded to PyPI, the Python Package Index [ref for pypi]. The source code and documentation are covered by the MIT License.
+\SuperScreen requires Python version 3.6 - 3.9. The package is located in a public repository on GitHub~\cite{superscreen}, and a suite of unit tests is run automatically via the GitHub Actions continuous integration (CI) tool whenever a change or proposed change (Pull Request) is made to the \inline{main} branch of the repository. At the time of writing, the test suite is executed using Python versions 3.6 through 3.9, and the test coverage is $>95\%$. Any changes to the \inline{main} branch of the repository also trigger an automatic re-build of the online documentation, which is hosted by Read the Docs at \inline{superscreen.readthedocs.io}~\cite{superscreen-rtd}. Stable versions of the package are tagged on GitHub and uploaded to PyPI, the Python Package Index. The source code and documentation are covered by the MIT License.
 
 \SuperScreen has several important dependencies beyond the Python standard library: \inline{numpy}~\cite{2020NumPy-Array} and \inline{scipy}~\cite{2020SciPy-NMeth} for numerics, \inline{pint}~\cite{Grecco} for handling physical units, \inline{matplotlib}~\cite{Hunter_2007} for visualization, \inline{meshpy}~\cite{Klockner,Shewchuk,shewchuk96b} and \inline{optimesh}~\cite{nico_schlomer_adam_dobrawy_2021} for mesh generation, \inline{dill}~\cite{McKerns} for serializing objects to disk and between processes, and \inline{ray}~\cite{ray_2018,ray-docs} for parallel processing with shared memory (see~\ref{section:parallel}).
 
@@ -449,29 +476,22 @@ def f(x, y, a=1, b=0):
     return a * x**2 + b * y
     
 param = Parameter(f, a=0, b=1)
-print(param)
-# Parameter<f(a=0, b=1)>
+print(param) # Parameter<f(a=0, b=1)>
 
 other_param = Parameter(f, a=2, b=3)
-print(other_param)
-# Parameter<f(a=2, b=3)>
+print(other_param) # Parameter<f(a=2, b=3)>
 
-print(param(0, 0) == f(0, 0, a=0, b=1))
-# True
-print(other_param(1, 2) == f(1, 2, a=2, b=3))
-# True
+print(param(0, 0) == f(0, 0, a=0, b=1)) # True
+print(other_param(1, 2) == f(1, 2, a=2, b=3)) # True
 
 param_squared = param ** 2
-print(param_squared)
-# CompositeParameter<(f(a=0, b=1) ** 2)>
+print(param_squared) # CompositeParameter<(f(a=0, b=1) ** 2)>
 
-print(param_squared(3, 4) == f(3, 4, a=0, b=1) ** 2)
-# True
+print(param_squared(3, 4) == f(3, 4, a=0, b=1) ** 2) # True
 print(
     (5 * param_squared / other_param)(5, 6)
     == 5 * f(5, 6, a=0, b=1) ** 2 / f(5, 6, a=2, b=3)
-)
-# True
+) # True
 \end{minted}
 \captionof{listing}{The basic usage of \inline{superscreen.Parameters}.}
 \label{code:parameters}
@@ -480,9 +500,9 @@ print(
 \subsection{Devices}
 \label{section:overview:device}
 
-Information about the geometry and penetration depth of a superconducting structure is described by an instance of the \inline{superscreen.Device} class. A \inline{Device} is made up of one or more superconducting layers, each represented by an instance of  \inline{superscreen.Layer}. Each layer sits in a specified plane parallel to the $x-y$ plane and has its own effective penetration depth $\Lambda$, which can either be a constant or a \inline{superscreen.Parameter} that defines $\Lambda(x, y)$, the effective penetration depth as a function of position. The effective penetration depth $\Lambda$ can instead be defined in terms of a layer's London penetration depth $\lambda$ and its thickness $d$: $\Lambda=\lambda^2/d$, in which case the London penetration depth can be either a constant or a \inline{superscreen.Parameter}.
+Information about the geometry and penetration depth of a superconducting structure is described by an instance of the \inline{superscreen.Device} class. A \inline{Device} is made up of one or more superconducting layers, each represented by an instance of  \inline{superscreen.Layer}. Each layer sits in a specified plane parallel to the $x-y$ plane and has its own effective penetration depth $\Lambda$, which can either be a constant or a \inline{superscreen.Parameter} that defines $\Lambda(x, y)$, the effective penetration depth as a function of position. Alternatively, the effective penetration depth $\Lambda$ can be defined in terms of a layer's London penetration depth $\lambda$ and its thickness $d$: $\Lambda=\lambda^2/d$, in which case the London penetration depth can be either a constant or a \inline{superscreen.Parameter}.
 
-Each layer can contain one or more superconducting films which may have one or more holes in them. Films and holes are represented by instances of the \inline{superscreen.Polygon} class. A \inline{Polygon} contains the name of the layer to which is belongs, an array specifying the coordinates of its vertices, and a method, \inline{Polygon.contains_points()}, which determines whether specified coordinates lie within the polygon or not. In addition to superconducting films and holes, one may define ``abstract regions,'' which are polygons that need not correspond to a physical feature in the structure, but will still be meshed. Abstract regions can be used to define a ``bounding box" around a structure. The \inline{superscreen.geometry} module provides functions for generating the underlying polygon vertices for simple geometries (circles and rectangles). See Code Block~\ref{code:device} for an example of a function that creates a square or circular superconducting ring centered at the origin, with an effective penetration depth $\Lambda = 1\,\mu\mathrm{m}$.
+Each layer can contain one or more superconducting films which may have one or more holes in them. Films and holes are represented by instances of the \inline{superscreen.Polygon} class. A \inline{Polygon} contains the name of the layer to which is belongs, an array specifying the coordinates of its vertices, and a method, \inline{Polygon.contains_points()}, which determines whether specified coordinates lie within the polygon or not. In addition to superconducting films and holes, one may define ``abstract regions,'' which are polygons that need not correspond to a physical feature in the structure, but will still be meshed. Abstract regions can be used to define a ``bounding box" around a structure. The \inline{superscreen.geometry} module provides functions for generating the underlying polygon vertices for simple geometries (ellipses and rectangles). See Code Block~\ref{code:device} for an example of a function that creates a square or circular superconducting ring centered at the origin, with an effective penetration depth $\Lambda = 1\,\mu\mathrm{m}$.
 
 \begin{code}
 \begin{minted}[fontsize=\small]{python}
@@ -526,14 +546,14 @@ def make_ring(
 \label{code:device}
 \end{code}
 
-Once the layers, films, holes, and abstract regions have been defined, one can generate the computational mesh by calling \inline{Device.make_mesh()}. The region that is meshed is defined by the convex hull of the union of all polygons in the device. Mesh generation is a two step process. First, an initial Delaunay mesh is created using \inline{meshpy}~\cite{Klockner}, which is a Python interface to Triangle~\cite{shewchuk96b, Shewchuk}, a fast compiled 2D mesh generation tool. Second (and optionally), the mesh can be further optimized using \inline{optimesh}~\cite{nico_schlomer_adam_dobrawy_2021}. The goal of the mesh optimization step is to improve the quality of each triangular element in the mesh, where quality is defined as twice the ratio of the incircle radius to the circumcircle radius (quality $\leq1$, with equality for equilateral triangles). The local density of triangles in the mesh is determined by the density of vertices in the device's polygons and the total number of triangles. Regions where there are many polygon vertices will be meshed more densely than regions with few polygon vertices. If no \inline{optimesh} optimization is done, then every polygon vertex is guaranteed to be a mesh vertex.
+Once the layers, films, holes, and abstract regions have been defined, one can generate the computational mesh by calling \inline{Device.make_mesh()}. The region that is meshed is defined by the convex hull of the union of all polygons in the device. Mesh generation is a two step process. First, an initial Delaunay mesh is created using \inline{meshpy}~\cite{Klockner}, which is a Python interface to Triangle~\cite{shewchuk96b, Shewchuk}, a fast compiled 2D mesh generation tool. Second (and optionally), the mesh is further optimized using \inline{optimesh}~\cite{nico_schlomer_adam_dobrawy_2021}. The goal of the mesh optimization step is to improve the quality of each triangular element in the mesh, where quality is defined as twice the ratio of the incircle radius to the circumcircle radius (quality $\leq1$, with equality for equilateral triangles). The local density of triangles in the mesh is determined by the density of vertices in the device's polygons and the total number of triangles. Regions where there are many polygon vertices will be meshed more densely than regions with few polygon vertices. If no \inline{optimesh} optimization is done, then every polygon vertex is guaranteed to be a mesh vertex.
 
-See Code Block~\ref{code:mesh_generation} for a demonstration of \inline{Device.make_mesh()} and Figure~\ref{fig:ring_mesh} to view the resulting meshes both with and without \inline{optimesh} optimization. After the mesh has been generated, the matrices and vectors described in Section~\ref{section:implementation} can be computed and one can begin solving models.
+See Code Block~\ref{code:mesh_generation} for a demonstration of \inline{Device.make_mesh()} and Figure~\ref{fig:ring_mesh} to view the resulting meshes both with and without \inline{optimesh} optimization. After the mesh has been generated, the matrices and vectors described in Section~\ref{section:implementation} are computed and one can begin solving models.
 
 \begin{code}
 \begin{minted}[fontsize=\small]{python}
 # min_triangles specifies the minimum number of mesh elements.
-min_triangles = 8000
+min_triangles = 8_000
 # optimesh_steps specifies the the number of iterations of
 # optimesh optimization to perform.
 # Set optimesh_steps=None to disable optimesh optimization.
@@ -587,7 +607,7 @@ for square in (False, True):
 \subsection{Solvers}
 \label{section:overview:solvers}
 
-A \SuperScreen model consists of a \inline{Device}, a function or \inline{Parameter} that defines the applied magnetic field as a function of position $H_{z,\,\mathrm{applied}}(x, y, z)$, and a value for the current circulating around each hole in the device due to trapped flux (if any). These items serve as the inputs to \SuperScreen's main solver function, \inline{superscreen.solve()}, which implements the calculation outlined in Section~\ref{section:implementation}. When simulating a device with more than one layer, one can specify the number of times to implement the iterative calculation described in Section~\ref{section:model:multilayer} in order to solve for the response of all layers self-consistently. One can also skip the iterative portion of the calculation entirely and only solve for the response of each layer to the applied field, assuming no interaction between layers.
+A \SuperScreen model consists of 1) a \inline{Device} with a mesh, 2) a function or \inline{Parameter} that defines the applied magnetic field as a function of position $H_{z,\,\mathrm{applied}}(x, y, z)$, 3) a value for the current circulating around each hole in the device due to trapped flux, and 4) a collection of vortices $v$ located at positions $\vec{r}_v$ and carrying flux $\Phi_v$. These items serve as the inputs to \SuperScreen's main solver function, \inline{superscreen.solve()}, which implements the calculation outlined in Section~\ref{section:implementation}. When simulating a device with more than one layer, one can specify the number of times to implement the iterative calculation described in Section~\ref{section:model:multilayer} in order to solve for the response of all layers self-consistently. One can also skip the iterative portion of the calculation entirely and only solve for the response of each layer to the applied field, assuming no interaction between layers.
 
 \begin{code}
 \begin{minted}[fontsize=\small]{python}
@@ -658,7 +678,7 @@ Code Block~\ref{code:ring_circulating_current} solves two models involving the \
 \label{fig:ring_plot_fields_currents}
 \end{figure}
 
-The output of \inline{superscreen.solve()} is a \inline{list} of \inline{superscreen.Solution} objects, with a length of 1 plus the number of iterations used for the iterative portion of the calculation. A \inline{Solution} encapsulates all of the information about a solved model: the \inline{Device}, applied field, circulating currents, and calculated stream functions and magnetic fields for all layers in the device. A \inline{Solution} also has methods for processing the simulation results, including:
+The output of \inline{superscreen.solve()} is a \inline{list} of \inline{superscreen.Solution} objects, with a length of 1 plus the number of iterations used for the iterative portion of the calculation. A \inline{Solution} encapsulates all of the information about a solved model: the \inline{Device}, applied field, circulating currents, vortices, and calculated stream functions and magnetic fields for all layers in the device. A \inline{Solution} also has methods for processing the simulation results, including:
 \begin{itemize}
     \item{
     \inline{Solution.grid_data()}: Interpolates the calculated stream functions and magnetic fields for each layer from the triangular mesh to a rectangular grid.
@@ -667,7 +687,13 @@ The output of \inline{superscreen.solve()} is a \inline{list} of \inline{supersc
     \inline{Solution.current_density()}: Interpolates the stream functions to a rectangular grid and calculates the current density (sheet current) $\vec{J}(x, y)$ in each layer using Eq.~\ref{eq:stream}.
     }
     \item{
+    \inline{Solution.interp_current_density()}: Evaluates the current density (sheet current) $\vec{J}(x, y)$ in each layer at arbitrary $(x, y)$ coordinates via interpolation.
+    }
+    \item{
     \inline{Solution.polygon_flux()}: Calculates the total flux through each polygon in the device (films, holes, and abstract regions).
+    }
+    \item{
+    \inline{Solution.polygon_fluxoid()}: Calculates the fluxoid for a specified polygonal region in the device. See \ref{secction:fluxoid} for more details.
     }
     \item{
     \inline{Solution.field_at_position()}: Calculates the vector magnetic field at any point(s) in space due the applied field and the currents flowing the in the device using Eqs.~\ref{eq:field_from_kernel} and \ref{eq:kernels}.
@@ -675,7 +701,7 @@ The output of \inline{superscreen.solve()} is a \inline{list} of \inline{supersc
 \end{itemize}
 \inline{Solutions} also have several visualization methods built in (see Section~\ref{section:overview:visualization}).
 
-One may wish to solve many models involving the same device while varying other aspects of the model, for example sweeping the applied field, circulating currents, or some parameter of one or more layers in the device. Fortunately, the mesh and large matrices described in Section~\ref{section:implementation} depend only on the geometry of the device parallel to the $x-y$ plane. This means that the same mesh and matrices can be re-used for models with different applied fields, circulating currents, layer heights (vertical positions), and penetration depths.
+One may wish to solve many models involving the same device while varying other aspects of the model, for example sweeping the applied field, circulating currents, vortex properties, or some parameter of one or more layers in the device. Fortunately, the mesh and large matrices described in Section~\ref{section:implementation} depend only on the geometry of the device parallel to the $x-y$ plane. This means that the same mesh and matrices can be re-used for models with different applied fields, circulating currents, vortex properties, layer heights (vertical positions), and penetration depths.
 
 The \inline{superscreen.solve_many()} function manages the setup and execution of such a sweep. One can provide a sequence of \inline{Parameter} objects defining different applied fields and/or a sequence of circulating current values over which to sweep and/or a ``layer updater" function that modifies each layer in the device according to some set of keyword arguments, which can also be swept. The latter option can be used to sweep layer heights or penetration depths. Given these inputs, \inline{superscreen.solve_many()} will generate and solve all of the corresponding models. The models can either be solved in series in a single Python process (the default), or in parallel in multiple Python processes running across multiple CPUs, or even across multiple nodes in a cluster (see~\ref{section:parallel}).
 
@@ -701,7 +727,7 @@ The \inline{superscreen.solve_many()} function manages the setup and execution o
     See also: \inline{Solution.plot_fields()}.
     }
     \item{
-    \inline{superscreen.plot_field_at_positions()}: Given a \inline{Solution}, plots the total field $\vec{H}(x, y, z_0)$ or $H_z(x, y, z_0)$ at any points in space (where $z_0$ is not equal to the vertical position of any of the layers in the device).
+    \inline{superscreen.plot_field_at_positions()}: Given a \inline{Solution}, plots the total field $\vec{H}(x, y, z)$ or $H_z(x, y, z)$ at an arbitrary set of positions $(x, y, z)$.
     
     See also: \inline{Solution.plot_field_at_positions()}.
     }
@@ -712,11 +738,11 @@ See Code Block~\ref{code:ring_circulating_current} and  Figure~\ref{fig:ring_plo
 \subsection{Comparison \& Persistence}
 \label{section:overview:persistence}
 
-\inline{Parameters}, \inline{Layers}, \inline{Polygons}, \inline{Devices}, and \inline{Solutions} all implement the equality operator, \inline{==}. Two \inline{Parameters} are considered equal if the Python bytecode of their underlying functions is the same and their keyword arguments are the same. Two \inline{Layers} are equal if their name, penetration depth, thickness, and vertical position are all equal. Two \inline{Polygons} are equal if they are in the same layer and their name and polygon vertices are equal. Two \inline{Devices} are equal if their name, layers, films, holes, and abstract regions are all equal. Two \inline{Solutions} are equal if their device, applied field, circulating currents, timestamp (time at which the solution was created), and all stream function and magnetic field arrays are equal. Two \inline{Solutions} created at different times can also be compared using the  \inline{solution.equals()} method.
+\inline{Parameters}, \inline{Layers}, \inline{Polygons}, \inline{Devices}, and \inline{Solutions} all implement the equality operator, \inline{==}. Two \inline{Parameters} are considered equal if the Python bytecode of their underlying functions is the same and their keyword arguments are the same. Two \inline{Layers} are equal if their name, penetration depth, thickness, and vertical position are all equal. Two \inline{Polygons} are equal if they are in the same layer and their name and polygon vertices are equal. Two \inline{Devices} are equal if their name, layers, films, holes, and abstract regions are all equal. Two \inline{Solutions} are equal if their device, applied field, circulating currents, list of trapped vortices, timestamp (time at which the solution was created), and all stream function and magnetic field arrays are equal. Two \inline{Solutions} created at different times can also be compared using the  \inline{solution.equals()} method.
 
 Instances of \inline{superscreen.Device} and \inline{superscreen.Solution} can be saved to and loaded from disk using their respective \inline{to_file()} and \inline{from_file()} methods, making it straightforward to share models and simulation results. \inline{Layers}, \inline{Polygons}, and all metadata are serialized to JSON, a widely-used, human-readable plain text format~\cite{JSON}. Functions and \inline{Parameters}, such as those that compute the applied field or penetration depth, are serialized in binary form using \inline{dill}~\cite{McKerns}. \inline{Numpy} arrays, such as the mesh itself and the computed stream functions and fields, are saved in the well-established \inline{numpy} \inline{npz} file format. A \inline{list} of \inline{Solutions}, such as that returned by \inline{superscreen.solve()} can be saved/loaded all at once using \inline{save_solutions()} and \inline{load_solutions()}.
 
-\section{Example application: Scanning SQUID susceptometry}
+\section{Example application: Scanning SQUID magnetometry}
 \label{section:application}
 In scanning superconducting quantum interference device (SQUID) susceptometry, the diamagnetic susceptibility of a superconducting sample is measured by bringing the sample close to a pair of superconducting loops. The first loop, called the ``pickup loop" is attached to a SQUID circuit that sensitively measures the magnetic flux threading the loop. The second loop, called the ``field coil," carries a known current and applies a known magnetic field to both the pickup loop and the sample. The superconducting sample screens the magnetic field from the field coil, modifying the amount of flux threading the pickup loop. Thus the mutual inductance between the field coil and pickup loop provides a measure of the sample's diamagnetic susceptibility, which is in turn a measure of the sample's penetration depth.
 
@@ -744,44 +770,44 @@ Analysis developed to interpret the results of scanning SQUID susceptometry meas
 
 Figure~\ref{fig:susceptometry}(a) shows a \inline{Device} representing field coil and pickup loop of an actual scanning SQUID sensor. In addition to the field coil and pickup loop, there are superconducting shields that limit the amount of magnetic flux that can penetrate the leads connecting the loops to the rest of the circuit (the rest of the circuit is not modeled). There are three relevant layers of superconducting films: the base electrode (``BE"), which is furthest from the sample contains the field coil; the first wiring layer (``W1"), which contains the pickup loop and a shield covering the field coil leads; and the second wiring layer (``W2"), which is closest to the sample and contains a shield covering the pickup loop leads. The device also contains a layer and film representing the superconducting sample.
 
-To model a SQUID susceptometry measurement, we first calculate $M_0$, the mutual inductance between the field coil and pickup loop in the absence of the sample. This can be done by temporarily setting the sample layer effective penetration depth to a very large value such that it essentially does not screen the field from the field coil (in this case, we set $\Lambda = 10^5\,\mu\mathrm{m}$). We then model the field from a known current flowing in the field coil following Section~\ref{section:model:holes} and self-consistently calculate the response of both the sample and the other superconducting layers of the SQUID sensor following Section~\ref{section:model:multilayer}. To ensure that the 2D current distribution in the field coil is approximately uniform (as we would expect for a real applied current), we set the field coil layer effective penetration depth to be greater than the width of the field coil conductor.
+% To model a SQUID susceptometry measurement, we first calculate $M_0$, the mutual inductance between the field coil and pickup loop in the absence of the sample. This can be done by temporarily setting the sample layer effective penetration depth to a very large value such that it essentially does not screen the field from the field coil (in this case, we set $\Lambda = 10^5\,\mu\mathrm{m}$). We then model the field from a known current flowing in the field coil following Section~\ref{section:model:holes} and self-consistently calculate the response of both the sample and the other superconducting layers of the SQUID sensor following Section~\ref{section:model:multilayer}. To ensure that the 2D current distribution in the field coil is approximately uniform (as we would expect for a real applied current), we set the field coil layer effective penetration depth to be greater than the width of the field coil conductor.
 
-Once $M_0$ is known, we can ``turn on" the sample's diamagnetic response by setting its effective penetration depth $\Lambda$ to the desired value and compute $M(z, \Lambda)$ for a given vertical distance $z$ between the sample and the SQUID as described in the previous paragraph. The SQUID susceptibility signal is then $M(z, \Lambda) - M_0$, the change in mutual inductance between the field coil and pickup loop due to the presence of the sample (usually given in units of $\Phi_0/\mathrm{A}$, where $\Phi_0$ is the superconducting flux quantum). The susceptibility can also be normalized to the bare mutual inductance $M_0$, giving a dimensionless susceptibility $\chi(z, \Lambda)=[M(z, \Lambda) - M_0] / M_0$.  
+% Once $M_0$ is known, we can ``turn on" the sample's diamagnetic response by setting its effective penetration depth $\Lambda$ to the desired value and compute $M(z, \Lambda)$ for a given vertical distance $z$ between the sample and the SQUID as described in the previous paragraph. The SQUID susceptibility signal is then $M(z, \Lambda) - M_0$, the change in mutual inductance between the field coil and pickup loop due to the presence of the sample (usually given in units of $\Phi_0/\mathrm{A}$, where $\Phi_0$ is the superconducting flux quantum). The susceptibility can also be normalized to the bare mutual inductance $M_0$, giving a dimensionless susceptibility $\chi(z, \Lambda)=[M(z, \Lambda) - M_0] / M_0$.  
 
-% \begin{figure}[!h]
-% \centering
-% \begin{subfigure}{\textwidth}
-%   \centering
-%   \includegraphics[width=\linewidth]{examples/images/squid_susceptometry/squid_with_sample_currents_Lambda=1_00__um__z=-1_00__um.png}
-% %   \caption{Device polygons and mesh for the SQUID susceptometer model.}
-% %   \label{fig:squid_mesh}
-% \end{subfigure}%
-% \vspace{-15pt}
-% \begin{subfigure}{\textwidth}
-%   \centering
-%   \includegraphics[width=\linewidth]{examples/images/squid_susceptometry/squid_with_sample_currents_Lambda=10_00__um__z=-1_00__um.png}
-% %   \caption{Fractional change in flux though all polygons vs. solver iteration with a current of $1\,\mathrm{mA}$ flowing in the field coil (\inline{fc}). The mutual inductance $M_0$ is given by the flux through the pickup loop (\inline{pl_hull}) divided by the field coil current.}
-% %   \label{fig:squid_convergence}
-% \end{subfigure}%
-% \vspace{-15pt}
-% \begin{subfigure}{\textwidth}
-%   \centering
-%   \includegraphics[width=\linewidth]{examples/images/squid_susceptometry/squid_with_sample_currents_Lambda=1_00__um__z=-10_00__um.png}
-% %   \caption{Fractional change in flux though all polygons vs. solver iteration with a current of $1\,\mathrm{mA}$ flowing in the field coil (\inline{fc}). The mutual inductance $M_0$ is given by the flux through the pickup loop (\inline{pl_hull}) divided by the field coil current.}
-% %   \label{fig:squid_convergence}
-% \end{subfigure}%
-% \caption{Left: Device polygons and mesh for the SQUID susceptometer model. Right: Fractional change in flux though all polygons vs. solver iteration with a current of $1\,\mathrm{mA}$ flowing in the field coil (\inline{fc}). The mutual inductance $M_0$ is given by the flux through the pickup loop (\inline{pl_hull}) divided by the field coil current.}
-% % \label{fig:susceptometry}
-% \end{figure}
+% % \begin{figure}[!h]
+% % \centering
+% % \begin{subfigure}{\textwidth}
+% %   \centering
+% %   \includegraphics[width=\linewidth]{examples/images/squid_susceptometry/squid_with_sample_currents_Lambda=1_00__um__z=-1_00__um.png}
+% % %   \caption{Device polygons and mesh for the SQUID susceptometer model.}
+% % %   \label{fig:squid_mesh}
+% % \end{subfigure}%
+% % \vspace{-15pt}
+% % \begin{subfigure}{\textwidth}
+% %   \centering
+% %   \includegraphics[width=\linewidth]{examples/images/squid_susceptometry/squid_with_sample_currents_Lambda=10_00__um__z=-1_00__um.png}
+% % %   \caption{Fractional change in flux though all polygons vs. solver iteration with a current of $1\,\mathrm{mA}$ flowing in the field coil (\inline{fc}). The mutual inductance $M_0$ is given by the flux through the pickup loop (\inline{pl_hull}) divided by the field coil current.}
+% % %   \label{fig:squid_convergence}
+% % \end{subfigure}%
+% % \vspace{-15pt}
+% % \begin{subfigure}{\textwidth}
+% %   \centering
+% %   \includegraphics[width=\linewidth]{examples/images/squid_susceptometry/squid_with_sample_currents_Lambda=1_00__um__z=-10_00__um.png}
+% % %   \caption{Fractional change in flux though all polygons vs. solver iteration with a current of $1\,\mathrm{mA}$ flowing in the field coil (\inline{fc}). The mutual inductance $M_0$ is given by the flux through the pickup loop (\inline{pl_hull}) divided by the field coil current.}
+% % %   \label{fig:squid_convergence}
+% % \end{subfigure}%
+% % \caption{Left: Device polygons and mesh for the SQUID susceptometer model. Right: Fractional change in flux though all polygons vs. solver iteration with a current of $1\,\mathrm{mA}$ flowing in the field coil (\inline{fc}). The mutual inductance $M_0$ is given by the flux through the pickup loop (\inline{pl_hull}) divided by the field coil current.}
+% % % \label{fig:susceptometry}
+% % \end{figure}
 
 \section{Conclusion}
 \label{section:conlusion}
 
 The ability to model and visualize screening effects in inhomogeneous 2D superconductors and devices constructed from superconducting thin films can help to build intuition about these systems, aid in interpretation of measurement results, and enable optimization of measurement and device design. \SuperScreen is an open-source, user-friendly, portable, and efficient tool that solves this problem. Applications of the package include calculating self- and mutual-inductance in mesoscopic superconducting circuits, and modeling the magnetic interaction between inhomogeneous superconducting samples and superconducting sensors such as scanning SQUID susceptometers~\cite{kirtley_scanning_2016}.
 
-There are two important limitations to the applicability of \SuperScreen and the matrix inversion method on which it is based~\cite{brandt_thin_2005}. First, strictly speaking all superconducting films should be in the 2D limit, with London penetration depth $\lambda$ less than film thickness $d$, such that the out-of-plane current density is approximately constant. There are cases where the model reproduces experimental results despite violation of this condition (e.g. the calculations in Section~\ref{section:application} and in~\cite{kirtley_scanning_2016,kirtley_response_2016}), but great care must be taking in interpreting results in these cases. Second, as a London model, Brandt's method assumes that all superconducting films behave linearly and without dissipation. Care should also be taken to ensure that for a given model the mesh is of sufficient density and quality that, to within the desired precision, the results of simulations do not depend on mesh size.
+There are three important limitations to the applicability of \SuperScreen and the matrix inversion method on which it is based~\cite{Brandt_Clem_2004,brandt_thin_2005}. First, strictly speaking all superconducting films should be in the 2D limit, with London penetration depth $\lambda$ less than film thickness $d$, such that the out-of-plane current density is approximately constant. There are cases where the model reproduces experimental results despite violation of this condition (e.g. the calculations in Section~\ref{section:application} and in~\cite{kirtley_scanning_2016,kirtley_response_2016}), but care must be taking in interpreting results in these cases. Second, as a London model, Brandt and Clem's method assumes that all superconducting films behave linearly and without dissipation, and that the applied magnetic field and current density are below the film's critical field and critical current density. Third, while currents associated with vortices and flux trapped in holes can be modeled, \SuperScreen does not enforce fluxoid quantization or treat the energetics of vortex nucleation in films or fluxoid transitions in multiply-connected films. For further discussion of these topics in the context of the present model, see Refs.~\cite{Brandt_Clem_2004, Clem_Brandt_2005}. Finally, care should be taken to ensure that for a given model the mesh is of sufficient density and quality that, to within the desired precision, the results of simulations do not depend on mesh size.
 
-Potential improvements to \SuperScreen include: more sophisticated mesh generation (e.g. automated local mesh refinement based on device geometry), automated determination of solution convergence for models with multiple layers, an improved interface for generating complex device geometries, and further optimization for memory and CPU efficiency (especially in the context of parallel processing).
+Potential improvements to \SuperScreen include: more complete treatment of multiply-connected superconductors~\cite{Clem_Brandt_2005}, more sophisticated mesh generation (e.g. automated local mesh refinement based on device geometry), automated determination of solution convergence for models with multiple layers, an improved interface for generating complex device geometries (for example using 2D constructive solid geometry, CSG), and further optimization for memory and CPU efficiency (especially in the context of parallel processing).
 
 %% The Appendices part is started with the command \appendix;
 %% appendix sections are then done as normal sections
@@ -793,10 +819,10 @@ Potential improvements to \SuperScreen include: more sophisticated mesh generati
 \appendix
 
 \section{Laplace operator}
-\label{section:implementation:laplace}
+\label{appendix:laplace}
 
 The definition of the discrete Laplace operator $\mathbf{\nabla}^2$ (also called the Laplace-Beltrami operator) deserves special attention, as it reduces the problem of solving a partial differential equation $\nabla^2g(x,y)=f(x,y)$ to the problem of solving a matrix equation
-$\mathbf{\nabla}^2\mathbf{g}=\mathbf{f}$~\cite{Reuter_Biasotti_Giorgi_Patane_Spagnuolo_2009}. As described in [Vaillant-Laplacian-2013] and [Laplacian-SGP-2014] the Laplace operator $\mathbf{\nabla}^2$ for a mesh is defined in terms of two matrices, the mass matrix $\mathbf{M}$ and the
+$\mathbf{\nabla}^2\mathbf{g}=\mathbf{f}$~\cite{Reuter_Biasotti_Giorgi_Patane_Spagnuolo_2009}. As described in Ref.~\cite{Crane_Vouga_2014}, the Laplace operator $\mathbf{\nabla}^2$ for a mesh is defined in terms of two matrices, the mass matrix $\mathbf{M}$ and the
 weak Laplacian matrix $\mathbf{L}$: $\mathbf{\nabla}^2 = \mathbf{M}^{-1}\mathbf{L}$.
 
 
@@ -848,6 +874,21 @@ $$
         W_{ij} / \sum_{i\neq j} W_{ij}&\text{otherwise.}
     \end{cases}
 $$
+
+% \section{Scaling with number of layers}
+% \label{section:scaling-layers}
+% The iterative method used to solve multi-layer structures (Section~\ref{section:model:multilayer}) is time-consuming and memory-intensive for models with a large mesh (many vertices $v$ and triangles $t$) and/or many layers $L$. As mentioned in Section~\ref{section:model:multilayer}, at each iteration of this process, we update the applied field $H_{z,\,\mathrm{applied}}(\vec{r}, z_\ell)$ at each layer $\ell$ based on the currents flowing in all other layers $m\neq\ell$, according to
+
+% \begin{equation}
+%     H_{z,\,\mathrm{applied}}(\vec{r}, z_\ell) \to
+%     H_{z,\,\mathrm{applied}}(\vec{r}, z_\ell)
+%     + \sum_{m\neq\ell}
+%     \int_{S_m} Q_z(\vec{r},\vec{r}')g_m(\vec{r}')\,\mathrm{d}^2r',
+%     \label{eq:iterative}
+% \end{equation}
+% where $S_m$ is surface of all films in layer $m$ and $g_m$ is the stream function for layer $m$. For a model with $L$ layers, at each iteration Eq.~\ref{eq:iterative} requires the calculation of $\binom{L}{2} = L(L-1)/2$ kernel matrices $\mathbf{Q_z}$, each of which is a dense $v\times t$ floating point matrix. For a mesh with $t=10,000$ triangles, each of these $\mathbf{Q_z}$ matrices is 800 MB. Furthermore, each iteration requires performing $2\binom{L}{2} = L(L-1)$ sums involving $\mathbf{Q_z}\cdot\mathbf{g}_m$, where $\mathbf{g}_m$ is the $n\times1$ vector defining the stream function in layer $m$ evaluated at the center of each triangle in the mesh.
+
+% To avoid redundant computation at each iteration and running out of memory during the iterative process, the $\mathbf{Q_z}$ matrices are computed once during the first iteration, cached to a temporary directory on disk, and loaded from disk during subsequent iterations, such that only a single $\mathbf{Q_z}$ is in memory at any given time. If running \SuperScreen on a machine with both hard disk (HDD) and solid state disk (SSD) storage, one should ensure that Python uses a temporary directory located on a solid state disk to avoid a significant performance penalty due to hard disk read/write speeds. See the documentation for the \inline{tempfile} module of the Python standard library for more details. Both the amount of computation needed per iteration and the number of iterations required to reach a certain level of convergence (quantified, for example, by the fractional change in flux through each polygon in the model from one iteration to the next)
 
 \section{Parallel processing}
 \label{section:parallel}
@@ -916,6 +957,7 @@ ray stop
 \end{minipage}
 
 Running \inline{superscreen.solve_many()} in parallel across multiple nodes in a computing cluster is a simple extension to the method outlined in Code Block~\ref{code:ray-cli}, although the specifics depend upon the infrastructure of the cluster, e.g. job management software. See the ``Multi-Node Ray" section of the \inline{ray} documentation for more details~\cite{ray-docs}.
+% Some applications of \SuperScreen may be ``embarrassingly parallel'' in the sense that all calls to \inline{superscreen.solve()} are completely independent. One such application is the scanning SQUID susceptometry simulation shown in Section~\ref{section:application}. In such cases, it may be simpler to avoid using \inline{ray} for shared memory and run many 
 
 %% References
 %%
