@@ -509,37 +509,26 @@ Each layer can contain one or more superconducting films which may have one or m
 import superscreen as sc
 import superscreen.geometry as geo
 
-def make_ring(
-    inner_radius=2.5,
-    outer_radius=5,
-    Lambda=1,
-    length_units="um",
-    square=False,
-):
+def make_ring(inner_radius=2.5, outer_radius=5, Lambda=1, square=False):
     if square:
-        name = "square_ring"
-        outer = geo.square(outer_radius * 2, points_per_side=60)
-        inner = geo.square(inner_radius * 2, points_per_side=20)
-        bbox = geo.square(outer_radius * 2 * 1.4, points_per_side=5)
+        outer_points = geo.square(2 * outer_radius, points_per_side=150)
+        inner_points = geo.square(2 * inner_radius, points_per_side=75)
+        bbox = geo.square(1.25 * 2 * outer_radius, points_per_side=10)
     else:
-        name = "circular_ring"
-        outer_points = geo.circle(outer_radius)
-        inner_points = geo.circle(inner_radius)
-        bbox = geo.circle(outer_radius * 1.4, points=21)
-
+        outer_points = geo.circle(outer_radius, points=500)
+        inner_points = geo.circle(inner_radius, points=300)
+        bbox = geo.circle(1.4 * outer_radius, points=50)
     layers = [sc.Layer("base", Lambda=Lambda, z0=0)]
     films = [sc.Polygon("ring", layer="base", points=outer_points)]
     holes = [sc.Polygon("hole", layer="base", points=inner_points)]
-    abstract_regions = [
-        sc.Polygon("bounding_box", layer="base", points=bbox),
-    ]
+    abstract_regions = [sc.Polygon("bbox", layer="base", points=bbox)]
     return sc.Device(
-        name,
+        "ring",
         layers=layers,
         films=films,
         holes=holes,
         abstract_regions=abstract_regions,
-        length_units=length_units,
+        length_units="um",
     )
 \end{minted}
 \captionof{listing}{A function that creates a \inline{Device} representing a circular or square ring centered at the origin.}
@@ -552,22 +541,30 @@ See Code Block~\ref{code:mesh_generation} for a demonstration of \inline{Device.
 
 \begin{code}
 \begin{minted}[fontsize=\small]{python}
+import matplotlib.pyplot as plt
+
+fig, axes = plt.subplots(2, 2, figsize=(8, 8), constrained_layout=True)
+# Create the Devices
+ring = make_ring(square=False)
+square_ring = make_ring(square=True)
 # min_triangles specifies the minimum number of mesh elements.
-min_triangles = 8_000
+min_triangles = 12000
 # optimesh_steps specifies the the number of iterations of
 # optimesh optimization to perform.
 # Set optimesh_steps=None to disable optimesh optimization.
-optimesh_steps = 400
+optimesh_steps = (None, 40)
 # For more meshing options, see the docstring for Device.make_mesh().
-
-for square in (False, True):
-    ring = make_ring(square=square)
-    ring.make_mesh(
-        min_triangles=min_triangles,
-        optimesh_steps=optimesh_steps,
-    )
-    ax = ring.plot_mesh(figsize=(6, 6), color="k", alpha=0.5)
-    ax = ring.plot_polygons(ax=ax)
+for opt_steps, row in zip(optimesh_steps, axes):
+    title = f"optimesh_steps = {opt_steps}"
+    for device, ax in zip((ring, square_ring), row):
+        # Generate the mesh
+        device.make_mesh(min_triangles=min_triangles, optimesh_steps=opt_steps)
+        # Visualize the mesh
+        device.plot_mesh(ax=ax, color="gray", linewidth=0.75)
+        device.plot_polygons(ax=ax, linewidth=3, legend=False)
+        ax.axis("off")
+        ax.set_title(title, fontfamily="monospace")
+axes[0, 0].legend(loc="best")
 \end{minted}
 \captionof{listing}{Generating and visualizing the computational mesh.}
 \label{code:mesh_generation}
@@ -684,7 +681,7 @@ The output of \inline{superscreen.solve()} is a \inline{list} of \inline{supersc
     \inline{Solution.grid_data()}: Interpolates the calculated stream functions and magnetic fields for each layer from the triangular mesh to a rectangular grid.
     }
     \item{
-    \inline{Solution.current_density()}: Interpolates the stream functions to a rectangular grid and calculates the current density (sheet current) $\vec{J}(x, y)$ in each layer using Eq.~\ref{eq:stream}.
+    \inline{Solution.grid_current_density()}: Interpolates the stream functions to a rectangular grid and calculates the current density (sheet current) $\vec{J}(x, y)$ in each layer using Eq.~\ref{eq:stream}.
     }
     \item{
     \inline{Solution.interp_current_density()}: Evaluates the current density (sheet current) $\vec{J}(x, y)$ in each layer at arbitrary $(x, y)$ coordinates via interpolation.
