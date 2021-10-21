@@ -643,37 +643,43 @@ for solution in (uniform_field, trapped_flux):
 
 Code Block~\ref{code:ring_circulating_current} solves two models involving the \inline{ring} device. First, Meissner screening of a spatially uniform applied out-of-plane magnetic field and second, the response of the ring to trapped flux with an associated circulating current of 1 mA (with no applied magnetic field). The resulting sheet current and magnetic field distributions can be visualized using the \inline{plot_current()} and \inline{plot_fields()} methods, which produce the images shown in Figure~\ref{fig:ring_plot_fields_currents}.
 
-
-\begin{figure}[!h]
-\centering
-\begin{subfigure}{.235\textwidth}
-  \centering
-  \includegraphics[width=\linewidth]{examples/images/ring/circular_ring_uniform_plot_currents.png}
-  \caption{Uniform applied field.}
-  \label{fig:circular_ring_plot_currents}
-\end{subfigure}
-\begin{subfigure}{.235\textwidth}
-  \centering
-  \includegraphics[width=\linewidth]{examples/images/ring/circular_ring_uniform_plot_fields.png}
-  \caption{Uniform applied field.}
-  \label{fig:circular_ring_plot_fields}
-\end{subfigure}
-\begin{subfigure}{.235\textwidth}
-  \centering
-  \includegraphics[width=\linewidth]{examples/images/ring/circular_ring_circ_plot_currents.png}
-  \caption{Trapped flux.}
-  \label{fig:square_ring_plot_currents}
-\end{subfigure}
-\begin{subfigure}{.235\textwidth}
-  \centering
-  \includegraphics[width=\linewidth]{examples/images/ring/circular_ring_circ_plot_fields.png}
-  \caption{Trapped flux.}
-  \label{fig:square_ring_plot_fields}
-\end{subfigure}
-
-\caption{Sheet current $\vec{J}$ (a, c) and magnetic field $\mu_0H_z$ (b, d) distributions for the circular ring with a uniform field of 0.25 mT applied out-of-plane (a, b) and a circulating current of 1 mA (c, d) calculated using Code Block~\ref{code:ring_circulating_current}.}
-\label{fig:ring_plot_fields_currents}
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{examples/images/square_ring_results.png}
+    \caption{Caption}
+    \label{fig:square-ring-results}
 \end{figure}
+
+% \begin{figure}[!h]
+% \centering
+% \begin{subfigure}{.235\textwidth}
+%   \centering
+%   \includegraphics[width=\linewidth]{examples/images/ring/circular_ring_uniform_plot_currents.png}
+%   \caption{Uniform applied field.}
+%   \label{fig:circular_ring_plot_currents}
+% \end{subfigure}
+% \begin{subfigure}{.235\textwidth}
+%   \centering
+%   \includegraphics[width=\linewidth]{examples/images/ring/circular_ring_uniform_plot_fields.png}
+%   \caption{Uniform applied field.}
+%   \label{fig:circular_ring_plot_fields}
+% \end{subfigure}
+% \begin{subfigure}{.235\textwidth}
+%   \centering
+%   \includegraphics[width=\linewidth]{examples/images/ring/circular_ring_circ_plot_currents.png}
+%   \caption{Trapped flux.}
+%   \label{fig:square_ring_plot_currents}
+% \end{subfigure}
+% \begin{subfigure}{.235\textwidth}
+%   \centering
+%   \includegraphics[width=\linewidth]{examples/images/ring/circular_ring_circ_plot_fields.png}
+%   \caption{Trapped flux.}
+%   \label{fig:square_ring_plot_fields}
+% \end{subfigure}
+
+% \caption{Sheet current $\vec{J}$ (a, c) and magnetic field $\mu_0H_z$ (b, d) distributions for the circular ring with a uniform field of 0.25 mT applied out-of-plane (a, b) and a circulating current of 1 mA (c, d) calculated using Code Block~\ref{code:ring_circulating_current}.}
+% \label{fig:ring_plot_fields_currents}
+% \end{figure}
 
 The output of \inline{superscreen.solve()} is a \inline{list} of \inline{superscreen.Solution} objects, with a length of 1 plus the number of iterations used for the iterative portion of the calculation. A \inline{Solution} encapsulates all of the information about a solved model: the \inline{Device}, applied field, circulating currents, vortices, and calculated stream functions and magnetic fields for all layers in the device. A \inline{Solution} also has methods for processing the simulation results, including:
 \begin{itemize}
