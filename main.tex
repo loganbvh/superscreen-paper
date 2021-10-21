@@ -543,7 +543,8 @@ See Code Block~\ref{code:mesh_generation} for a demonstration of \inline{Device.
 \begin{minted}[fontsize=\small]{python}
 import matplotlib.pyplot as plt
 
-fig, axes = plt.subplots(2, 2, figsize=(8, 8), constrained_layout=True)
+fig, axes = plt.subplots(2, 2, figsize=(8, 8), facecolor="w", constrained_layout=True)
+axlist = list(axes.flat)
 # Create the Devices
 ring = make_ring(square=False)
 square_ring = make_ring(square=True)
@@ -554,52 +555,60 @@ min_triangles = 12000
 # Set optimesh_steps=None to disable optimesh optimization.
 optimesh_steps = (None, 40)
 # For more meshing options, see the docstring for Device.make_mesh().
-for row, opt_steps in zip(axes, optimesh_steps):
-    title = f"optimesh_steps = {opt_steps}"
-    for ax, device in zip(row, (ring, square_ring)):
+for row, device in zip(axes, (ring, square_ring)):
+    for ax, opt_steps in zip(row, optimesh_steps):
         # Generate the mesh
         device.make_mesh(min_triangles=min_triangles, optimesh_steps=opt_steps)
         # Visualize the mesh
         device.plot_mesh(ax=ax, color="gray", linewidth=0.75)
         device.plot_polygons(ax=ax, linewidth=3, legend=False)
+        label = "abcd"[axlist.index(ax)]
+        title = f"{label}) optimesh_steps = {opt_steps}"
+        ax.set_title(title, fontsize=16, fontfamily="monospace")
         ax.axis("off")
-        ax.set_title(title, fontfamily="monospace")
-axes[0, 0].legend(loc="best")
+axlist[0].legend(loc="best")
 \end{minted}
 \captionof{listing}{Generating and visualizing the computational mesh.}
 \label{code:mesh_generation}
 \end{code}
 
-
-\begin{figure}[!h]
-\centering
-\begin{subfigure}{.235\textwidth}
-  \centering
-  \includegraphics[width=\linewidth]{examples/images/ring/circular_ring_mesh.png}
-  \caption{\inline{optimesh_steps=400}.}
-  \label{fig:circular_ring_mesh}
-\end{subfigure}%
-\begin{subfigure}{.235\textwidth}
-  \centering
-  \includegraphics[width=\linewidth]{examples/images/ring/circular_ring_mesh_no_optimesh.png}
-  \caption{\inline{optimesh_steps=None}.}
-  \label{fig:circular_ring_mesh_no_opt}
-\end{subfigure}%
-\begin{subfigure}{.235\textwidth}
-  \centering
-  \includegraphics[width=\linewidth]{examples/images/ring/square_ring_mesh.png}
-  \caption{\inline{optimesh_steps=400}.}
-  \label{fig:square_ring_mesh}
-\end{subfigure}
-\begin{subfigure}{.235\textwidth}
-  \centering
-  \includegraphics[width=\linewidth]{examples/images/ring/square_ring_mesh_no_optimesh.png}
-  \caption{\inline{optimesh_steps=None}.}
-  \label{fig:square_ring_mesh_no_opt}
-\end{subfigure}
-\caption{Device geometry and mesh for a circular (a, b) and square ring (c, d) generated using Code Blocks~\ref{code:device} and \ref{code:mesh_generation}, with (a, c) and without (b, d) \inline{optimesh} optimization.}
-\label{fig:ring_mesh}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.55\textwidth]{examples/images/mesh.pdf}
+    \caption{Computational meshes for }
+    \label{fig:mesh}
 \end{figure}
+
+
+% \begin{figure}[!h]
+% \centering
+% \begin{subfigure}{.235\textwidth}
+%   \centering
+%   \includegraphics[width=\linewidth]{examples/images/ring/circular_ring_mesh.png}
+%   \caption{\inline{optimesh_steps=400}.}
+%   \label{fig:circular_ring_mesh}
+% \end{subfigure}%
+% \begin{subfigure}{.235\textwidth}
+%   \centering
+%   \includegraphics[width=\linewidth]{examples/images/ring/circular_ring_mesh_no_optimesh.png}
+%   \caption{\inline{optimesh_steps=None}.}
+%   \label{fig:circular_ring_mesh_no_opt}
+% \end{subfigure}%
+% \begin{subfigure}{.235\textwidth}
+%   \centering
+%   \includegraphics[width=\linewidth]{examples/images/ring/square_ring_mesh.png}
+%   \caption{\inline{optimesh_steps=400}.}
+%   \label{fig:square_ring_mesh}
+% \end{subfigure}
+% \begin{subfigure}{.235\textwidth}
+%   \centering
+%   \includegraphics[width=\linewidth]{examples/images/ring/square_ring_mesh_no_optimesh.png}
+%   \caption{\inline{optimesh_steps=None}.}
+%   \label{fig:square_ring_mesh_no_opt}
+% \end{subfigure}
+% \caption{Device geometry and mesh for a circular (a, b) and square ring (c, d) generated using Code Blocks~\ref{code:device} and \ref{code:mesh_generation}, with (a, c) and without (b, d) \inline{optimesh} optimization.}
+% \label{fig:ring_mesh}
+% \end{figure}
 
 \subsection{Solvers}
 \label{section:overview:solvers}
