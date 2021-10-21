@@ -554,9 +554,9 @@ min_triangles = 12000
 # Set optimesh_steps=None to disable optimesh optimization.
 optimesh_steps = (None, 40)
 # For more meshing options, see the docstring for Device.make_mesh().
-for opt_steps, row in zip(optimesh_steps, axes):
+for row, opt_steps in zip(axes, optimesh_steps):
     title = f"optimesh_steps = {opt_steps}"
-    for device, ax in zip((ring, square_ring), row):
+    for ax, device in zip(row, (ring, square_ring)):
         # Generate the mesh
         device.make_mesh(min_triangles=min_triangles, optimesh_steps=opt_steps)
         # Visualize the mesh
