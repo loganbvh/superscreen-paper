@@ -444,7 +444,7 @@ inside a superconducting film, which can efficiently be solved (e.g. by matrix i
     \end{cases}
 \end{equation}
 
-If there is a vortex with flux $\Phi_j$ located in a film at position $\vec{r}_j$ indexed as mesh vertex $j$, then for each position $\vec{r}_i$ within that film, we add to the stream function $g_i$ the quantity $\mu_0^{-1}\Phi_jK_{ij} / M_{jj}$, where $K_{ij}$ is an element of the inverse matrix defined above, and $M_{jj}$ is an element of the ``mass matrix'' which assigns an effective area to the mesh vertex at which the vortex is located (see \ref{appendix:laplace} for the definition of the mass matrix). This process amounts to numerically inverting Eq.~\ref{eq:applied_to_stream_vortices}.
+If there is a vortex containing flux $\Phi_j$ located in a film at position $\vec{r}_j$ indexed as mesh vertex $j$, then for each position $\vec{r}_i$ within that film, we add to the stream function $g_i$ the quantity $\mu_0^{-1}\Phi_jK_{ij} / M_{jj}$, where $K_{ij}$ is an element of the inverse matrix defined above, and $M_{jj}$ is an element of the ``mass matrix'' which assigns an effective area to the mesh vertex at which the vortex is located (see \ref{appendix:laplace} for the definition of the mass matrix). This process amounts to numerically inverting Eq.~\ref{eq:applied_to_stream_vortices} as described in Ref.~\cite{brandt_thin_2005}.
 
 Once the stream function $\mathbf{g}$ is known for the full mesh,
 the sheet current flowing in the film can be computed from Eq.~\ref{eq:stream}, the $z$-component of the total field in the plane of the film can be computed
@@ -459,7 +459,7 @@ In this section we give a high-level overview of the \SuperScreen package. Furth
 \subsection{Development Details}
 \label{section:overview:development}
 
-\SuperScreen requires Python version 3.6 - 3.9. The package is located in a public repository on GitHub~\cite{superscreen}, and a suite of unit tests is run automatically via the GitHub Actions continuous integration (CI) tool whenever a change or proposed change (Pull Request) is made to the \inline{main} branch of the repository. At the time of writing, the test suite is executed using Python versions 3.6 through 3.9, and the test coverage is $>95\%$. Any changes to the \inline{main} branch of the repository also trigger an automatic re-build of the online documentation, which is hosted by Read the Docs at \inline{superscreen.readthedocs.io}~\cite{superscreen-rtd}. Stable versions of the package are tagged on GitHub and uploaded to PyPI, the Python Package Index. The source code and documentation are covered by the MIT License.
+\SuperScreen requires Python version 3.6--3.9. The package is located in a public repository on GitHub~\cite{superscreen}, and a suite of unit tests is run automatically via the GitHub Actions continuous integration (CI) tool whenever a change or proposed change (Pull Request) is made to the \inline{main} branch of the repository. At the time of writing, the test suite is executed using Python versions 3.6 through 3.9, and the test coverage is $>95\%$. Any changes to the \inline{main} branch of the repository also trigger an automatic re-build of the online documentation, which is located at \inline{superscreen.readthedocs.io}~\cite{superscreen-rtd}. Stable versions of the package are tagged on GitHub and uploaded to PyPI, the Python Package Index. The source code and documentation are covered by the MIT License.
 
 \SuperScreen has several important dependencies beyond the Python standard library: \inline{numpy}~\cite{2020NumPy-Array} and \inline{scipy}~\cite{2020SciPy-NMeth} for numerics, \inline{pint}~\cite{Grecco} for handling physical units, \inline{matplotlib}~\cite{Hunter_2007} for visualization, \inline{meshpy}~\cite{Klockner,Shewchuk,shewchuk96b} and \inline{optimesh}~\cite{nico_schlomer_adam_dobrawy_2021} for mesh generation, \inline{dill}~\cite{McKerns} for serializing objects to disk and between processes, and \inline{ray}~\cite{ray_2018,ray-docs} for parallel processing with shared memory (see~\ref{section:parallel}).
 
@@ -477,17 +477,12 @@ def f(x, y, a=1, b=0):
     
 param = Parameter(f, a=0, b=1)
 print(param) # Parameter<f(a=0, b=1)>
-
 other_param = Parameter(f, a=2, b=3)
 print(other_param) # Parameter<f(a=2, b=3)>
-
 print(param(0, 0) == f(0, 0, a=0, b=1)) # True
 print(other_param(1, 2) == f(1, 2, a=2, b=3)) # True
-
 param_squared = param ** 2
 print(param_squared) # CompositeParameter<(f(a=0, b=1) ** 2)>
-
-print(param_squared(3, 4) == f(3, 4, a=0, b=1) ** 2) # True
 print(
     (5 * param_squared / other_param)(5, 6)
     == 5 * f(5, 6, a=0, b=1) ** 2 / f(5, 6, a=2, b=3)
@@ -535,13 +530,13 @@ def make_ring(inner_radius=2.5, outer_radius=5, Lambda=1, square=False):
 \label{code:device}
 \end{code}
 
-Once the layers, films, holes, and abstract regions have been defined, one can generate the computational mesh by calling \inline{Device.make_mesh()}. The region that is meshed is defined by the convex hull of the union of all polygons in the device. Mesh generation is a two step process. First, an initial Delaunay mesh is created using \inline{meshpy}~\cite{Klockner}, which is a Python interface to Triangle~\cite{shewchuk96b, Shewchuk}, a fast compiled 2D mesh generation tool. Second (and optionally), the mesh is further optimized using \inline{optimesh}~\cite{nico_schlomer_adam_dobrawy_2021}. The goal of the mesh optimization step is to improve the quality of each triangular element in the mesh, where quality is defined as twice the ratio of the incircle radius to the circumcircle radius (quality $\leq1$, with equality for equilateral triangles). The local density of triangles in the mesh is determined by the density of vertices in the device's polygons and the total number of triangles. Regions where there are many polygon vertices will be meshed more densely than regions with few polygon vertices. If no \inline{optimesh} optimization is done, then every polygon vertex is guaranteed to be a mesh vertex. See Code Block~\ref{code:mesh_generation} for a demonstration of \inline{Device.make_mesh()} and Figure~\ref{fig:mesh} to view the resulting meshes both with and without \inline{optimesh} optimization. After the mesh has been generated, the matrices and vectors described in Section~\ref{section:implementation} are computed and one can begin solving models.
+Once the layers, films, holes, and abstract regions have been defined, one can generate the computational mesh by calling \inline{Device.make_mesh()}. The region that is meshed is defined by the convex hull of the union of all polygons in the device. Mesh generation is a two step process. First, an initial Delaunay mesh is created using \inline{meshpy}~\cite{Klockner}, which is a Python interface to Triangle~\cite{shewchuk96b, Shewchuk}, a fast compiled 2D mesh generation tool. Second (and optionally), the mesh is further optimized using \inline{optimesh}~\cite{nico_schlomer_adam_dobrawy_2021}. The goal of the mesh optimization step is to improve the quality of each triangular element in the mesh, where quality is defined as twice the ratio of the incircle radius to the circumcircle radius (quality $\leq1$, with equality for equilateral triangles). The local density of triangles in the mesh is determined by the density of vertices in the device's polygons and the total number of triangles. Regions where there are many polygon vertices will be meshed more densely than regions with few polygon vertices. If no \inline{optimesh} optimization is done, then every polygon vertex is guaranteed to be a mesh vertex. See Code Block~\ref{code:mesh_generation} for a demonstration of \inline{Device.make_mesh()} and Figure~\ref{fig:mesh} to view the resulting meshes both with and without \inline{optimesh} optimization. After the mesh has been generated, the geometry-dependent matrices and vectors described in Section~\ref{section:implementation} are computed and one can begin solving models.
 
 \begin{code}
 \begin{minted}[fontsize=\small]{python}
 import matplotlib.pyplot as plt
 
-fig, axes = plt.subplots(2, 2, figsize=(6, 6), constrained_layout=True)
+fig, axes = plt.subplots(1, 4, figsize=(14, 5), constrained_layout=True)
 # Create the Devices
 ring = make_ring(square=False)
 square_ring = make_ring(square=True)
@@ -552,54 +547,23 @@ min_triangles = 12000
 # Set optimesh_steps=None to disable optimesh optimization.
 optimesh_steps = (None, 40)
 # For more meshing options, see the docstring for Device.make_mesh().
-for row, device in zip(axes, (ring, square_ring)):
+for row, device in zip(axes.reshape(2, 2), (ring, square_ring)):
     for ax, opt_steps in zip(row, optimesh_steps):
         # Generate and visualize the mesh
         device.make_mesh(min_triangles=min_triangles, optimesh_steps=opt_steps)
         device.plot_mesh(ax=ax, color="gray", linewidth=0.75)
         device.plot_polygons(ax=ax, linewidth=3, legend=False)
 \end{minted}
-\captionof{listing}{Generating and visualizing the computational mesh.}
+\captionof{listing}{Generating and visualizing the computational mesh. See Figure~\ref{fig:mesh} to view the resulting meshes.}
 \label{code:mesh_generation}
 \end{code}
 
-\begin{figure}[h]
+\begin{figure}
     \centering
-    \includegraphics[width=0.6\textwidth]{examples/images/mesh.pdf}
-    \caption{Computational meshes for circular (a, b) and square (c, d) rings, without (a, c) and with (b, d) \inline{optimesh} optimization, generated using Code Block~\ref{code:mesh_generation}. The bounding box (\inline{bbox}) is shown in purple, the ring's outer edge (\inline{ring}) is shown in red, and the ring's inner edge (\inline{hole}) is shown in blue. Note that optimizing the mesh does not change the total number of vertices or triangles, but tends to make the triangle size and density more uniform across the mesh. In this case, all four meshes (a-d) contain around 6,000 points and 12,000 triangles.}
+    \includegraphics[width=\textwidth]{examples/images/mesh.pdf}
+    \caption{Computational meshes for circular (a, b) and square (c, d) rings, without (a, c) and with (b, d) \inline{optimesh} optimization, generated using Code Block~\ref{code:mesh_generation}. The bounding box (\inline{bbox}) is shown in purple, the ring's outer edge (\inline{ring}) is shown in red, and the ring's inner edge (\inline{hole}) is shown in blue. Note that optimizing the mesh does not change the total number of vertices or triangles, but does tend to make the triangle size and density more uniform across the mesh. In this case, all four meshes (a-d) contain around 6,000 points and 12,000 triangles.}
     \label{fig:mesh}
 \end{figure}
-
-
-% \begin{figure}[!h]
-% \centering
-% \begin{subfigure}{.235\textwidth}
-%   \centering
-%   \includegraphics[width=\linewidth]{examples/images/ring/circular_ring_mesh.png}
-%   \caption{\inline{optimesh_steps=400}.}
-%   \label{fig:circular_ring_mesh}
-% \end{subfigure}%
-% \begin{subfigure}{.235\textwidth}
-%   \centering
-%   \includegraphics[width=\linewidth]{examples/images/ring/circular_ring_mesh_no_optimesh.png}
-%   \caption{\inline{optimesh_steps=None}.}
-%   \label{fig:circular_ring_mesh_no_opt}
-% \end{subfigure}%
-% \begin{subfigure}{.235\textwidth}
-%   \centering
-%   \includegraphics[width=\linewidth]{examples/images/ring/square_ring_mesh.png}
-%   \caption{\inline{optimesh_steps=400}.}
-%   \label{fig:square_ring_mesh}
-% \end{subfigure}
-% \begin{subfigure}{.235\textwidth}
-%   \centering
-%   \includegraphics[width=\linewidth]{examples/images/ring/square_ring_mesh_no_optimesh.png}
-%   \caption{\inline{optimesh_steps=None}.}
-%   \label{fig:square_ring_mesh_no_opt}
-% \end{subfigure}
-% \caption{Device geometry and mesh for a circular (a, b) and square ring (c, d) generated using Code Blocks~\ref{code:device} and \ref{code:mesh_generation}, with (a, c) and without (b, d) \inline{optimesh} optimization.}
-% \label{fig:ring_mesh}
-% \end{figure}
 
 \subsection{Solvers}
 \label{section:overview:solvers}
@@ -608,78 +572,46 @@ A \SuperScreen model consists of 1) a \inline{Device} with a mesh, 2) a function
 
 \begin{code}
 \begin{minted}[fontsize=\small]{python}
-# Simulate the response to a uniform applied field of 0.25 mT
-applied_field = sc.sources.ConstantField(0.25)
+import numpy as np
+
+# Simulate the response of the square ring to a uniform applied field of 0.5 mT
+applied_field = sc.sources.ConstantField(0.5)
 field_units = "mT"
-
 solutions = sc.solve(
-    device=ring,
-    applied_field=applied_field,
-    field_units=field_units,
+    device=square_ring, applied_field=applied_field, field_units=field_units
 )
-assert len(solutions) == 1 # Since there is only one layer
-uniform_field = solutions[-1]
+assert len(solutions) == 1 # Since there is only one layer in this Device
+uniform_field_solution = solutions[-1]
 
-# Simulate a current circulating around the hole in the ring.
-circulating_currents = {"hole": "1 mA"}
+# Simulate a current circulating around the hole in the ring
+# (with no applied field).
+trapped_flux_solution = sc.solve(
+    device=square_ring, circulating_currents=dict(hole="1 mA"),
+)[-1]
 
-solutions = sc.solve(
-    device=ring,
-    applied_field=None,
-    circulating_currents=circulating_currents
-)
-assert len(solutions) == 1 # Since there is only one layer
-trapped_flux = solutions[-1]
-
-for solution in (uniform_field, trapped_flux):
-    solution.plot_currents(
-        figsize=(6, 7), cross_section_ys=[0], units="mA/um",
-    )
-    solution.plot_fields(figsize=(6, 7), cross_section_ys=[0])
+# Specify a sequence of (x, y) coordinates to plot cross-sections
+# of the simulated currents and fields.
+xs = np.linspace(-5.5, 5.5, 201) # [microns]
+cross_sections = [ # Two sets of [x, y] coordinates
+    np.stack([xs, xs], axis=1), # diagonal cross-section
+    np.stack([xs, np.zeros_like(xs)], axis=1), # horizontal cross-section
+]
+for solution in (uniform_field_solution, trapped_flux_solution):
+    solution.plot_currents(cross_section_coords=cross_sections, units="mA/um")
+    solution.plot_fields(cross_section_coords=cross_sections)
 \end{minted}
-\captionof{listing}{Solves for the current and magnetic field distributions for the \inline{ring} device given a uniform applied field, and circulating current with no applied field.}
+\captionof{listing}{Solves for the current and magnetic field distributions for the \inline{square_ring} device given a uniform applied field, and circulating current with no applied field, and plots the resulting sheet current and field.}
 \label{code:ring_circulating_current}
 \end{code}
 
-Code Block~\ref{code:ring_circulating_current} solves two models involving the \inline{ring} device. First, Meissner screening of a spatially uniform applied out-of-plane magnetic field and second, the response of the ring to trapped flux with an associated circulating current of 1 mA (with no applied magnetic field). The resulting sheet current and magnetic field distributions can be visualized using the \inline{plot_current()} and \inline{plot_fields()} methods, which produce the images shown in Figure~\ref{fig:ring_plot_fields_currents}.
+Code Block~\ref{code:ring_circulating_current} solves two models involving the \inline{square_ring} device, which was generated using Code Blocks~\ref{code:device} and \ref{code:mesh_generation}. First, Meissner screening of a spatially uniform applied out-of-plane magnetic field and second, the response of the ring to trapped flux with an associated circulating current of 1 mA (with no applied magnetic field). The resulting sheet current and magnetic field distributions (calculated using the optimized mesh shown in Figure~\ref{fig:mesh}d) can be visualized using the \inline{plot_currents()} and \inline{plot_fields()} methods, which produce the images shown in Figure~\ref{fig:square-ring-results}.
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.6\textwidth]{examples/images/square_ring_results.png}
-    \caption{Sheet current $\vec{J}(x, y)$ and out-of-plane magnetic field $\mu_0H_z(x, y)$ evaluated in the plane of a square ring with effective penetration depth $\Lambda=1\,\mu\mathrm{m}$ subject to a uniform applied field of 0.5 mT (a, b) and trapped flux inducing a circulating current of 1 mA (c, d). The sub-figures show the output of \inline{Solution.plot_currents()} (a, c) and \inline{Solution.plot_fields()} (b, d). For the current plots (a, c), the color-scale indicates the magnitude of the sheet current (or current density), $|\vec{J}|$, and the direction is indicated by the white streamlines.}
+    \includegraphics[width=\textwidth]{examples/images/square_ring_results.png}
+    \caption{Sheet current $\vec{J}(x, y)$ and out-of-plane magnetic field $\mu_0H_z(x, y)$ evaluated in the plane of a square ring with effective penetration depth $\Lambda=1\,\mu\mathrm{m}$ subject to a uniform applied field of 0.5 mT (a, b) or trapped flux inducing a circulating current of 1 mA (c, d). The sub-figures show the output of \inline{Solution.plot_currents()} (a, c) and \inline{Solution.plot_fields()} (b, d), as shown in Code Block~\ref{code:ring_circulating_current}. For the current plots (a, c), the color-scale indicates the magnitude of the sheet current (or current density), $|\vec{J}|$, and the direction is indicated by the white streamlines.}
     \label{fig:square-ring-results}
 \end{figure}
-
-% \begin{figure}[!h]
-% \centering
-% \begin{subfigure}{.235\textwidth}
-%   \centering
-%   \includegraphics[width=\linewidth]{examples/images/ring/circular_ring_uniform_plot_currents.png}
-%   \caption{Uniform applied field.}
-%   \label{fig:circular_ring_plot_currents}
-% \end{subfigure}
-% \begin{subfigure}{.235\textwidth}
-%   \centering
-%   \includegraphics[width=\linewidth]{examples/images/ring/circular_ring_uniform_plot_fields.png}
-%   \caption{Uniform applied field.}
-%   \label{fig:circular_ring_plot_fields}
-% \end{subfigure}
-% \begin{subfigure}{.235\textwidth}
-%   \centering
-%   \includegraphics[width=\linewidth]{examples/images/ring/circular_ring_circ_plot_currents.png}
-%   \caption{Trapped flux.}
-%   \label{fig:square_ring_plot_currents}
-% \end{subfigure}
-% \begin{subfigure}{.235\textwidth}
-%   \centering
-%   \includegraphics[width=\linewidth]{examples/images/ring/circular_ring_circ_plot_fields.png}
-%   \caption{Trapped flux.}
-%   \label{fig:square_ring_plot_fields}
-% \end{subfigure}
-
-% \caption{Sheet current $\vec{J}$ (a, c) and magnetic field $\mu_0H_z$ (b, d) distributions for the circular ring with a uniform field of 0.25 mT applied out-of-plane (a, b) and a circulating current of 1 mA (c, d) calculated using Code Block~\ref{code:ring_circulating_current}.}
-% \label{fig:ring_plot_fields_currents}
-% \end{figure}
 
 The output of \inline{superscreen.solve()} is a \inline{list} of \inline{superscreen.Solution} objects, with a length of 1 plus the number of iterations used for the iterative portion of the calculation. A \inline{Solution} encapsulates all of the information about a solved model: the \inline{Device}, applied field, circulating currents, vortices, and calculated stream functions and magnetic fields for all layers in the device. A \inline{Solution} also has methods for processing the simulation results, including:
 \begin{itemize}
@@ -702,7 +634,7 @@ The output of \inline{superscreen.solve()} is a \inline{list} of \inline{supersc
     \inline{Solution.field_at_position()}: Calculates the vector magnetic field at any point(s) in space due the applied field and the currents flowing the in the device using Eqs.~\ref{eq:field_from_kernel} and \ref{eq:kernels}.
     }
 \end{itemize}
-\inline{Solutions} also have several visualization methods built in (see Section~\ref{section:overview:visualization}).
+\inline{Solutions} also have several visualization methods built in (see Figure~\ref{fig:square-ring-results} and Section~\ref{section:overview:visualization}).
 
 One may wish to solve many models involving the same device while varying other aspects of the model, for example sweeping the applied field, circulating currents, vortex properties, or some parameter of one or more layers in the device. Fortunately, the mesh and large matrices described in Section~\ref{section:implementation} depend only on the geometry of the device parallel to the $x-y$ plane. This means that the same mesh and matrices can be re-used for models with different applied fields, circulating currents, vortex properties, layer heights (vertical positions), and penetration depths.
 
