@@ -535,16 +535,13 @@ def make_ring(inner_radius=2.5, outer_radius=5, Lambda=1, square=False):
 \label{code:device}
 \end{code}
 
-Once the layers, films, holes, and abstract regions have been defined, one can generate the computational mesh by calling \inline{Device.make_mesh()}. The region that is meshed is defined by the convex hull of the union of all polygons in the device. Mesh generation is a two step process. First, an initial Delaunay mesh is created using \inline{meshpy}~\cite{Klockner}, which is a Python interface to Triangle~\cite{shewchuk96b, Shewchuk}, a fast compiled 2D mesh generation tool. Second (and optionally), the mesh is further optimized using \inline{optimesh}~\cite{nico_schlomer_adam_dobrawy_2021}. The goal of the mesh optimization step is to improve the quality of each triangular element in the mesh, where quality is defined as twice the ratio of the incircle radius to the circumcircle radius (quality $\leq1$, with equality for equilateral triangles). The local density of triangles in the mesh is determined by the density of vertices in the device's polygons and the total number of triangles. Regions where there are many polygon vertices will be meshed more densely than regions with few polygon vertices. If no \inline{optimesh} optimization is done, then every polygon vertex is guaranteed to be a mesh vertex.
-
-See Code Block~\ref{code:mesh_generation} for a demonstration of \inline{Device.make_mesh()} and Figure~\ref{fig:ring_mesh} to view the resulting meshes both with and without \inline{optimesh} optimization. After the mesh has been generated, the matrices and vectors described in Section~\ref{section:implementation} are computed and one can begin solving models.
+Once the layers, films, holes, and abstract regions have been defined, one can generate the computational mesh by calling \inline{Device.make_mesh()}. The region that is meshed is defined by the convex hull of the union of all polygons in the device. Mesh generation is a two step process. First, an initial Delaunay mesh is created using \inline{meshpy}~\cite{Klockner}, which is a Python interface to Triangle~\cite{shewchuk96b, Shewchuk}, a fast compiled 2D mesh generation tool. Second (and optionally), the mesh is further optimized using \inline{optimesh}~\cite{nico_schlomer_adam_dobrawy_2021}. The goal of the mesh optimization step is to improve the quality of each triangular element in the mesh, where quality is defined as twice the ratio of the incircle radius to the circumcircle radius (quality $\leq1$, with equality for equilateral triangles). The local density of triangles in the mesh is determined by the density of vertices in the device's polygons and the total number of triangles. Regions where there are many polygon vertices will be meshed more densely than regions with few polygon vertices. If no \inline{optimesh} optimization is done, then every polygon vertex is guaranteed to be a mesh vertex. See Code Block~\ref{code:mesh_generation} for a demonstration of \inline{Device.make_mesh()} and Figure~\ref{fig:mesh} to view the resulting meshes both with and without \inline{optimesh} optimization. After the mesh has been generated, the matrices and vectors described in Section~\ref{section:implementation} are computed and one can begin solving models.
 
 \begin{code}
 \begin{minted}[fontsize=\small]{python}
 import matplotlib.pyplot as plt
 
-fig, axes = plt.subplots(2, 2, figsize=(8, 8), facecolor="w", constrained_layout=True)
-axlist = list(axes.flat)
+fig, axes = plt.subplots(2, 2, figsize=(8, 8), constrained_layout=True)
 # Create the Devices
 ring = make_ring(square=False)
 square_ring = make_ring(square=True)
@@ -557,16 +554,10 @@ optimesh_steps = (None, 40)
 # For more meshing options, see the docstring for Device.make_mesh().
 for row, device in zip(axes, (ring, square_ring)):
     for ax, opt_steps in zip(row, optimesh_steps):
-        # Generate the mesh
+        # Generate and visualize the mesh
         device.make_mesh(min_triangles=min_triangles, optimesh_steps=opt_steps)
-        # Visualize the mesh
         device.plot_mesh(ax=ax, color="gray", linewidth=0.75)
         device.plot_polygons(ax=ax, linewidth=3, legend=False)
-        label = "abcd"[axlist.index(ax)]
-        title = f"{label}) optimesh_steps = {opt_steps}"
-        ax.set_title(title, fontsize=16, fontfamily="monospace")
-        ax.axis("off")
-axlist[0].legend(loc="best")
 \end{minted}
 \captionof{listing}{Generating and visualizing the computational mesh.}
 \label{code:mesh_generation}
@@ -574,8 +565,8 @@ axlist[0].legend(loc="best")
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.55\textwidth]{examples/images/mesh.pdf}
-    \caption{Computational meshes for }
+    \includegraphics[width=0.6\textwidth]{examples/images/mesh.pdf}
+    \caption{Computational meshes for circular (a, b) and square (c, d) rings, without (a, c) and with (b, d) \inline{optimesh} optimization, generated using Code Block~\ref{code:mesh_generation}. The bounding box (\inline{bbox}) is shown in purple, the ring's outer edge (\inline{ring}) is shown in red, and the ring's inner edge (\inline{hole}) is shown in blue. Note that optimizing the mesh does not change the total number of vertices or triangles, but tends to make the triangle density more uniform across the mesh. In this case, all four meshes (a-d) contain around 6,000 points and 12,000 triangles.}
     \label{fig:mesh}
 \end{figure}
 
