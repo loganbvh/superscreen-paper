@@ -18,7 +18,7 @@
 % \documentclass[final,1p,times,twocolumn]{elsarticle}
 \documentclass[final,3p,times]{elsarticle}
 % \documentclass[final,3p,times,twocolumn]{elsarticle}
-%% \documentclass[final,5p,times]{elsarticle}
+% \documentclass[final,5p,times]{elsarticle}
 % \documentclass[final,5p,times,twocolumn]{elsarticle}
 
 \usepackage{subcaption}
@@ -205,7 +205,7 @@ superconductivity\sep Meissner screening\sep thin film\sep London equations
 
 \SuperScreen is an open-source Python package developed to simulate the static magnetic response of structures composed of one or more layers containing superconducting thin films. \SuperScreen solves the coupled Maxwell's and London's equations in and around superconducting films with spatially-varying penetration depth in the presence of applied magnetic fields, pinned vortices, and trapped flux using a matrix inversion method introduced by Brandt and Clem~\cite{Brandt_Clem_2004,brandt_thin_2005} and initially implemented by Kirtley, \emph{et al.} to model the magnetic response of scanning superconducting quantum interference device (SQUID) sensors.~\cite{kirtley_scanning_2016, kirtley_response_2016}
 
-In Section~\ref{section:model} we outline Brandt's model, and in Section~\ref{section:implementation} we describe its numerical implementation. In Section~\ref{section:overview}, we provide an overview of the structure of the \SuperScreen package, highlighting notable functions, classes, and features, and discuss some important development details. Finally, in Section~\ref{section:conlusion} we conclude with potential applications, extensions, and improvements to the package.
+In Section~\ref{section:model} we outline the model, and in Section~\ref{section:implementation} we describe its numerical implementation. In Section~\ref{section:overview}, we provide an overview of the structure of the \SuperScreen package, highlighting notable functions, classes, and features, and discuss some important development details. Finally, in Section~\ref{section:conlusion} we conclude with potential applications, extensions, and improvements to the package.
 
 \section{The Model}
 \label{section:model}
@@ -558,7 +558,7 @@ for row, device in zip(axes.reshape(2, 2), (ring, square_ring)):
 \label{code:mesh_generation}
 \end{code}
 
-\begin{figure}
+\begin{figure}[h]
     \centering
     \includegraphics[width=\textwidth]{examples/images/mesh.pdf}
     \caption{Computational meshes for circular (a, b) and square (c, d) rings, without (a, c) and with (b, d) \inline{optimesh} optimization, generated using Code Block~\ref{code:mesh_generation}. The bounding box (\inline{bbox}) is shown in purple, the ring's outer edge (\inline{ring}) is shown in red, and the ring's inner edge (\inline{hole}) is shown in blue. Note that optimizing the mesh does not change the total number of vertices or triangles, but does tend to make the triangle size and density more uniform across the mesh. In this case, all four meshes (a-d) contain around 6,000 points and 12,000 triangles.}
@@ -668,7 +668,7 @@ The \inline{superscreen.solve_many()} function manages the setup and execution o
     }
 \end{itemize}
 
-See Code Block~\ref{code:ring_circulating_current} and  Figure~\ref{fig:ring_plot_fields_currents} for an example of the usage and output of \inline{plot_fields()} and \inline{plot_currents()}.
+See Code Block~\ref{code:ring_circulating_current} and  Figure~\ref{fig:square-ring-results} for an example of the usage and output of \inline{plot_fields()} and \inline{plot_currents()}.
 
 \subsection{Comparison \& Persistence}
 \label{section:overview:persistence}
@@ -809,6 +809,18 @@ $$
         W_{ij} / \sum_{i\neq j} W_{ij}&\text{otherwise.}
     \end{cases}
 $$
+
+\section{Fluxoid path independence}
+\label{appendix:fluxoid}
+
+\SuperScreen allows one to calculate the fluxoid $\Phi^f_S$ for any polygonal region $S$ whose boundary $\partial S$ lies completely within a superconducting film. As described in Section~\ref{section:model:fluxoid}, for a valid solution to Equation~\ref{eq:london} the fluxoid $\Phi^f_S$ should have the following properties:
+\begin{enumerate}
+    \item{$\Phi^f_S = \sum_{\mathrm{vortices}\,v}\Phi_v$ for any region $S$ lying completely within a superconducting film that contains a set of vortices $v$, each containing flux $\Phi_v$ (and $\Phi^f_S = 0$ if $S$ contains no vortices).}
+    \item{$\Phi^f_S = \Phi_h$ for any region $S$ that contains a hole $h$, where $\Phi_h$ is a constant (i.e. does not depend on the specific region $S$ or path $\partial S$) but need not be quantized in units of $\Phi_0$.}
+\end{enumerate}
+
+\section{Convergence of multi-layer solutions}
+\label{appendix:convergence}
 
 % \section{Scaling with number of layers}
 % \label{section:scaling-layers}
