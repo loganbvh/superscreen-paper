@@ -203,7 +203,7 @@ superconductivity\sep Meissner screening\sep thin film\sep London equations
 \section{Introduction}
 \label{section:introduction}
 
-\SuperScreen is an open-source Python package developed to simulate the static magnetic response of structures composed of one or more layers containing superconducting thin films. \SuperScreen solves the coupled Maxwell's and London's equations in and around superconducting films with spatially-varying penetration depth in the presence of applied magnetic fields, pinned vortices, and trapped flux using a matrix inversion method introduced by Brandt and Clem~\cite{Brandt_Clem_2004,brandt_thin_2005} and initially implemented by Kirtley, \emph{et al.} to model the magnetic response of scanning superconducting quantum interference device (SQUID) sensors.~\cite{kirtley_scanning_2016, kirtley_response_2016}
+\SuperScreen is an open-source Python package developed to simulate the static magnetic response of structures composed of one or more layers containing superconducting thin films. \SuperScreen solves the coupled Maxwell's and London's equations in and around superconducting films with spatially-varying penetration depth in the presence of applied magnetic fields, pinned vortices, and trapped flux using a matrix inversion method introduced by Brandt and Clem~\cite{Brandt_Clem_2004,brandt_thin_2005} and subsequently used by Kirtley, \emph{et al.} to model the magnetic response of scanning superconducting quantum interference device (SQUID) sensors.~\cite{kirtley_scanning_2016, kirtley_response_2016}
 
 In Section~\ref{section:model} we outline the model, and in Section~\ref{section:implementation} we describe its numerical implementation. In Section~\ref{section:overview}, we provide an overview of the structure of the \SuperScreen package, highlighting notable functions, classes, and features, and discuss some important development details. Finally, in Section~\ref{section:conlusion} we conclude with potential applications, extensions, and improvements to the package.
 
@@ -228,7 +228,7 @@ of the superconducting film (equal to half the Pearl length~\cite{pearl_current_
 It is important to note that the assumption $\vec{j}(x, y, z)\approx\vec{j}_{z_0}(x, y)$ is valid for only films that are thinner than their London penetration depth ($d<\lambda$, such that $\Lambda=\lambda^2/d>\lambda$). However the model has been applied with some success in structures with $\lambda\lesssim d$~\cite{kirtley_scanning_2016,kirtley_response_2016}. Aside from this limitation, the method described below can in principle to used to model films with any effective penetration depth $0\leq\Lambda<\infty$.
 
 Because the sheet current has zero divergence inside the superconducting film ($\nabla\cdot\vec{J}=0$)
-except at small contacts where current can be injected, one can express the sheet current in terms
+except at small terminals where current can be injected, one can express the sheet current in terms
 of a scalar potential $g(x, y)$, called the stream function:
 
 \begin{equation}
@@ -333,7 +333,7 @@ The fluxoid $\Phi^f_S$ for a 2D region $S$ with 1D boundary $\partial S$ is give
     \label{eq:fluxoid}
 \end{equation}
 
-The fluxoid should vanish for a region $S$ completely contained within a superconducting film that contains no holes or vortices. Similarly, the fluxoid $\Phi^f_S$ should have the same value for any region containing a given hole or collection of vortices in a superconducting film. This path-independence of the fluxoid follows from the static London equation (Eq.~\ref{eq:london}) on which the present model is based. However, because Eq.~\ref{eq:london} does not relate the supercurrent density $\vec{J}$ to the phase of a complex order parameter as in Ginzburg-Landau (GL) theory, or invoke the semi-classical Bohr-Sommerfeld quantization rule as London did~\cite{tinkham2004introduction}, within this model the fluxoid is in no way constrained to be an integer multiple of the flux quantum $\Phi_0=h/2e$.
+The fluxoid should vanish for a region $S$ completely contained within a superconducting film that contains no holes or vortices. Similarly, the fluxoid should have the same value for any region containing a given hole or collection of vortices in a superconducting film. This path-independence of the fluxoid follows from the static London equation (Eq.~\ref{eq:london}) on which the present model is based. However, because Eq.~\ref{eq:london} does not relate the supercurrent density $\vec{J}$ to the phase of a complex order parameter as in Ginzburg-Landau (GL) theory, or invoke the semi-classical Bohr-Sommerfeld quantization rule as London did~\cite{tinkham2004introduction}, within this model the fluxoid is not constrained to be an integer multiple of the flux quantum $\Phi_0=h/2e$.
 
 \subsection{Vortices}
 \label{section:model:vortices}
@@ -387,20 +387,22 @@ In order to numerically solve Eq.~\ref{eq:field_from_kernel} and Eq.~\ref{eq:app
 which together form $t$ triangles. Below we denote column vectors and matrices using bold font. $\mathbf{A}\mathbf{B}$
 denotes matrix multiplication, with $(\mathbf{A}\mathbf{B})_{ij}=\sum_{k=1}^\ell A_{ik}B_{kj}$
 ($\ell$ being the number of columns in $\mathbf{A}$ and the number of rows in $\mathbf{B}$). Column vectors are treated as matrices with $\ell$ rows and 1 column. On the other hand, we denote element-wise multiplication with a dot: $(\mathbf{A}\cdot\mathbf{B})_{ij}=A_{ij}B_{ij}$ for two matrices
-and $(\mathbf{A}\cdot\mathbf{v})_{ij}=(\mathbf{v}\cdot\mathbf{A})_{ij}=A_{ij}v_{i}$ for a matrix $\mathbf{A}$ and a column vector $\mathbf{v}$.
+and $(\mathbf{A}\cdot\mathbf{v})_{ij}=(\mathbf{v}\cdot\mathbf{A})_{ij}=A_{ij}v_{i}$ for a matrix $\mathbf{A}$ and a column vector $\mathbf{v}$. $\mathbf{A}^T$ denotes the transpose of matrix $\mathbf{A}$.
 
 The matrix version of Eq.~\ref{eq:field_from_kernel} is
 
-\begin{equation}
+\begin{align}
     \label{eq:field_from_kernel_num}
     \underbrace{\mathbf{h}_z}_\text{total field}
-    = \underbrace{\mathbf{h}_{z,\,\mathrm{applied}}}_\text{applied field}
-    + \underbrace{(\mathbf{Q}\cdot\mathbf{w})\mathbf{g}}_\text{screening field}.
-\end{equation}
+    &= \underbrace{\mathbf{h}_{z,\,\mathrm{applied}}}_\text{applied field}
+    + \underbrace{\mathbf{Q}(\mathbf{g}\cdot\mathbf{w})}_\text{screening field}\\
+    &=\mathbf{h}_{z,\,\mathrm{applied}}
+    + (\mathbf{Q}\cdot\mathbf{w}^T)\mathbf{g}\\
+    h_{z, i} &= h_{z,\,\mathrm{applied}, i} + \sum_j Q_{ij}g_jw_j
+\end{align}
 
-The kernel matrix $\mathbf{Q}$ and weight matrix $\mathbf{w}$ together play the role of the
-kernel function $Q_z(\vec{r},\vec{r}')$ for all points lying in the plane of the film. They are both $n\times n$ matrices determined solely by the geometry of the mesh.
-$\mathbf{h}_z$, $\mathbf{h}_{z,\,\mathrm{applied}}$, and $\mathbf{g}$ are all $n\times 1$ vectors, with each row representing the value of the quantity at the
+The $n\times n$ kernel matrix $\mathbf{Q}$ and $n\times 1$ weight vector $\mathbf{w}$, both of which are solely determined by the geometry of the mesh, together play the role of the
+kernel function $Q_z(\vec{r},\vec{r}')$ for all points lying in the plane of the film. $\mathbf{h}_z$, $\mathbf{h}_{z,\,\mathrm{applied}}$, and $\mathbf{g}$ are all $n\times 1$ vectors, with each row representing the value of the quantity at the
 corresponding vertex in the mesh. There are several different methods for constructing the weight matrix $\mathbf{w}$, which are discussed in~\ref{appendix:laplace}. The kernel matrix $\mathbf{Q}$ is given by
 
 \begin{equation}
@@ -410,7 +412,7 @@ corresponding vertex in the mesh. There are several different methods for constr
 \end{equation}
 where $q_{ij} = \left(4\pi|\vec{r}_i-\vec{r}_j|^3\right)^{-1}$
 (which is $\lim_{\Delta z\to 0}Q_z(\vec{r},\vec{r}')$ cf. Eq.~\ref{eq:kernels}),
-and $\delta_{ij}$ is the Kronecker delta function. The diagonal terms involving the vector $\mathbf{C}$ are meant to work around the fact that $q_{ii}$ diverge (see \cite{brandt_thin_2005} for more details), and $\mathbf{C}$ is given by
+and $\delta_{ij}$ is the Kronecker delta function. The diagonal terms involving the $n\times 1$ vector $\mathbf{C}$ are meant to work around the fact that $q_{ii}$ diverge (see Ref.~\cite{brandt_thin_2005} for more details), and $\mathbf{C}$ is given by
 
 \begin{equation}
     \label{eq:C_vector}
@@ -422,14 +424,14 @@ The matrix version of Eq.~\ref{eq:Heff_sub} is
 
 \begin{equation}
     \label{eq:Heff_sub_num}
-     \mathbf{h}_{z,\,\mathrm{applied}} - \sum_{\mathrm{holes}\, k}\mathbf{h}_{z,\,\mathrm{eff},\,k} = -(\mathbf{Q}\cdot\mathbf{w}-\mathbf{\Lambda}\cdot\mathbf{\nabla}^2)\mathbf{g},
+     \mathbf{h}_{z,\,\mathrm{applied}} - \sum_{\mathrm{holes}\, k}\mathbf{h}_{z,\,\mathrm{eff},\,k} = -(\mathbf{Q}\cdot\mathbf{w}^T-\mathbf{\Lambda}\cdot\mathbf{\nabla}^2)\mathbf{g},
 \end{equation}
 where we exclude points in the mesh lying outside of the superconducting film but keep points
 inside holes in the film. $\mathbf{\Lambda}$ is either a scalar or a vector defining the effective penetration depth at every included vertex in the mesh, and $\mathbf{\nabla}^2$
 is the Laplace operator, an $n\times n$ matrix defined such that $\mathbf{\nabla}^2\mathbf{f}$ computes the Laplacian $\nabla^2f(x,y)$ of a function $f(x,y)$ defined on the mesh  (see~\ref{appendix:laplace}).
 
 Eq.~\ref{eq:Heff_sub_num} is a matrix equation relating the applied field to the stream function
-inside a superconducting film, which can efficiently be solved (e.g. by matrix inversion or LU decomposition) for the unknown vector $\mathbf{g}$, the stream function inside the film. Since the stream function outside the film and inside holes in the film is already known, solving Eq.~\ref{eq:Heff_sub_num} gives us the stream function for the full mesh. Defining $\mathbf{K} = \left(\mathbf{Q}\cdot\mathbf{w}-\mathbf{\Lambda}\cdot\mathbf{\nabla}^2\right)^{-1}$, we have
+inside a superconducting film, which can efficiently be solved (e.g. by matrix inversion or LU decomposition) for the unknown vector $\mathbf{g}$, the stream function inside the film. Since the stream function outside the film and inside holes in the film is already known, solving Eq.~\ref{eq:Heff_sub_num} gives us the stream function for the full mesh. Defining $\mathbf{K} = \left(\mathbf{Q}\cdot\mathbf{w}^T-\mathbf{\Lambda}\cdot\mathbf{\nabla}^2\right)^{-1}$, we have
 
 \begin{equation}
     \label{eq:full_stream}
@@ -444,7 +446,7 @@ inside a superconducting film, which can efficiently be solved (e.g. by matrix i
     \end{cases}
 \end{equation}
 
-If there is a vortex containing flux $\Phi_j$ located in a film at position $\vec{r}_j$ indexed as mesh vertex $j$, then for each position $\vec{r}_i$ within that film, we add to the stream function $g_i$ the quantity $\mu_0^{-1}\Phi_jK_{ij} / M_{jj}$, where $K_{ij}$ is an element of the inverse matrix defined above, and $M_{jj}$ is an element of the ``mass matrix'' which assigns an effective area to the mesh vertex at which the vortex is located (see \ref{appendix:laplace} for the definition of the mass matrix). This process amounts to numerically inverting Eq.~\ref{eq:applied_to_stream_vortices} as described in Ref.~\cite{brandt_thin_2005}.
+If there is a vortex containing flux $\Phi_j$ located in a film at position $\vec{r}_j$ indexed as mesh vertex $j$, then for each position $\vec{r}_i$ within that film, we add to the stream function $g_i$ the quantity $\mu_0^{-1}\Phi_jK_{ij} / w_{j}$, where $K_{ij}$ is an element of the inverse matrix defined above, and $w_{j}$ is an element of the weight matrix which assigns an effective area to the mesh vertex at which the vortex is located (see \ref{appendix:laplace} for the definition of the mass matrix). This process amounts to numerically inverting Eq.~\ref{eq:applied_to_stream_vortices} as described in Ref.~\cite{brandt_thin_2005}.
 
 Once the stream function $\mathbf{g}$ is known for the full mesh,
 the sheet current flowing in the film can be computed from Eq.~\ref{eq:stream}, the $z$-component of the total field in the plane of the film can be computed
@@ -578,7 +580,7 @@ import numpy as np
 applied_field = sc.sources.ConstantField(0.5)
 field_units = "mT"
 solutions = sc.solve(
-    device=square_ring, applied_field=applied_field, field_units=field_units
+    device=square_ring, applied_field=applied_field, field_units=field_units,
 )
 assert len(solutions) == 1 # Since there is only one layer in this Device
 uniform_field_solution = solutions[-1]
@@ -586,7 +588,7 @@ uniform_field_solution = solutions[-1]
 # Simulate a current circulating around the hole in the ring
 # (with no applied field).
 trapped_flux_solution = sc.solve(
-    device=square_ring, circulating_currents=dict(hole="1 mA"),
+    device=square_ring, applied_field=None, circulating_currents=dict(hole="1 mA"),
 )[-1]
 
 # Specify a sequence of (x, y) coordinates to plot cross-sections
@@ -675,13 +677,13 @@ See Code Block~\ref{code:ring_circulating_current} and  Figure~\ref{fig:square-r
 
 \inline{Parameters}, \inline{Layers}, \inline{Polygons}, \inline{Devices}, and \inline{Solutions} all implement the equality operator, \inline{==}. Two \inline{Parameters} are considered equal if the Python bytecode of their underlying functions is the same and their keyword arguments are the same. Two \inline{Layers} are equal if their name, penetration depth, thickness, and vertical position are all equal. Two \inline{Polygons} are equal if they are in the same layer and their name and polygon vertices are equal. Two \inline{Devices} are equal if their name, layers, films, holes, and abstract regions are all equal. Two \inline{Solutions} are equal if their device, applied field, circulating currents, list of trapped vortices, timestamp (time at which the solution was created), and all stream function and magnetic field arrays are equal. Two \inline{Solutions} created at different times can also be compared using the  \inline{solution.equals()} method.
 
-Instances of \inline{superscreen.Device} and \inline{superscreen.Solution} can be saved to and loaded from disk using their respective \inline{to_file()} and \inline{from_file()} methods, making it straightforward to share models and simulation results. \inline{Layers}, \inline{Polygons}, and all metadata are serialized to JSON, a widely-used, human-readable plain text format~\cite{JSON}. Functions and \inline{Parameters}, such as those that compute the applied field or penetration depth, are serialized in binary form using \inline{dill}~\cite{McKerns}. \inline{Numpy} arrays, such as the mesh itself and the computed stream functions and fields, are saved in the well-established \inline{numpy} \inline{npz} file format. A \inline{list} of \inline{Solutions}, such as that returned by \inline{superscreen.solve()} can be saved/loaded all at once using \inline{save_solutions()} and \inline{load_solutions()}.
+Instances of \inline{superscreen.Device} and \inline{superscreen.Solution} can be saved to and loaded from disk using their respective \inline{to_file()} and \inline{from_file()} methods, making it straightforward to share models and simulation results. \inline{Layers}, \inline{Polygons}, and all metadata are serialized to JSON, a widely-used, human-readable plain text format~\cite{JSON}. Functions and \inline{Parameters}, such as those that compute the applied field or penetration depth, are serialized in binary form using \inline{dill}~\cite{McKerns}. \inline{Numpy} arrays, such as the mesh itself and the computed stream functions and fields, are saved in the \inline{numpy} \inline{npz} file format. A \inline{list} of \inline{Solutions}, such as that returned by \inline{superscreen.solve()} can be saved/loaded all at once using \inline{save_solutions()} and \inline{load_solutions()}.
 
-\section{Example application: Scanning SQUID magnetometry}
-\label{section:application}
-In scanning superconducting quantum interference device (SQUID) susceptometry, the diamagnetic susceptibility of a superconducting sample is measured by bringing the sample close to a pair of superconducting loops. The first loop, called the ``pickup loop" is attached to a SQUID circuit that sensitively measures the magnetic flux threading the loop. The second loop, called the ``field coil," carries a known current and applies a known magnetic field to both the pickup loop and the sample. The superconducting sample screens the magnetic field from the field coil, modifying the amount of flux threading the pickup loop. Thus the mutual inductance between the field coil and pickup loop provides a measure of the sample's diamagnetic susceptibility, which is in turn a measure of the sample's penetration depth.
+% \section{Example application: Scanning SQUID magnetometry}
+% \label{section:application}
+% In scanning superconducting quantum interference device (SQUID) susceptometry, the diamagnetic susceptibility of a superconducting sample is measured by bringing the sample close to a pair of superconducting loops. The first loop, called the ``pickup loop" is attached to a SQUID circuit that sensitively measures the magnetic flux threading the loop. The second loop, called the ``field coil," carries a known current and applies a known magnetic field to both the pickup loop and the sample. The superconducting sample screens the magnetic field from the field coil, modifying the amount of flux threading the pickup loop. Thus the mutual inductance between the field coil and pickup loop provides a measure of the sample's diamagnetic susceptibility, which is in turn a measure of the sample's penetration depth.
 
-Analysis developed to interpret the results of scanning SQUID susceptometry measurements makes several simplifying assumptions that are not always satisfied: 1) the sample's effective penetration depth $\Lambda$ (or Pearl length $2\Lambda$) is spatially homogeneous, 2) the sample is much larger than the field coil, and 3) the field coil and pickup loop can be approximated as one-dimensional coaxial, coplanar circular loops~\cite{Kirtley_Kalisky_2012}.
+% Analysis developed to interpret the results of scanning SQUID susceptometry measurements makes several simplifying assumptions that are not always satisfied: 1) the sample's effective penetration depth $\Lambda$ (or Pearl length $2\Lambda$) is spatially homogeneous, 2) the sample is much larger than the field coil, and 3) the field coil and pickup loop can be approximated as one-dimensional coaxial, coplanar circular loops~\cite{Kirtley_Kalisky_2012}.
 
 % \begin{figure}[!h]
 % \centering
@@ -703,7 +705,7 @@ Analysis developed to interpret the results of scanning SQUID susceptometry meas
 % \label{fig:susceptometry}
 % \end{figure}
 
-Figure~\ref{fig:susceptometry}(a) shows a \inline{Device} representing field coil and pickup loop of an actual scanning SQUID sensor. In addition to the field coil and pickup loop, there are superconducting shields that limit the amount of magnetic flux that can penetrate the leads connecting the loops to the rest of the circuit (the rest of the circuit is not modeled). There are three relevant layers of superconducting films: the base electrode (``BE"), which is furthest from the sample contains the field coil; the first wiring layer (``W1"), which contains the pickup loop and a shield covering the field coil leads; and the second wiring layer (``W2"), which is closest to the sample and contains a shield covering the pickup loop leads. The device also contains a layer and film representing the superconducting sample.
+% Figure~\ref{fig:susceptometry}(a) shows a \inline{Device} representing field coil and pickup loop of an actual scanning SQUID sensor. In addition to the field coil and pickup loop, there are superconducting shields that limit the amount of magnetic flux that can penetrate the leads connecting the loops to the rest of the circuit (the rest of the circuit is not modeled). There are three relevant layers of superconducting films: the base electrode (``BE"), which is furthest from the sample contains the field coil; the first wiring layer (``W1"), which contains the pickup loop and a shield covering the field coil leads; and the second wiring layer (``W2"), which is closest to the sample and contains a shield covering the pickup loop leads. The device also contains a layer and film representing the superconducting sample.
 
 % To model a SQUID susceptometry measurement, we first calculate $M_0$, the mutual inductance between the field coil and pickup loop in the absence of the sample. This can be done by temporarily setting the sample layer effective penetration depth to a very large value such that it essentially does not screen the field from the field coil (in this case, we set $\Lambda = 10^5\,\mu\mathrm{m}$). We then model the field from a known current flowing in the field coil following Section~\ref{section:model:holes} and self-consistently calculate the response of both the sample and the other superconducting layers of the SQUID sensor following Section~\ref{section:model:multilayer}. To ensure that the 2D current distribution in the field coil is approximately uniform (as we would expect for a real applied current), we set the field coil layer effective penetration depth to be greater than the width of the field coil conductor.
 
@@ -735,14 +737,41 @@ Figure~\ref{fig:susceptometry}(a) shows a \inline{Device} representing field coi
 % % % \label{fig:susceptometry}
 % % \end{figure}
 
+\section{Examples}
+\label{section:examples}
+
+\subsection{Calculating the fluxoid}
+\label{section:examples:fluxoid}
+
+\SuperScreen allows one to calculate the fluxoid $\Phi^f_S$ for any polygonal region $S$ whose boundary $\partial S$ lies completely within a superconducting film (see Section~\ref{section:model:fluxoid}). This calculation is implemented as follows: The ``flux part''  is calculated using \inline{Solution.polygon_flux()}, which computes the flux through a polygon representing a region $S$ by averaging the field at the three vertices of each triangle $t$ that lies in $S$ to estimate the field $\mu_0H_{z, t}$ at the center of the triangle, then returns the flux $\sum_t \mu_0H_{z,t}A_t$, where $A_t$ is the area of triangle $t$. The ``supercurrent part'' is calculated by evaluating the vector current density $\vec{J}$ at each point in the path $\partial S$ using \inline{Solution.interp_current_density()}, then computing the integral $\oint_S\mu_o\Lambda(\vec{r})\vec{J}(\vec{r})\cdot\mathrm{d}\vec{r}$ using the trapezoid rule. The sum of these two terms gives the fluxoid $\Phi^f_S$.
+
+As described in Section~\ref{section:model:fluxoid}, for a valid solution to the static 2D London equation as formulated in Equation~\ref{eq:london}, the fluxoid $\Phi^f_S$ should have the following properties:
+\begin{enumerate}
+    \item{$\Phi^f_S = \sum_{\mathrm{vortices}\,v}\Phi_v$ for any region $S$ lying completely within a superconducting film that contains a set of vortices $v$, each containing flux $\Phi_v$ (and $\Phi^f_S = 0$ if $S$ contains no vortices).}
+    \item{$\Phi^f_S = \Phi_h$ for any region $S$ that contains a hole $h$, where $\Phi_h$ is a constant (i.e. does not depend on the specific region $S$ or path $\partial S$) but need not be quantized in units of $\Phi_0$.}
+\end{enumerate}
+
+A demonstration of these properties for the case of the square ring with effective penetration depth $\Lambda=1\,\mu\mathrm{m}$, inner side length $5\,\mu\mathrm{m}$, and outer side length $10\,\mu\mathrm{m}$ subject to a uniform applied field of 0.1 mT is shown in Figure~\ref{fig:fluxoid}. See the figure caption for a detailed explanation of the results.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{examples/images/fluxoid_combined.png}
+    \caption{Demonstration of the fluxoid properties listed in \ref{section:examples:fluxoid} for a square ring with $\Lambda=1\,\mu\mathrm{m}$, inner side length $5\,\mu\mathrm{m}$, and outer side length $10\,\mu\mathrm{m}$ (whose outline is shown with white lines in the left and middle columns) subject to a uniform applied field of 0.1 mT. The left and middle columns show the computed current density and out-of-plane-field, overlaid with several regions $S$ for which the fluxoid $\Phi^f_S$ (calculating using \inline{Solution.polygon_fluxoid()}) is shown in the right column. The colors of the paths in the left and middle columns correspond to the colors of the bars in the right column. Top row (a - c): The fluxoid $\Phi^f_S$ vanishes for all simply-connected regions containing no vortices. The errors in (c) are given by $|\Phi^f_S / \Phi^f_{S,\,\text{(flux part)}}|$. Middle row (d - f): For simply-connected regions containing a set of vortices $v$, each carrying flux $\Phi_v$, the fluxoid is given by $\sum_v\Phi_v$. In this case, the body of the square ring contains both ``positive'' ($\Phi_v=\Phi_0$, counter-clockwise circulating current) and ``negative'' ($\Phi_v=-\Phi_0$, clockwise circulating current) vortices, which appear in (e) as yellow and blue dots respectively. The expected value for the fluxoid for each region $S$ given in units of $\Phi_0$ by (number of yellow vortices lying inside $S$) - (number of blue vortices lying inside $S$), and the errors in (f) are reported relative to this expected value. Bottom row (g - i): The fluxoid is approximately equal for all regions $S$ containing a given hole, shown here for both circular ($S = 0, 1, 2$) and square ($S=3, 4, 5, 6$) regions.}
+    \label{fig:fluxoid}
+\end{figure}
+
+\subsection{Calculating mutual inductance}
+\label{section:examples:mutual-inductance}
+
+
 \section{Conclusion}
 \label{section:conlusion}
 
 The ability to model and visualize screening effects in inhomogeneous 2D superconductors and devices constructed from superconducting thin films can help to build intuition about these systems, aid in interpretation of measurement results, and enable optimization of measurement and device design. \SuperScreen is an open-source, user-friendly, portable, and efficient tool that solves this problem. Applications of the package include calculating self- and mutual-inductance in mesoscopic superconducting circuits, and modeling the magnetic interaction between inhomogeneous superconducting samples and superconducting sensors such as scanning SQUID susceptometers~\cite{kirtley_scanning_2016}.
 
-There are three important limitations to the applicability of \SuperScreen and the matrix inversion method on which it is based~\cite{Brandt_Clem_2004,brandt_thin_2005}. First, strictly speaking all superconducting films should be in the 2D limit, with London penetration depth $\lambda$ less than film thickness $d$, such that the out-of-plane current density is approximately constant. There are cases where the model reproduces experimental results despite violation of this condition (e.g. the calculations in Section~\ref{section:application} and in~\cite{kirtley_scanning_2016,kirtley_response_2016}), but care must be taking in interpreting results in these cases. Second, as a London model, Brandt and Clem's method assumes that all superconducting films behave linearly and without dissipation, and that the applied magnetic field and current density are below the film's critical field and critical current density. Third, while currents associated with vortices and flux trapped in holes can be modeled, \SuperScreen does not enforce fluxoid quantization or treat the energetics of vortex nucleation in films or fluxoid transitions in multiply-connected films. For further discussion of these topics in the context of the present model, see Refs.~\cite{Brandt_Clem_2004, Clem_Brandt_2005}. Finally, care should be taken to ensure that for a given model the mesh is of sufficient density and quality that, to within the desired precision, the results of simulations do not depend on mesh size.
+There are three important limitations to the applicability of \SuperScreen and the matrix inversion method on which it is based~\cite{Brandt_Clem_2004,brandt_thin_2005}. First, strictly speaking all superconducting films should be in the 2D limit, with London penetration depth $\lambda$ less than film thickness $d$, such that the out-of-plane current density is approximately constant. There are cases where the model reproduces experimental results despite violation of this condition (e.g. the calculations and in Refs.~\cite{kirtley_scanning_2016,kirtley_response_2016}), but care must be taking in interpreting results in these cases. Second, as a London model, Brandt and Clem's method assumes that all superconducting films behave linearly and without dissipation, and that the applied magnetic field and current density are well below the critical field and critical current density of all films in a device. Third, while currents associated with vortices and flux trapped in holes can be modeled, \SuperScreen does not enforce fluxoid quantization or treat the energetics of vortex nucleation in films or fluxoid transitions in multiply-connected films. For further discussion of these topics in the context of the present model, see Refs.~\cite{Brandt_Clem_2004, Clem_Brandt_2005}. Finally, care should be taken to ensure that for a given model the mesh is of sufficient density and quality that, to within the desired precision, the results of simulations do not depend on mesh size.
 
-Potential improvements to \SuperScreen include: more complete treatment of multiply-connected superconductors~\cite{Clem_Brandt_2005}, more sophisticated mesh generation (e.g. automated local mesh refinement based on device geometry), automated determination of solution convergence for models with multiple layers, an improved interface for generating complex device geometries (for example using 2D constructive solid geometry, CSG), and further optimization for memory and CPU efficiency (especially in the context of parallel processing).
+Potential improvements to \SuperScreen include: more complete treatment of multiply-connected superconductors~\cite{Clem_Brandt_2005}, more sophisticated mesh generation (e.g. automated local mesh refinement based on device geometry), automated determination of solution convergence for models with multiple layers, an improved interface for generating complex device geometries (for example using 2D constructive solid geometry), and further optimization for memory and CPU efficiency (especially in the context of parallel processing).
 
 %% The Appendices part is started with the command \appendix;
 %% appendix sections are then done as normal sections
@@ -810,21 +839,25 @@ $$
     \end{cases}
 $$
 
-\section{Fluxoid path independence}
-\label{appendix:fluxoid}
+% \section{Fluxoid calculation}
+% \label{appendix:fluxoid}
 
-\SuperScreen allows one to calculate the fluxoid $\Phi^f_S$ for any polygonal region $S$ whose boundary $\partial S$ lies completely within a superconducting film. As described in Section~\ref{section:model:fluxoid}, for a valid solution to Equation~\ref{eq:london} the fluxoid $\Phi^f_S$ should have the following properties:
-\begin{enumerate}
-    \item{$\Phi^f_S = \sum_{\mathrm{vortices}\,v}\Phi_v$ for any region $S$ lying completely within a superconducting film that contains a set of vortices $v$, each containing flux $\Phi_v$ (and $\Phi^f_S = 0$ if $S$ contains no vortices).}
-    \item{$\Phi^f_S = \Phi_h$ for any region $S$ that contains a hole $h$, where $\Phi_h$ is a constant (i.e. does not depend on the specific region $S$ or path $\partial S$) but need not be quantized in units of $\Phi_0$.}
-\end{enumerate}
+% \SuperScreen allows one to calculate the fluxoid $\Phi^f_S$ for any polygonal region $S$ whose boundary $\partial S$ lies completely within a superconducting film (see Section~\ref{section:model:fluxoid}). This calculation is implemented as follows: The ``flux part''  is calculated using \inline{Solution.polygon_flux()}, which computes the flux through a polygon representing a region $S$ by averaging the field at the three vertices of each triangle $t$ that lies in $S$ to estimate the field $\mu_0H_{z, t}$ at the center of the triangle, then returns the flux $\sum_t \mu_0H_{z,t}A_t$, where $A_t$ is the area of triangle $t$. The ``supercurrent part'' is calculated by evaluating the vector current density $\vec{J}$ at each point in the path $\partial S$ using \inline{Solution.interp_current_density()}, then computing the integral $\oint_S\mu_o\Lambda(\vec{r})\vec{J}(\vec{r})\cdot\mathrm{d}\vec{r}$ using the trapezoid rule. The sum of these two terms gives the fluxoid $\Phi^f_S$.
 
-\begin{figure}
-    \centering
-    \includegraphics[width=\textwidth]{examples/images/fluxoid_combined.png}
-    \caption{Caption}
-    \label{fig:fluxoid}
-\end{figure}
+% As described in Section~\ref{section:model:fluxoid}, for a valid solution to the static 2D London equation as formulated in Equation~\ref{eq:london}, the fluxoid $\Phi^f_S$ should have the following properties:
+% \begin{enumerate}
+%     \item{$\Phi^f_S = \sum_{\mathrm{vortices}\,v}\Phi_v$ for any region $S$ lying completely within a superconducting film that contains a set of vortices $v$, each containing flux $\Phi_v$ (and $\Phi^f_S = 0$ if $S$ contains no vortices).}
+%     \item{$\Phi^f_S = \Phi_h$ for any region $S$ that contains a hole $h$, where $\Phi_h$ is a constant (i.e. does not depend on the specific region $S$ or path $\partial S$) but need not be quantized in units of $\Phi_0$.}
+% \end{enumerate}
+
+% A demonstration of these properties for the case of the square ring with effective penetration depth $\Lambda=1\,\mu\mathrm{m}$, inner side length $5\,\mu\mathrm{m}$, and outer side length $10\,\mu\mathrm{m}$ subject to a uniform applied field of 0.1 mT is shown in Figure~\ref{fig:fluxoid}. See the figure caption for a detailed explanation of the results.
+
+% \begin{figure}[h]
+%     \centering
+%     \includegraphics[width=\textwidth]{examples/images/fluxoid_combined.png}
+%     \caption{Demonstration of the fluxoid properties listed in \ref{appendix:fluxoid} for a square ring with $\Lambda=1\,\mu\mathrm{m}$, inner side length $5\,\mu\mathrm{m}$, and outer side length $10\,\mu\mathrm{m}$ (whose outline is shown with white lines in the left and middle columns) subject to a uniform applied field of 0.1 mT. The left and middle columns show the computed current density and out-of-plane-field, overlaid with several regions $S$ for which the fluxoid $\Phi^f_S$ (calculating using \inline{Solution.polygon_fluxoid()}) is shown in the right column. The colors of the paths in the left and middle columns correspond to the colors of the bars in the right column. Top row (a - c): The fluxoid $\Phi^f_S$ vanishes for all simply-connected regions containing no vortices. The errors in (c) are given by $|\Phi^f_S / \Phi^f_{S,\,\text{(flux part)}}|$. Middle row (d - f): For simply-connected regions containing a set of vortices $v$, each carrying flux $\Phi_v$, the fluxoid is given by $\sum_v\Phi_v$. In this case, the body of the square ring contains both ``positive'' ($\Phi_v=\Phi_0$, counter-clockwise circulating current) and ``negative'' ($\Phi_v=-\Phi_0$, clockwise circulating current) vortices, which appear in (e) as yellow and blue dots respectively. The expected value for the fluxoid for each region $S$ given in units of $\Phi_0$ by (number of yellow vortices lying inside $S$) - (number of blue vortices lying inside $S$), and the errors in (f) are reported relative to this expected value. Bottom row (g - i): The fluxoid is approximately equal for all regions $S$ containing a given hole, shown here for both circular ($S = 0, 1, 2$) and square ($S=3, 4, 5, 6$) regions.}
+%     \label{fig:fluxoid}
+% \end{figure}
 
 \section{Convergence of multi-layer solutions}
 \label{appendix:convergence}
