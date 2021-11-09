@@ -37,6 +37,9 @@
 
 \newenvironment{code}{\captionsetup{type=listing}}{\hfill}
 \SetupFloatingEnvironment{listing}{name=Code Block}
+\BeforeBeginEnvironment{code}{\begin{minipage}{\textwidth}}
+\AfterEndEnvironment{code}{\end{minipage}}
+\captionsetup[listing]{skip=0pt}
 
 %% if you use PostScript figures in your article
 %% use the graphics package for simple commands
@@ -475,6 +478,8 @@ In this section we give a high-level overview of the \SuperScreen package. Furth
 A \inline{superscreen.Parameter} is a wrapper around a Python function that computes a scalar value as a function of position coordinates ($x$, $y$, and optionally $z$) based on some set of keyword arguments. Addition, subtraction, multiplication, division, and exponentiation between \inline{Parameters}, other \inline{Parameters}, and Python scalars (\inline{int} and \inline{float}) are supported (see Code Block~\ref{code:parameters}). \inline{Parameters} can be used to conveniently define applied magnetic fields and penetration depths that depend on position, and make it possible to serialize wrapped Python functions for storage to disk or inter-process communication.
 
 \begin{code}
+\captionof{listing}{The basic usage of \inline{superscreen.Parameters}.}
+\label{code:parameters}
 \begin{minted}[fontsize=\small]{python}
 from superscreen import Parameter
 
@@ -494,8 +499,6 @@ print(
     == 5 * f(5, 6, a=0, b=1) ** 2 / f(5, 6, a=2, b=3)
 ) # True
 \end{minted}
-\captionof{listing}{The basic usage of \inline{superscreen.Parameters}.}
-\label{code:parameters}
 \end{code}
 
 \subsection{Devices}
@@ -506,6 +509,8 @@ Information about the geometry and penetration depth of a superconducting struct
 Each layer can contain one or more superconducting films which may have one or more holes in them. Films and holes are represented by instances of the \inline{superscreen.Polygon} class. A \inline{Polygon} contains the name of the layer to which is belongs, an array specifying the coordinates of its vertices, and a method, \inline{Polygon.contains_points()}, which determines whether specified coordinates lie within the polygon or not. In addition to superconducting films and holes, one may define ``abstract regions,'' which are polygons that need not correspond to a physical feature in the structure, but will still be meshed. Abstract regions can be used to define a ``bounding box" around a structure. The \inline{superscreen.geometry} module provides functions for generating the underlying polygon vertices for simple geometries (ellipses and rectangles). See Code Block~\ref{code:device} for an example of a function that creates a square or circular superconducting ring centered at the origin, with an effective penetration depth $\Lambda = 1\,\mu\mathrm{m}$.
 
 \begin{code}
+\captionof{listing}{A function that creates a \inline{Device} representing a circular or square ring centered at the origin.}
+\label{code:device}
 \begin{minted}[fontsize=\small]{python}
 import superscreen as sc
 import superscreen.geometry as geo
@@ -540,13 +545,13 @@ def make_ring(
         length_units="um",
     )
 \end{minted}
-\captionof{listing}{A function that creates a \inline{Device} representing a circular or square ring centered at the origin.}
-\label{code:device}
 \end{code}
 
 Once the layers, films, holes, and abstract regions have been defined, one can generate the computational mesh by calling \inline{Device.make_mesh()}. The region that is meshed is defined by the convex hull of the union of all polygons in the device. Mesh generation is a two step process. First, an initial Delaunay mesh is created using \inline{meshpy}~\cite{Klockner}, which is a Python interface to Triangle~\cite{Shewchuk1996-va, Shewchuk}, a fast compiled 2D mesh generation tool. Second (and optionally), the mesh is further optimized using \inline{optimesh}~\cite{Schlomer2021-ua}. The goal of the mesh optimization step is to improve the quality of each triangular element in the mesh, where quality is defined as twice the ratio of the incircle radius to the circumcircle radius (quality $\leq1$, with equality for equilateral triangles). The local density of triangles in the mesh is determined by the density of vertices in the device's polygons and the total number of triangles. Regions where there are many polygon vertices will be meshed more densely than regions with few polygon vertices. If no \inline{optimesh} optimization is done, then every polygon vertex is guaranteed to be a mesh vertex. See Code Block~\ref{code:mesh_generation} for a demonstration of \inline{Device.make_mesh()} and Figure~\ref{fig:mesh} to view the resulting meshes both with and without \inline{optimesh} optimization. After the mesh has been generated, the geometry-dependent matrices and vectors described in Section~\ref{section:implementation} are computed and one can begin solving models.
 
 \begin{code}
+\captionof{listing}{Generating and visualizing the computational mesh. See Figure~\ref{fig:mesh} to view the resulting meshes.}
+\label{code:mesh_generation}
 \begin{minted}[fontsize=\small]{python}
 import matplotlib.pyplot as plt
 
@@ -568,8 +573,6 @@ for row, device in zip(axes.reshape(2, 2), (ring, square_ring)):
         device.plot_mesh(ax=ax, color="gray", linewidth=0.75)
         device.plot_polygons(ax=ax, linewidth=3, legend=False)
 \end{minted}
-\captionof{listing}{Generating and visualizing the computational mesh. See Figure~\ref{fig:mesh} to view the resulting meshes.}
-\label{code:mesh_generation}
 \end{code}
 
 \begin{figure}[h]
@@ -585,6 +588,8 @@ for row, device in zip(axes.reshape(2, 2), (ring, square_ring)):
 A \SuperScreen model consists of 1) a \inline{Device} with a mesh, 2) a function or \inline{Parameter} that defines the applied magnetic field as a function of position $H_{z,\,\mathrm{applied}}(x, y, z)$, 3) a value for the current circulating around each hole in the device due to trapped flux, and 4) a collection of vortices $v$ located at positions $\vec{r}_v$ and carrying flux $\Phi_v$. These items serve as the inputs to \SuperScreen's main solver function, \inline{superscreen.solve()}, which implements the calculation outlined in Section~\ref{section:implementation}. When simulating a device with more than one layer, one can specify the number of times to implement the iterative calculation described in Section~\ref{section:model:multilayer} in order to solve for the response of all layers self-consistently. One can also skip the iterative portion of the calculation entirely and only solve for the response of each layer to the applied field, assuming no interaction between layers.
 
 % \begin{code}
+% \captionof{listing}{Solves for the current and magnetic field distributions for the \inline{square_ring} device given a uniform applied field, and circulating current with no applied field, and plots the resulting sheet current and field.}
+% \label{code:ring_circulating_current}
 % \begin{minted}[fontsize=\small]{python}
 % import numpy as np
 
@@ -614,8 +619,6 @@ A \SuperScreen model consists of 1) a \inline{Device} with a mesh, 2) a function
 %     solution.plot_currents(cross_section_coords=cross_sections, units="mA/um")
 %     solution.plot_fields(cross_section_coords=cross_sections)
 % \end{minted}
-% \captionof{listing}{Solves for the current and magnetic field distributions for the \inline{square_ring} device given a uniform applied field, and circulating current with no applied field, and plots the resulting sheet current and field.}
-% \label{code:ring_circulating_current}
 % \end{code}
 
 % Code Block~\ref{code:ring_circulating_current} solves two models involving the \inline{square_ring} device, which was generated using Code Blocks~\ref{code:device} and \ref{code:mesh_generation}. First, Meissner screening of a spatially uniform applied out-of-plane magnetic field and second, the response of the ring to trapped flux with an associated circulating current of 1 mA (with no applied magnetic field). The resulting sheet current and magnetic field distributions (calculated using the optimized mesh shown in Figure~\ref{fig:mesh}d) can be visualized using the \inline{plot_currents()} and \inline{plot_fields()} methods, which produce the images shown in Figure~\ref{fig:square-ring-results}.
@@ -648,7 +651,7 @@ The output of \inline{superscreen.solve()} is a \inline{list} of \inline{supersc
     \inline{Solution.field_at_position()}: Calculates the vector magnetic field at any point(s) in space due the applied field and the currents flowing the in the device using Eqs.~\ref{eq:field_from_kernel} and \ref{eq:kernels}.
     }
 \end{itemize}
-\inline{Solutions} also have several visualization methods built in (see Figure~\ref{fig:square-ring-results} and Section~\ref{section:overview:visualization}).
+\inline{Solutions} also have several visualization methods built in (see Section~\ref{section:overview:visualization}).
 
 One may wish to solve many models involving the same device while varying other aspects of the model, for example sweeping the applied field, circulating currents, vortex properties, or some parameter of one or more layers in the device. Fortunately, the mesh and large matrices described in Section~\ref{section:implementation} depend only on the geometry of the device parallel to the $x-y$ plane. This means that the same mesh and matrices can be re-used for models with different applied fields, circulating currents, vortex properties, layer heights (vertical positions), and penetration depths.
 
@@ -682,7 +685,7 @@ The \inline{superscreen.solve_many()} function manages the setup and execution o
     }
 \end{itemize}
 
-See Code Block~\ref{code:ring_circulating_current} and  Figure~\ref{fig:square-ring-results} for an example of the usage and output of \inline{plot_fields()} and \inline{plot_currents()}.
+% See Code Block~\ref{code:ring_circulating_current} and  Figure~\ref{fig:square-ring-results} for an example of the usage and output of \inline{plot_fields()} and \inline{plot_currents()}.
 
 \subsection{Comparison \& Persistence}
 \label{section:overview:persistence}
@@ -762,7 +765,11 @@ Vortices trapped in 2D superconductors ($d\ll\lambda$, where $d$ is the film thi
 \end{equation}
 where $\mathcal{F}\{\cdot\}$ is the 2D Fourier transform, $\vec{k}=(k_x, k_y)$ are in-plane spatial frequencies, $z$ is the out-of-plane position at which the field is evaluated, and $2\Lambda = 2\lambda^2 / d$ is the Pearl length~\cite{Pearl1964-cl, Tafuri2004-ap}. The real-space magnetic field distribution near a Pearl vortex can be calculated numerically by taking the inverse Fourier transform of Equation~\ref{eq:pearl}: $H_z(\vec{r}, z)=\mathcal{F}^{-1}\{\tilde{H}_z(\vec{k}, z)\}$. The field distributions generated by \SuperScreen in the presence of vortices as described in Sections~\ref{section:model:vortices} and~\ref{section:implementation} agree to within a few percent with the distributions obtained using this Fourier transform method, as demonstrated in Code Block~\ref{code:pearl-vortex} and Figure~\ref{fig:pearl}(c-e).
 
+To include vortices in a \SuperScreen model, one can simply input a \inline{list} of \inline{superscreen.Vortex} objects when calling \inline{superscreen.solve()} (see Code Block~\ref{code:pearl-vortex}). A \inline{Vortex} object specifies the $x,y$ position for the vortex core, the name of the superconducting layer in which the vortex is pinned, and the number of flux quanta $\Phi_0$ contained in the vortex (which is 1 by default). See Ref.~\cite{Brandt2005-wj} for a method to compute the self-energy and interaction energies of vortices in thin films.
+
 \begin{code}
+\captionof{listing}{Creates a square superconducting film with side length $20\,\mu\mathrm{m}$ and calculates the magnetic field distribution near a vortex at the center of the film as a function of the the effective penetration depth, $\Lambda$ (see Figure~\ref{fig:pearl}).}
+\label{code:pearl-vortex}
 \begin{minted}[fontsize=\small]{python}
 # Create a device representing square thin film.
 device = sc.Device(
@@ -782,21 +789,22 @@ for Lambda in Lambdas:
     # Use solution.field_at_position() to evaluate the magnetic field profile,
     # and Solution.polygon_fluxoid() to calculate fluxoids.
 \end{minted}
-\captionof{listing}{Creates a square superconducting film with side length $20\,\mu\mathrm{m}$ and calculates the magnetic field distribution near a vortex at the center of the film as a function of the the effective penetration depth, $\Lambda$ (see Figure~\ref{fig:pearl}).}
-\label{code:pearl-vortex}
 \end{code}
 
-\begin{figure}
+\begin{figure}[h]
     \centering
     \includegraphics[width=\textwidth]{examples/images/pearl.pdf}
-    \caption{Vortex field profiles calculated with \SuperScreen agree with the analytical solution (Eq.~\ref{eq:pearl}) to within a few percent. Here, we model a vortex trapped at the center of a square superconducting film lying in the $x-y$ plane with side length $20\,\mu\mathrm{m}$ as a function of the film's effective penetration depth, $\Lambda$. (a) The fluxoid $\Phi_S^f$ for a circular region in the film with radius $r=1\,\mu\mathrm{m}$ centered on the vortex core. As $\Lambda$ increases, so to does the supercurrent contribution to the fluxoid. (b) Error in the total simulated fluxoid relative to $\Phi_0$: $(\Phi_S^f(\Lambda) - \Phi_0) / \Phi_0$. (c) Cross section along the $x$-axis of the out-of-plane magnetic field $\mu_0H_z$ from the vortex, evaluated at a vertical distance $z=1\,\mu\mathrm{m}$ above the film. (d) Percentage difference between the $\mu_0H_z$ calculated with \SuperScreen and the Fourier transform method for the $x$-axis cut shown in (c). (e) Cross-section along the $z$-axis of $\mu_0H_z$ directly above the center of the vortex (logarithmic $y$ axis scale). (f) Percentage difference between the $\mu_0H_z$ calculated with \SuperScreen and the Fourier transform method for the $z$-axis cut shown in (e). In (c) and (e), the results from \SuperScreen are shown as open circles and the results from the Fourier transform method are shown as solid lines. }
+    \caption{Vortex field profiles calculated with \SuperScreen agree with the analytical solution (Eq.~\ref{eq:pearl}) to within a few percent. Here, we model a vortex trapped at the center of a square superconducting film lying in the $x-y$ plane with side length $20\,\mu\mathrm{m}$ as a function of the film's effective penetration depth, $\Lambda$. (a) Cross section along the $x$-axis of the out-of-plane magnetic field $\mu_0H_z$ from the vortex, evaluated at a vertical distance $z=1\,\mu\mathrm{m}$ above the film. (b) Percentage difference between the $\mu_0H_z$ calculated with \SuperScreen and the Fourier transform method for the $x$-axis cut shown in (a). (c) Cross-section along the $z$-axis of $\mu_0H_z$ directly above the center of the vortex (logarithmic $y$ axis scale). (d) Percentage difference between the $\mu_0H_z$ calculated with \SuperScreen and the Fourier transform method for the $z$-axis cut shown in (c). In (a) and (c), the results from \SuperScreen are shown as open circles and the results from the Fourier transform method are shown as solid lines. (e) The fluxoid $\Phi_S^f$ for a circular region in the film with radius $r=1\,\mu\mathrm{m}$ centered on the vortex core. As $\Lambda$ increases, so to does the supercurrent contribution to the fluxoid. (f) Error in the total simulated fluxoid relative to $\Phi_0$: $(\Phi_S^f(\Lambda) - \Phi_0) / \Phi_0$.}
     \label{fig:pearl}
 \end{figure}
 
 \subsection{Calculating the fluxoid}
 \label{section:examples:fluxoid}
 
-\SuperScreen allows one to calculate the fluxoid $\Phi^f_S$ for any polygonal region $S$ whose boundary $\partial S$ lies completely within a superconducting film using the method \inline{Solution.polygon_fluxoid()} (see Section~\ref{section:model:fluxoid}, Eq.~\ref{eq:fluxoid}). We calculate the ``flux part''  $\int_S\mu_0H_z(\vec{r})\,\mathrm{d}^2r$ using \inline{Solution.polygon_flux()}, which computes the flux through a polygon representing a region $S$ by averaging the field at the three vertices of each triangle $t$ that lies in $S$ to estimate the field $\mu_0H_{z, t}$ at the center of the triangle, then returns the flux $\sum_t \mu_0H_{z,t}A_t$, where $A_t$ is the area of triangle $t$. We calculate the ``supercurrent part'' $\oint_S\mu_o\Lambda(\vec{r})\vec{J}(\vec{r})\cdot\mathrm{d}\vec{r}$ by evaluating the vector current density $\vec{J}$ at each point in the path $\partial S$ using \inline{Solution.interp_current_density()}, then computing the line integral along the path using the trapezoid rule. The sum of these two terms gives the fluxoid $\Phi^f_S$. See \ref{appendix:fluxoid} for a demonstration of the fluxoid properties listed in Section~\ref{section:model:fluxoid}.
+\SuperScreen allows one to calculate the fluxoid $\Phi^f_S$ for any polygonal region $S$ whose boundary $\partial S$ lies completely within a superconducting film using the method \inline{Solution.polygon_fluxoid()} (see Section~\ref{section:model:fluxoid}, Eq.~\ref{eq:fluxoid}). The ``flux part''  $\int_S\mu_0H_z(\vec{r})\,\mathrm{d}^2r$ is calculated using \inline{Solution.polygon_flux()}, which computes the flux through a polygon representing a region $S$ by averaging the field at the three vertices of each triangle $t$ that lies in $S$ to estimate the field $\mu_0H_{z, t}$ at the center of the triangle, then returns the flux $\sum_t \mu_0H_{z,t}A_t$, where $A_t$ is the area of triangle $t$. The ``supercurrent part'' $\oint_S\mu_o\Lambda(\vec{r})\vec{J}(\vec{r})\cdot\mathrm{d}\vec{r}$ is calculated by evaluating the vector current density $\vec{J}$ at each point in the path $\partial S$ using \inline{Solution.interp_current_density()}, then computing the line integral along the path using the trapezoid rule. The sum of these two terms gives the fluxoid $\Phi^f_S$.
+
+Figure~\ref{fig:pearl}(e) shows the fluxoid for a circular region $S$ with radius $r=1\,\mu\mathrm{m}$ enclosing a Pearl vortex trapped in a film as a function of the film's effective penetration depth, $\Lambda$. When $\Lambda=0$, the screening currents decay very quickly away from the center of the vortex, so the ``supercurrent part'' of the $\Phi^f_S$ vanishes. With increasing $\Lambda$, the ``supercurrent part'' accounts for an increasing fraction of the total fluxoid.
+% See \ref{appendix:fluxoid} for a demonstration of the fluxoid properties listed in Section~\ref{section:model:fluxoid}.
 
 While the model doesn't ``know'' about fluxoid quantization, so to speak, we can nevertheless calculate current and field distributions for different fluxoid states $\Phi^f_S=n\Phi_0$. Consider again the circular or square ring. For a given applied field $H_{z,\,\mathrm{applied}}$ we can choose $I_h$, the current circulating around the hole in the ring, such that the fluxoid $\Phi^f_S=n\Phi_0$ for a region $S$ containing the hole. If there is a single hole, this is simply a root finding problem. For a structure with $N_h$ holes, we can specify $N_h$ fluxoids $\Phi^f_h$ and find the circulating currents $I_h$ by minimizing the deviation of each fluxoid from some assumed value. These two calculations are implemented in the \inline{superscreen.find_fluxoid_solution()} function.
 
@@ -959,6 +967,8 @@ As discussed above, one can solve many models involving the same \inline{Device}
 There are three ways to invoke \inline{ray} from \SuperScreen when running on a single machine, e.g. a multi-core CPU. The first is to simply pass the keyword argument \inline{parallel_method="ray"} when calling \inline{solve_many()}. This will automatically create a \inline{ray} cluster using all available physical CPU cores, solve the models in parallel, and then shut down the cluster before returning. The second method is to manually create a \inline{ray} cluster using the \inline{ray} Python application programming interface (API) prior to calling \inline{solve_many(..., parallel_method="ray")}, as demonstrated in Code Block~\ref{code:ray-python}. The third method is to start a \inline{ray} cluster using the command line interface (CLI), then connect to the existing cluster using the Python API prior to calling \inline{solve_many(..., parallel_method="ray")}, as demonstrated in Code Block~\ref{code:ray-cli}. One of the latter two methods should be used for finer control over the \inline{ray} cluster (number of CPUs to utilize, etc.).
 
 \begin{code}
+\captionof{listing}{Starting and stopping \inline{ray} outside of \inline{superscreen.solve_many()} using the Python API. See the ``API and Package Reference" section of the \inline{ray} documentation for additional options in \inline{ray.init()}~\cite{ray-docs}.}
+\label{code:ray-python}
 \begin{minted}[fontsize=\small]{python}
 # Assume that we have already created a Device and put all
 # other inputs to superscreen.solve_many() into a dictionary
@@ -982,12 +992,12 @@ solutions, paths = superscreen.solve_many(
 # Shutdown the ray cluster
 ray.shutdown()
 \end{minted}
-\captionof{listing}{Starting and stopping \inline{ray} outside of \inline{superscreen.solve_many()} using the Python API. See the ``API and Package Reference" section of the \inline{ray} documentation for additional options in \inline{ray.init()}~\cite{ray-docs}.}
-\label{code:ray-python}
 \end{code}
 
 \begin{minipage}{\textwidth}
 \begin{code}
+\captionof{listing}{Starting and stopping \inline{ray} outside of \inline{superscreen.solve_many()} using the command line interface. See the \inline{ray} documentation for additional options in \inline{ray start}~\cite{ray-docs}.}
+\label{code:ray-cli}
 \begin{minted}[fontsize=\small]{bash}
 # Start a ray cluster from the command line, e.g. bash
 ray start --head --num-cpus=3
@@ -1013,8 +1023,6 @@ solutions, paths = superscreen.solve_many(
 # Shut down the ray cluster from the command line
 ray stop
 \end{minted}
-\captionof{listing}{Starting and stopping \inline{ray} outside of \inline{superscreen.solve_many()} using the command line interface. See the \inline{ray} documentation for additional options in \inline{ray start}~\cite{ray-docs}.}
-\label{code:ray-cli}
 \end{code}
 \end{minipage}
 
