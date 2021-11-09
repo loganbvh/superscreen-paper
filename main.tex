@@ -797,10 +797,18 @@ for Lambda in Lambdas:
         device=device, vortices=vortices, field_units="Phi_0/um**2"
     )[-1]
     solutions.append(solution)
+    # Use solution.field_at_position() to evaluate the magnetic field profile.
 \end{minted}
 \captionof{listing}{}
 \label{code:pearl-vortex}
 \end{code}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{examples/images/pearl.pdf}
+    \caption{Caption}
+    \label{fig:pearl}
+\end{figure}
 
 \subsection{Self-inductance and mutual inductance}
 \label{section:examples:mutual-inductance}
