@@ -203,9 +203,9 @@ superconductivity\sep Meissner screening\sep thin film\sep London equations \sep
 
 \SuperScreen is a Python package developed to simulate the static magnetic response of structures composed of one or more layers containing superconducting thin films. \SuperScreen solves the coupled Maxwell's and London's equations in and around superconducting films with spatially-varying penetration depth in the presence of inhomogeneous applied magnetic fields, pinned vortices, and trapped flux using a matrix inversion method introduced by Brandt and Clem~\cite{Brandt2004-ew,Brandt2005-wj} and subsequently used by Kirtley, \emph{et al.} to model the magnetic response of scanning superconducting quantum interference device (SQUID) sensors.~\cite{Kirtley2016-zz, Kirtley2016-gt}
 
-There have been many previous numerical studies of magnetic screening and inductance extraction in thin film and two-dimensional (2D) superconducting devices~\cite{Jaycox1981-zl, Ketchen1982-at, Ketchen2012-mb, Hildebrandt1995-uw, Khapaev1997-kw, Khapaev2001-xq, Khapaev2001-pw, Babaei_Brojeny2003-la, Brandt2004-ew, Brandt2005-wj, Clem2005-ye, Muller2021-ci}. However, few software tools for this task exist and those that are available are closed-source, are written in low-level compiled languages like C, and/or require the use of specialized file formats or separate computer aided design (CAD) software for defining device geometries and model configurations.\footnote{A brief summary of existing tools can be found in \ref{appendix:other-tools}, and a more thorough overview in Ref.~\cite{Gaj1999-ls}.} Most of these tools are intended for use in the design of superconducting integrated circuits for rapid single flux quantum (RSFQ) logic and are primarily used for inductance extraction~\cite{Gaj1999-ls}. In contrast, \SuperScreen is an open-source, user-friendly, portable research tool designed to lower the barrier to entry to quantitative modeling of 2D superconductors, and to help interpret and inform measurements of superconducting thin films and devices.
+There have been many previous numerical studies of magnetic screening and inductance extraction in thin film and two-dimensional (2D) superconducting devices~\cite{Jaycox1981-zl, Ketchen1982-at, Ketchen2012-mb, Hildebrandt1995-uw, Khapaev1997-kw, Khapaev2001-xq, Khapaev2001-pw, Babaei_Brojeny2003-la, Brandt2004-ew, Brandt2005-wj, Clem2005-ye, Muller2021-ci, Jackman2016-mf}. However, few software tools for this task exist and those that are available are closed-source, are written in low-level compiled languages like C, and/or require the use of specialized file formats or separate computer aided design (CAD) software for defining device geometries and model configurations.\footnote{A brief summary of existing tools can be found in \ref{appendix:other-tools}, and a more thorough overview in Ref.~\cite{Gaj1999-ls}.} Most of these tools are intended for use in the design of superconducting integrated circuits for rapid single flux quantum (RSFQ) logic and are primarily used for inductance extraction~\cite{Gaj1999-ls}. In contrast, \SuperScreen is an open-source, user-friendly, portable research tool designed to lower the barrier to entry to quantitative modeling of 2D superconductors, and to help interpret and inform measurements of superconducting thin films and devices.
 
-This introduction to \SuperScreen is organized as follows: In Section~\ref{section:model}, we outline the model and its assumptions and in Section~\ref{section:implementation}, we describe its numerical implementation. In Section~\ref{section:overview}, we provide an overview of the structure of the \SuperScreen package, highlighting notable functions, classes, and features, and discuss some important development details. In Section~\ref{section:examples}, we demonstrate how to perform a few simple types of simulations using \SuperScreen and compare the results to previous numerical and analytical solutions. Finally, in Section~\ref{section:conlusion}, we by discussing applications, limitations, and possible extensions of the package.
+This introduction to \SuperScreen is organized as follows: In Section~\ref{section:model}, we outline the model and its assumptions and in Section~\ref{section:implementation}, we describe its numerical implementation. In Section~\ref{section:overview}, we provide an overview of the structure of the \SuperScreen package, highlighting notable functions, classes, and features, and discuss some important development details. In Section~\ref{section:examples}, we demonstrate how to perform a few simple types of simulations using \SuperScreen and compare the results to previous numerical and analytical solutions. Finally, in Section~\ref{section:conlusion}, we conclude by discussing applications, limitations, and possible extensions of the package.
 
 \section{The Model}
 \label{section:model}
@@ -465,9 +465,9 @@ In this section we give a high-level overview of the \SuperScreen package. Furth
 \subsection{Development Details}
 \label{section:overview:development}
 
-\SuperScreen requires Python version 3.6--3.9. The package is located in a public repository on GitHub~\cite{superscreen}, and a suite of unit tests is run automatically via the GitHub Actions continuous integration (CI) tool whenever a change or proposed change (Pull Request) is made to the \inline{main} branch of the repository. At the time of writing, the test suite is executed using Python versions 3.6 through 3.9, and the test coverage is $>95\%$. Any changes to the \inline{main} branch of the repository also trigger an automatic re-build of the online documentation, which is located at \inline{superscreen.readthedocs.io}~\cite{superscreen-rtd}. Stable versions of the package are tagged on GitHub and uploaded to PyPI, the Python Package Index. The source code and documentation are covered by the MIT License.
+\SuperScreen requires Python version 3.6--3.9. The package is located in a public repository on GitHub~\cite{superscreen}, and a suite of unit tests is run automatically via the GitHub Actions continuous integration (CI) tool whenever a change or proposed change (Pull Request) is made to the \inline{main} branch of the repository. At the time of writing, the test suite is executed using Python versions 3.6 through 3.9, and the test coverage is $>95\%$. Any changes to the \inline{main} branch of the repository also trigger an automatic re-build of the online documentation~\cite{superscreen-rtd}. Stable versions of the package are tagged on GitHub and uploaded to PyPI, the Python Package Index. The source code and documentation are covered by the MIT License.\footnote{\href{https://opensource.org/licenses/MIT}{https://opensource.org/licenses/MIT}}
 
-\SuperScreen has several important dependencies beyond the Python standard library: \inline{numpy}~\cite{Harris2020-xv} and \inline{scipy}~\cite{Virtanen2020-zz} for numerics, \inline{pint}~\cite{Grecco} for handling physical units, \inline{matplotlib}~\cite{Hunter2007-il} for visualization, \inline{meshpy}~\cite{Klockner,Shewchuk,Shewchuk1996-va} and \inline{optimesh}~\cite{Schlomer2021-ua} for mesh generation, \inline{dill}~\cite{McKerns} for serializing objects to disk and between processes, and \inline{ray}~\cite{Moritz2018-mt,ray-docs} for parallel processing with shared memory (see~\ref{section:parallel}).
+\SuperScreen has several important dependencies beyond the Python standard library: \inline{numpy}~\cite{Harris2020-xv} and \inline{scipy}~\cite{Virtanen2020-zz} for numerics, \inline{pint}~\cite{Grecco} for handling physical units, \inline{matplotlib}~\cite{Hunter2007-il} for visualization, \inline{meshpy}~\cite{Klockner, Shewchuk, Shewchuk1996-va} and \inline{optimesh}~\cite{Schlomer2021-ua} for mesh generation, and \inline{ray}~\cite{Moritz2018-mt,ray-docs} for parallel processing with shared memory (see~\ref{section:parallel}).
 
 \subsection{Parameters}
 \label{section:overview:parameter}
@@ -584,48 +584,48 @@ for row, device in zip(axes.reshape(2, 2), (ring, square_ring)):
 
 A \SuperScreen model consists of 1) a \inline{Device} with a mesh, 2) a function or \inline{Parameter} that defines the applied magnetic field as a function of position $H_{z,\,\mathrm{applied}}(x, y, z)$, 3) a value for the current circulating around each hole in the device due to trapped flux, and 4) a collection of vortices $v$ located at positions $\vec{r}_v$ and carrying flux $\Phi_v$. These items serve as the inputs to \SuperScreen's main solver function, \inline{superscreen.solve()}, which implements the calculation outlined in Section~\ref{section:implementation}. When simulating a device with more than one layer, one can specify the number of times to implement the iterative calculation described in Section~\ref{section:model:multilayer} in order to solve for the response of all layers self-consistently. One can also skip the iterative portion of the calculation entirely and only solve for the response of each layer to the applied field, assuming no interaction between layers.
 
-\begin{code}
-\begin{minted}[fontsize=\small]{python}
-import numpy as np
+% \begin{code}
+% \begin{minted}[fontsize=\small]{python}
+% import numpy as np
 
-# Simulate the response of the square ring to a uniform applied field of 0.5 mT
-applied_field = sc.sources.ConstantField(0.5)
-field_units = "mT"
-solutions = sc.solve(
-    device=square_ring, applied_field=applied_field, field_units=field_units,
-)
-assert len(solutions) == 1 # Since there is only one layer in this Device
-uniform_field_solution = solutions[-1]
+% # Simulate the response of the square ring to a uniform applied field of 0.5 mT
+% applied_field = sc.sources.ConstantField(0.5)
+% field_units = "mT"
+% solutions = sc.solve(
+%     device=square_ring, applied_field=applied_field, field_units=field_units,
+% )
+% assert len(solutions) == 1 # Since there is only one layer in this Device
+% uniform_field_solution = solutions[-1]
 
-# Simulate a current circulating around the hole in the ring
-# (with no applied field).
-trapped_flux_solution = sc.solve(
-    device=square_ring, applied_field=None, circulating_currents=dict(hole="1 mA"),
-)[-1]
+% # Simulate a current circulating around the hole in the ring
+% # (with no applied field).
+% trapped_flux_solution = sc.solve(
+%     device=square_ring, applied_field=None, circulating_currents={"hole" : "1 mA"},
+% )[-1]
 
-# Specify a sequence of (x, y) coordinates to plot cross-sections
-# of the simulated currents and fields.
-xs = np.linspace(-5.5, 5.5, 201) # [microns]
-cross_sections = [ # Two sets of [x, y] coordinates
-    np.stack([xs, xs], axis=1), # diagonal cross-section
-    np.stack([xs, np.zeros_like(xs)], axis=1), # horizontal cross-section
-]
-for solution in (uniform_field_solution, trapped_flux_solution):
-    solution.plot_currents(cross_section_coords=cross_sections, units="mA/um")
-    solution.plot_fields(cross_section_coords=cross_sections)
-\end{minted}
-\captionof{listing}{Solves for the current and magnetic field distributions for the \inline{square_ring} device given a uniform applied field, and circulating current with no applied field, and plots the resulting sheet current and field.}
-\label{code:ring_circulating_current}
-\end{code}
+% # Specify a sequence of (x, y) coordinates to plot cross-sections
+% # of the simulated currents and fields.
+% xs = np.linspace(-5.5, 5.5, 201) # [microns]
+% cross_sections = [ # Two sets of [x, y] coordinates
+%     np.stack([xs, xs], axis=1), # diagonal cross-section
+%     np.stack([xs, np.zeros_like(xs)], axis=1), # horizontal cross-section
+% ]
+% for solution in (uniform_field_solution, trapped_flux_solution):
+%     solution.plot_currents(cross_section_coords=cross_sections, units="mA/um")
+%     solution.plot_fields(cross_section_coords=cross_sections)
+% \end{minted}
+% \captionof{listing}{Solves for the current and magnetic field distributions for the \inline{square_ring} device given a uniform applied field, and circulating current with no applied field, and plots the resulting sheet current and field.}
+% \label{code:ring_circulating_current}
+% \end{code}
 
-Code Block~\ref{code:ring_circulating_current} solves two models involving the \inline{square_ring} device, which was generated using Code Blocks~\ref{code:device} and \ref{code:mesh_generation}. First, Meissner screening of a spatially uniform applied out-of-plane magnetic field and second, the response of the ring to trapped flux with an associated circulating current of 1 mA (with no applied magnetic field). The resulting sheet current and magnetic field distributions (calculated using the optimized mesh shown in Figure~\ref{fig:mesh}d) can be visualized using the \inline{plot_currents()} and \inline{plot_fields()} methods, which produce the images shown in Figure~\ref{fig:square-ring-results}.
+% Code Block~\ref{code:ring_circulating_current} solves two models involving the \inline{square_ring} device, which was generated using Code Blocks~\ref{code:device} and \ref{code:mesh_generation}. First, Meissner screening of a spatially uniform applied out-of-plane magnetic field and second, the response of the ring to trapped flux with an associated circulating current of 1 mA (with no applied magnetic field). The resulting sheet current and magnetic field distributions (calculated using the optimized mesh shown in Figure~\ref{fig:mesh}d) can be visualized using the \inline{plot_currents()} and \inline{plot_fields()} methods, which produce the images shown in Figure~\ref{fig:square-ring-results}.
 
-\begin{figure}
-    \centering
-    \includegraphics[width=\textwidth]{examples/images/square_ring_results.png}
-    \caption{Sheet current $\vec{J}(x, y)$ and out-of-plane magnetic field $\mu_0H_z(x, y)$ evaluated in the plane of a square ring with effective penetration depth $\Lambda=1\,\mu\mathrm{m}$ subject to (a, b) a uniform applied field of 0.5 mT or (c, d) trapped flux inducing a circulating current of 1 mA. The sub-figures show the output of (a, c) \inline{Solution.plot_currents()} and (b, d) \inline{Solution.plot_fields()}, as shown in Code Block~\ref{code:ring_circulating_current}. For the current plots (a, c), the color-scale indicates the magnitude of the sheet current (or current density), $|\vec{J}|$, and the direction is indicated by the white streamlines.}
-    \label{fig:square-ring-results}
-\end{figure}
+% \begin{figure}
+%     \centering
+%     \includegraphics[width=\textwidth]{examples/images/square_ring_results.png}
+%     \caption{Sheet current $\vec{J}(x, y)$ and out-of-plane magnetic field $\mu_0H_z(x, y)$ evaluated in the plane of a square ring with effective penetration depth $\Lambda=1\,\mu\mathrm{m}$ subject to (a, b) a uniform applied field of 0.5 mT or (c, d) trapped flux inducing a circulating current of 1 mA. The sub-figures show the output of (a, c) \inline{Solution.plot_currents()} and (b, d) \inline{Solution.plot_fields()}, as shown in Code Block~\ref{code:ring_circulating_current}. For the current plots (a, c), the color-scale indicates the magnitude of the sheet current (or current density), $|\vec{J}|$, and the direction is indicated by the white streamlines.}
+%     \label{fig:square-ring-results}
+% \end{figure}
 
 The output of \inline{superscreen.solve()} is a \inline{list} of \inline{superscreen.Solution} objects, with a length of 1 plus the number of iterations used for the iterative portion of the calculation. A \inline{Solution} encapsulates all of the information about a solved model: the \inline{Device}, applied field, circulating currents, vortices, and calculated stream functions and magnetic fields for all layers in the device. A \inline{Solution} also has methods for processing the simulation results, including:
 \begin{itemize}
@@ -755,74 +755,96 @@ Instances of \inline{superscreen.Device} and \inline{superscreen.Solution} can b
 \subsection{Calculating the fluxoid}
 \label{section:examples:fluxoid}
 
-\SuperScreen allows one to calculate the fluxoid $\Phi^f_S$ for any polygonal region $S$ whose boundary $\partial S$ lies completely within a superconducting film using the method \inline{Solution.polygon_fluxoid()} (see Section~\ref{section:model:fluxoid}, Eq.~\ref{eq:fluxoid}). We calculate the ``flux part''  $\int_S\mu_0H_z(\vec{r})\,\mathrm{d}^2r$ using \inline{Solution.polygon_flux()}, which computes the flux through a polygon representing a region $S$ by averaging the field at the three vertices of each triangle $t$ that lies in $S$ to estimate the field $\mu_0H_{z, t}$ at the center of the triangle, then returns the flux $\sum_t \mu_0H_{z,t}A_t$, where $A_t$ is the area of triangle $t$. We calculate the ``supercurrent part'' $\oint_S\mu_o\Lambda(\vec{r})\vec{J}(\vec{r})\cdot\mathrm{d}\vec{r}$ by evaluating the vector current density $\vec{J}$ at each point in the path $\partial S$ using \inline{Solution.interp_current_density()}, then computing the line integral along the path using the trapezoid rule. The sum of these two terms gives the fluxoid $\Phi^f_S$.
+\SuperScreen allows one to calculate the fluxoid $\Phi^f_S$ for any polygonal region $S$ whose boundary $\partial S$ lies completely within a superconducting film using the method \inline{Solution.polygon_fluxoid()} (see Section~\ref{section:model:fluxoid}, Eq.~\ref{eq:fluxoid}). We calculate the ``flux part''  $\int_S\mu_0H_z(\vec{r})\,\mathrm{d}^2r$ using \inline{Solution.polygon_flux()}, which computes the flux through a polygon representing a region $S$ by averaging the field at the three vertices of each triangle $t$ that lies in $S$ to estimate the field $\mu_0H_{z, t}$ at the center of the triangle, then returns the flux $\sum_t \mu_0H_{z,t}A_t$, where $A_t$ is the area of triangle $t$. We calculate the ``supercurrent part'' $\oint_S\mu_o\Lambda(\vec{r})\vec{J}(\vec{r})\cdot\mathrm{d}\vec{r}$ by evaluating the vector current density $\vec{J}$ at each point in the path $\partial S$ using \inline{Solution.interp_current_density()}, then computing the line integral along the path using the trapezoid rule. The sum of these two terms gives the fluxoid $\Phi^f_S$. See \ref{appendix:fluxoid} for a demonstration of the fluxoid properties listed in Section~\ref{section:model:fluxoid}.
 
-As described in Section~\ref{section:model:fluxoid}, for a valid solution to the static 2D London equation as formulated in Equation~\ref{eq:london}, the fluxoid $\Phi^f_S$ should have the following properties:
-\begin{enumerate}
-    \item{$\Phi^f_S = \sum_{\mathrm{vortices}\,v}\Phi_v$ for any region $S$ lying completely within a superconducting film that contains a set of vortices $v$, each containing flux $\Phi_v$ (and $\Phi^f_S = 0$ if $S$ contains no vortices).}
-    \item{$\Phi^f_S = \Phi_h$ for any region $S$ that contains a hole $h$, where $\Phi_h$ is a constant (i.e. does not depend on the specific region $S$ or path $\partial S$) but need not be quantized in units of $\Phi_0$.}
-\end{enumerate}
+While the model doesn't ``know'' about fluxoid quantization, so to speak, we can nevertheless calculate current and field distributions for different fluxoid states $\Phi^f_S=n\Phi_0$. Consider again the circular or square ring. For a given applied field $H_{z,\,\mathrm{applied}}$ we can choose $I_h$, the current circulating around the hole in the ring, such that the fluxoid $\Phi^f_S=n\Phi_0$ for a region $S$ containing the hole. If there is a single hole, this is simply a root finding problem. For a structure with $N_h$ holes, we can specify $N_h$ fluxoids $\Phi^f_h$ and find the circulating currents $I_h$ by minimizing the deviation of each fluxoid from some assumed value. These two calculations are implemented in the \inline{superscreen.find_fluxoid_solution()} function.
 
-A demonstration of these properties for the case of the square ring with effective penetration depth $\Lambda=1\,\mu\mathrm{m}$, inner side length $5\,\mu\mathrm{m}$, and outer side length $10\,\mu\mathrm{m}$ subject to a uniform applied field of 0.1 mT is shown in Figure~\ref{fig:fluxoid}. Property 1 is shown in the first two rows, and property 2 is shown in the last row. See the figure caption for a detailed explanation of the results.
+Here, we use \inline{superscreen.find_fluxoid_solution()} to compute the current and field distributions in and around a film with a single hole in the $n=1$ fluxoid state as a function of the film's effective penetration depth, $\Lambda$.
 
-\begin{figure}
-    \centering
-    \includegraphics[width=\textwidth]{examples/images/fluxoid_combined.png}
-    \caption{Demonstration of the fluxoid properties listed in Section~\ref{section:examples:fluxoid} for a square ring with $\Lambda=1\,\mu\mathrm{m}$, inner side length $5\,\mu\mathrm{m}$, and outer side length $10\,\mu\mathrm{m}$, whose outline is shown with white (black) lines in the left (middle) column, subject to a uniform applied field of 0.1 mT. The left and middle columns show the computed current density and out-of-plane-field, overlaid with several regions $S$ for which the fluxoids $\Phi^f_S$, calculated using \inline{Solution.polygon_fluxoid()}, are shown in the right column. The colors of the paths in the left and middle columns correspond to the colors of the bars in the right column. Top row (a - c): The fluxoid $\Phi^f_S$ vanishes for all simply-connected regions containing no vortices. The errors in (c) are given by $|\Phi^f_S / \Phi^f_{S,\,\text{(flux part)}}|$. Middle row (d - f): For simply-connected regions containing a set of vortices $v$, each carrying flux $\Phi_v$, the fluxoid is given by $\sum_v\Phi_v$. In this case, the body of the square ring contains both ``positive'' ($\Phi_v=\Phi_0$, counter-clockwise circulating current) and ``negative'' ($\Phi_v=-\Phi_0$, clockwise circulating current) vortices, which appear in (e) as yellow and blue dots respectively. The expected value for the fluxoid for each region $S$ given in units of $\Phi_0$ by (number of yellow vortices lying inside $S$) - (number of blue vortices lying inside $S$), and the errors in (f) are reported relative to this expected value. Bottom row (g - i): The fluxoid is approximately equal for all regions $S$ containing a given hole, shown here for both circular ($S = 0, 1, 2$) and square ($S=3, 4, 5, 6$) regions.}
-    \label{fig:fluxoid}
-\end{figure}
+\subsection{Pearl vortices in thin films}
+\label{section:examples:pearl-vortices}
+Vortices trapped in 2D superconductors ($d\ll\lambda$, where $d$ is the film thickness and $\lambda$ is the London penetration depth), i.e. ``Pearl vortices'', are associated with different current and magnetic field distributions than Abrikosov vortices trapped in bulk type-II superconductors~\cite{Pearl1964-cl}. The 2D Fourier transform $\tilde{H}_z(\vec{k}, z)$ of the out-of-plane component of the magnetic field $H_z(\vec{r}, z)$ from a Pearl vortex located at the origin $x=y=z=0$ is given by
 
-While the model doesn't ``know'' about fluxoid quantization, so to speak, we can nevertheless calculate current and field distributions for different fluxoid states $\Phi^f_S=n\Phi_0$. Consider again the circular or square ring. For a given applied field $H_{z,\,\mathrm{applied}}$ we can choose $I_h$, the current circulating around the hole in the ring, such that the fluxoid $\Phi^f_S=n\Phi_0$ for a region $S$ containing the hole. If there is a single hole, this is simply a root finding problem (see Code Block~\ref{code:fluxoid-root}). For a structure with $N_h$ holes, we can specify $N_h$ fluxoids $\Phi^f_h$ and find the circulating currents $I_h$ by minimizing, in the least-squares sense, the deviation between each fluxoid and its desired value.
+\begin{equation}
+    \tilde{H}_z(\vec{k}, z)=\mathcal{F}\{H_z(\vec{r}, z)\}=\frac{1}{\mu_0}\frac{\Phi_0e^{-|\vec{k}||z|}}{1+2\Lambda|\vec{k}|},
+    \label{eq:pearl}
+\end{equation}
+where $\mathcal{F}\{\cdot\}$ is the 2D Fourier transform, $\vec{k}=(k_x, k_y)$ are in-plane spatial frequencies, $z$ is the out-of-plane position at which the field is evaluated, and $2\Lambda = 2\lambda^2 / d$ is the Pearl length~\cite{Pearl1964-cl, Tafuri2004-ap}. The real-space magnetic field distribution near a Pearl vortex can be calculated numerically by taking the inverse Fourier transform of Equation~\ref{eq:pearl}: $H_z(\vec{r}, z)=\mathcal{F}^{-1}\{\tilde{H}_z(\vec{k}, z)\}$. The field distributions generated by \SuperScreen in the presence of vortices as described in Sections~\ref{section:model:vortices} and~\ref{section:implementation} agree to within a few percent with the distributions obtained using this Fourier transform method, as demonstrated in Code Block~\ref{code:pearl-vortex} and Figures XXX.
 
 \begin{code}
 \begin{minted}[fontsize=\small]{python}
-from scipy import optimize
-
-def find_fluxoid_solution(
-    device: sc.Device,
-    applied_field: sc.Parameter,
-    hole_name: str,
-    polygon: np.ndarray,
-    fluxoid_n: int = 0,
-    **solve_kwargs,
-) -> sc.Solution:
-
-    solution = None
-
-    def residual_fluxoid(current: float) -> float:
-        """Returns (actual_fluxoid - desired_fluxoid) in units of Phi_0."""
-        nonlocal solution
-        solution = sc.solve(
-            device=device,
-            applied_field=applied_field,
-            circulating_currents={hole_name: current},
-            **solve_kwargs,
-        )[-1]
-        layer_name = device.holes[hole_name].layer
-        total_fluxoid = sum(solution.polygon_fluxoid(polygon)[layer_name])
-        return total_fluxoid.to("Phi_0").magnitude - fluxoid_n
-
-    # Replace optimize.root_scalar with optimize.minimize for multiple holes.
-    result = optimize.root_scalar(residual_fluxoid, x0=-1, x1=1)
-    # Return the optimal Solution
-    return solution
+# Create a device representing square thin film.
+device = sc.Device(
+    "film",
+    layers=[sc.Layer("base", Lambda=0, z0=0)],
+    films=[sc.Polygon("film", layer="base", points=sc.geometry.square(20))],
+    # Add an abstract_polygon near the vortex position so that
+    # that region will be meshed densely.
+    abstract_regions=[
+        sc.Polygon("circle", layer="base", points=sc.geometry.circle(0.1)),
+    ],
+    length_units="um",
+)
+device.make_mesh(min_triangles=8000)
+# Specify the vortex position.
+vortices = [sc.Vortex(x=0, y=0, layer="base")]
+# Sweep Lambda, solve the model, and evaluate the field at the given coordinates.
+Lambdas = np.linspace(0, 1, 6) # [device.length_units]
+solutions = []
+for Lambda in Lambdas:
+    device.layers["base"].Lambda = Lambda
+    solution = sc.solve(
+        device=device, vortices=vortices, field_units="Phi_0/um**2"
+    )[-1]
+    solutions.append(solution)
 \end{minted}
-\captionof{listing}{Given an applied field, this function solves for the current and field distribution in a \inline{Device} with a single hole for a specified fluxoid state $\Phi^f_S=n\Phi_0$ using root finding.}
-\label{code:fluxoid-root}
+\captionof{listing}{}
+\label{code:pearl-vortex}
 \end{code}
 
-
-
-\subsection{Calculating mutual inductance}
+\subsection{Self-inductance and mutual inductance}
 \label{section:examples:mutual-inductance}
 
 As shown in Ref.~\cite{Brandt2005-wj}, the mutual inductance $M_{ij}$ between holes $i$ and $j$ in a superconducting structure is given by
 \begin{equation}
     M_{ij}=\frac{\Phi^f_{S_i}}{I_j},
 \end{equation}
-where $\Phi^f_{S_i}$ is the fluxoid for a region $S_i$ containing the hole $i$, and $I_j$ is the current circulating around hole $j$. The mutual inductance values for a set of holes form a mutual inductance matrix. The diagonals of the mutual inductance matrix are the hole self-inductances ($M_{ii}=L_i$, the self-inductance of hole $i$), and the matrix must be symmetric ($M_{ij}=M_{ji}$) due to the reciprocity theorem. If the penetration depth of the film containing hole $i$ is $\Lambda = 0$, then no field penetrates the film and the fluxoid $\Phi^f_{S_i}$ is equal to $\Phi_i$, the flux through hole $i$.
+where $\Phi^f_{S_i}$ is the fluxoid for a region $S_i$ containing the hole $i$, and $I_j$ is the current circulating around hole $j$. The mutual inductance values for a set of holes form a mutual inductance matrix. The diagonals of the mutual inductance matrix are the hole self-inductances ($M_{ii}=L_i$, the self-inductance of hole $i$), and the matrix is symmetric ($M_{ij}=M_{ji}$) due to the reciprocity theorem. If the penetration depth of the film containing hole $i$ is $\Lambda = 0$, then no field penetrates the film and the fluxoid $\Phi^f_{S_i}$ is equal to $\Phi_i$, the flux through hole $i$.
 
 We'll focus first on the self-inductance of circular and square rings. For a circular ring with inner radius $a$, outer radius $b>a$, and penetration depth $\Lambda=0$, Clem~\cite{Babaei_Brojeny2003-la} found that the self-inductance approaches $L=2\mu_0 a$ in the ``small hole'' limit $\tilde{a}=a/b\ll 1$. In the opposite ``thin ring'' limit $\tilde{a}=a/b\approx 1$, the inductance was found to approach $L=\mu_0b(1+\tilde{a})(\tanh^{-1}\tilde{a}+\log 4 - 1)$. Clem and Brandt~\cite{Brandt2004-ew} and Khapaev~\cite{Khapaev1997-kw} calculated the self-inductance of circular and square rings as a function of the ratio of inner and outer diameters.
+
+\subsection{Application: scanning SQUID susceptometry}
+\label{section:examples:susceptometry}
+
+In scanning superconducting quantum interference device (SQUID) susceptometry, the diamagnetic susceptibility of a superconducting sample is measured by bringing the sample close to a pair of superconducting loops. The first loop, called the ``pickup loop" is attached to a SQUID circuit that sensitively measures the magnetic flux threading the loop. The second loop, called the ``field coil," carries a known current and applies a known magnetic field to both the pickup loop and the sample. The superconducting sample screens the magnetic field from the field coil, modifying the amount of flux threading the pickup loop. Thus the mutual inductance between the field coil and pickup loop provides a measure of the sample's diamagnetic susceptibility, which is in turn a measure of the sample's penetration depth.
+
+Analysis developed to interpret the results of scanning SQUID susceptometry measurements makes several simplifying assumptions that are not always satisfied: 1) the sample's effective penetration depth $\Lambda$ (or Pearl length $2\Lambda$) is spatially homogeneous, 2) the sample is much larger than the field coil, and 3) the field coil and pickup loop can be approximated as one-dimensional coaxial, coplanar circular loops~\cite{Kirtley_Kalisky_2012}.
+
+% \begin{figure}[!h]
+% \centering
+% \begin{subfigure}{.35\textwidth}
+%   \centering
+%   \includegraphics[width=\linewidth]{examples/images/squid_susceptometry/squid_with_sample_mesh.png}
+%   \label{fig:squid_mesh}
+%   \caption{}
+% \end{subfigure}%
+% \hspace{10pt}
+% \begin{subfigure}{.5\textwidth}
+%   \centering
+%   \includegraphics[width=\linewidth]{examples/images/squid_susceptometry/squid_with_sample_M0_convergence.png}
+%   \label{fig:squid_convergence}
+%   \caption{}
+%   \caption{Fractional change in flux though all polygons vs. solver iteration with a current of $1\,\mathrm{mA}$ flowing in the field coil (\inline{fc}). The mutual inductance $M_0$ is given by the flux through the pickup loop (\inline{pl_hull}) divided by the field coil current.}
+% \end{subfigure}%
+% \caption{(a): Device polygons and mesh for the SQUID susceptometer model. (b) Fractional change in flux though all polygons vs. solver iteration with a current of $1\,\mathrm{mA}$ flowing in the field coil (\inline{fc}). The mutual inductance $M_0$ is given by the flux through the pickup loop (\inline{pl_hull}) divided by the field coil current.}
+% \label{fig:susceptometry}
+% \end{figure}
+
+Figure~\ref{fig:susceptometry}(a) shows a \inline{Device} representing field coil and pickup loop of an actual scanning SQUID sensor. In addition to the field coil and pickup loop, there are superconducting shields that limit the amount of magnetic flux that can penetrate the leads connecting the loops to the rest of the circuit (the rest of the circuit is not modeled). There are three relevant layers of superconducting films: the base electrode (``BE"), which is furthest from the sample contains the field coil; the first wiring layer (``W1"), which contains the pickup loop and a shield covering the field coil leads; and the second wiring layer (``W2"), which is closest to the sample and contains a shield covering the pickup loop leads. The device also contains a layer and film representing the superconducting sample.
+
+To model a SQUID susceptometry measurement, we first calculate $M_0$, the mutual inductance between the field coil and pickup loop in the absence of the sample. This can be done by temporarily setting the sample layer effective penetration depth to a very large value such that it essentially does not screen the field from the field coil (in this case, we set $\Lambda = 10^5\,\mu\mathrm{m}$). We then model the field from a known current flowing in the field coil following Section~\ref{section:model:holes} and self-consistently calculate the response of both the sample and the other superconducting layers of the SQUID sensor following Section~\ref{section:model:multilayer}. To ensure that the 2D current distribution in the field coil is approximately uniform (as we would expect for a real applied current), we set the field coil layer effective penetration depth to be greater than the width of the field coil conductor.
+
+Once $M_0$ is known, we can ``turn on" the sample's diamagnetic response by setting its effective penetration depth $\Lambda$ to the desired value and compute $M(z, \Lambda)$ for a given vertical distance $z$ between the sample and the SQUID as described in the previous paragraph. The SQUID susceptibility signal is then $M(z, \Lambda) - M_0$, the change in mutual inductance between the field coil and pickup loop due to the presence of the sample (usually given in units of $\Phi_0/\mathrm{A}$, where $\Phi_0$ is the superconducting flux quantum). The susceptibility can also be normalized to the bare mutual inductance $M_0$, giving a dimensionless susceptibility $\chi(z, \Lambda)=[M(z, \Lambda) - M_0] / M_0$.  
 
 
 \section{Conclusion}
@@ -834,7 +856,7 @@ There are several important limitations to the applicability of \SuperScreen and
 % Third, while currents associated with vortices and flux trapped in holes can be modeled, \SuperScreen does not treat the energetics of vortex nucleation in films or fluxoid transitions in multiply-connected films. For further discussion of these topics in the context of the present model, see Refs.~\cite{Brandt2004-ew, Clem2005-ye}.
 Third, as currently implemented, \SuperScreen does not support ``terminal currents,'' i.e. currents flowing in one terminal of a device and out another terminal. This means that inductance calculations are limited to structures with holes, in which all applied currents are circulating currents associated with trapped flux (see Sections~\ref{section:model:holes} and~\ref{section:examples:mutual-inductance}). Terminal currents can be included in the stream function-base model by setting appropriate boundary conditions~\cite{Khapaev1997-kw,Khapaev2001-xq,Khapaev2001-pw,Muller2021-ci}. Finally, care should be taken to ensure that for a given model the mesh is of sufficient density and quality that, to within the desired precision, the results of simulations do not depend on mesh size.
 
-Potential improvements to \SuperScreen include: support for terminal currents as discussed above, more sophisticated mesh generation (e.g. automated local mesh refinement based on device geometry), automated determination of solution convergence for models with multiple layers, an improved interface for generating complex device geometries (for example using 2D constructive solid geometry), and further optimization for memory and CPU efficiency.
+Potential improvements to \SuperScreen include: support for terminal currents as discussed above, more sophisticated mesh generation (e.g. automated local mesh refinement based on device geometry), automated determination of solution convergence for models with multiple layers, an improved interface for generating complex device geometries (for example via integration with standard integrated circuit layout software), and further optimization for memory and CPU efficiency.
 
 %% The Appendices part is started with the command \appendix;
 %% appendix sections are then done as normal sections
@@ -848,7 +870,7 @@ Potential improvements to \SuperScreen include: support for terminal currents as
 \section{Existing tools}
 \label{appendix:other-tools}
 
-FastHenry, a widely-used 3D (normal metal) inductance extraction tool from MIT~\cite{Kamon1994-ck}, has been extended to support superconducting elements~\cite{wrcad, XicTools}. This modified version of FastHenry is used for inductance extraction in the commercial software InductEx~\cite{Fourie2011-wl}. While FastHenry is open-source, it is written in C and must be compiled for a specific computer architecture and operating system. FastHenry executables compiled for several common operating systems are available as part of the open-source XicTools superconducting integrated circuit design suite from Whiteley Research, Inc~\cite{wrcad, XicTools}. A 2D London model based on a scalar stream function, much like the model used by \SuperScreen~\cite{Brandt2004-ew, Brandt2005-wj} (described in detail in Section~\ref{section:model}), forms the basis of the 3D-MLSI software package, which is also written in C and is not open-source~\cite{Khapaev1997-kw, Khapaev2001-xq, Khapaev2001-pw}. \SuperScreen is an open-source, portable, user-friendly tool for modeling the magnetic response of 2D superconductors, designed to lower the barrier to entry to quantitative modeling of superconducting devices.
+Here, we briefly describe existing software tools for modeling the magnetic response of superconducting devices, most of which are specifically designed for inductance extraction for superconducting integrated circuits. FastHenry, a widely-used 3D (normal metal) inductance extraction tool from MIT~\cite{Kamon1994-ck}, has been extended to support superconducting elements~\cite{wrcad, XicTools}. This modified version of FastHenry has been used for inductance extraction in the commercial software InductEx~\cite{Fourie2011-wl}. While FastHenry is open-source, it is written in C and must be compiled for a specific computer architecture and operating system. FastHenry executables compiled for several common operating systems are available as part of the open-source XicTools superconducting integrated circuit design suite from Whiteley Research, Inc~\cite{wrcad, XicTools}. A 2D London model based on a scalar stream function, much like the model used by \SuperScreen~\cite{Brandt2004-ew, Brandt2005-wj} (described in detail in Section~\ref{section:model}), forms the basis of the 3D-MLSI software package~\cite{Khapaev1997-kw, Khapaev2001-xq, Khapaev2001-pw}, which is also written in C and is not open-source. For a more thorough overview and comparison of inductance extraction tools, see Ref.~\cite{Gaj1999-ls}.
 
 \section{Laplace operator}
 \label{appendix:laplace}
@@ -898,25 +920,22 @@ where $\mathcal{N}(i)$ is the set of triangles $t$ adjacent to vertex $i$. The w
 
 By default, \SuperScreen uses half-cotangent weighting. The Laplacian matrix $\mathbf{L}$ is defined in terms of the weight matrix $\mathbf{W}$: $L_{ij} = W_{ij} - \delta_{ij}\sum_{\ell}W_{i\ell}$. Finally, the Laplace operator is given by $\mathbf{\nabla}^2 = \mathbf{M}^{-1}\mathbf{L}$.
 
-% \section{Fluxoid calculation}
-% \label{appendix:fluxoid}
+\section{Fluxoid calculation}
+\label{appendix:fluxoid}
+As described in Section~\ref{section:model:fluxoid}, for a valid solution to the static 2D London equation as formulated in Equation~\ref{eq:london}, the fluxoid $\Phi^f_S$ should have the following properties:
+\begin{enumerate}
+    \item{$\Phi^f_S = \sum_{\mathrm{vortices}\,v}\Phi_v$ for any region $S$ lying completely within a superconducting film that contains a set of vortices $v$, each containing flux $\Phi_v$ (and $\Phi^f_S = 0$ if $S$ contains no vortices).}
+    \item{$\Phi^f_S = \Phi_h$ for any region $S$ that contains a hole $h$, where $\Phi_h$ is a constant (i.e. does not depend on the specific region $S$ or path $\partial S$) but need not be quantized in units of $\Phi_0$.}
+\end{enumerate}
 
-% \SuperScreen allows one to calculate the fluxoid $\Phi^f_S$ for any polygonal region $S$ whose boundary $\partial S$ lies completely within a superconducting film (see Section~\ref{section:model:fluxoid}). This calculation is implemented as follows: The ``flux part''  is calculated using \inline{Solution.polygon_flux()}, which computes the flux through a polygon representing a region $S$ by averaging the field at the three vertices of each triangle $t$ that lies in $S$ to estimate the field $\mu_0H_{z, t}$ at the center of the triangle, then returns the flux $\sum_t \mu_0H_{z,t}A_t$, where $A_t$ is the area of triangle $t$. The ``supercurrent part'' is calculated by evaluating the vector current density $\vec{J}$ at each point in the path $\partial S$ using \inline{Solution.interp_current_density()}, then computing the integral $\oint_S\mu_o\Lambda(\vec{r})\vec{J}(\vec{r})\cdot\mathrm{d}\vec{r}$ using the trapezoid rule. The sum of these two terms gives the fluxoid $\Phi^f_S$.
+A demonstration of these properties for the case of the square ring with effective penetration depth $\Lambda=1\,\mu\mathrm{m}$, inner side length $5\,\mu\mathrm{m}$, and outer side length $10\,\mu\mathrm{m}$ subject to a uniform applied field of 0.1 mT is shown in Figure~\ref{fig:fluxoid}. Property 1 is shown in the first two rows, and property 2 is shown in the last row. See the figure caption for a detailed explanation of the results.
 
-% As described in Section~\ref{section:model:fluxoid}, for a valid solution to the static 2D London equation as formulated in Equation~\ref{eq:london}, the fluxoid $\Phi^f_S$ should have the following properties:
-% \begin{enumerate}
-%     \item{$\Phi^f_S = \sum_{\mathrm{vortices}\,v}\Phi_v$ for any region $S$ lying completely within a superconducting film that contains a set of vortices $v$, each containing flux $\Phi_v$ (and $\Phi^f_S = 0$ if $S$ contains no vortices).}
-%     \item{$\Phi^f_S = \Phi_h$ for any region $S$ that contains a hole $h$, where $\Phi_h$ is a constant (i.e. does not depend on the specific region $S$ or path $\partial S$) but need not be quantized in units of $\Phi_0$.}
-% \end{enumerate}
-
-% A demonstration of these properties for the case of the square ring with effective penetration depth $\Lambda=1\,\mu\mathrm{m}$, inner side length $5\,\mu\mathrm{m}$, and outer side length $10\,\mu\mathrm{m}$ subject to a uniform applied field of 0.1 mT is shown in Figure~\ref{fig:fluxoid}. See the figure caption for a detailed explanation of the results.
-
-% \begin{figure}[h]
-%     \centering
-%     \includegraphics[width=\textwidth]{examples/images/fluxoid_combined.png}
-%     \caption{Demonstration of the fluxoid properties listed in \ref{appendix:fluxoid} for a square ring with $\Lambda=1\,\mu\mathrm{m}$, inner side length $5\,\mu\mathrm{m}$, and outer side length $10\,\mu\mathrm{m}$ (whose outline is shown with white lines in the left and middle columns) subject to a uniform applied field of 0.1 mT. The left and middle columns show the computed current density and out-of-plane-field, overlaid with several regions $S$ for which the fluxoid $\Phi^f_S$ (calculating using \inline{Solution.polygon_fluxoid()}) is shown in the right column. The colors of the paths in the left and middle columns correspond to the colors of the bars in the right column. Top row (a - c): The fluxoid $\Phi^f_S$ vanishes for all simply-connected regions containing no vortices. The errors in (c) are given by $|\Phi^f_S / \Phi^f_{S,\,\text{(flux part)}}|$. Middle row (d - f): For simply-connected regions containing a set of vortices $v$, each carrying flux $\Phi_v$, the fluxoid is given by $\sum_v\Phi_v$. In this case, the body of the square ring contains both ``positive'' ($\Phi_v=\Phi_0$, counter-clockwise circulating current) and ``negative'' ($\Phi_v=-\Phi_0$, clockwise circulating current) vortices, which appear in (e) as yellow and blue dots respectively. The expected value for the fluxoid for each region $S$ given in units of $\Phi_0$ by (number of yellow vortices lying inside $S$) - (number of blue vortices lying inside $S$), and the errors in (f) are reported relative to this expected value. Bottom row (g - i): The fluxoid is approximately equal for all regions $S$ containing a given hole, shown here for both circular ($S = 0, 1, 2$) and square ($S=3, 4, 5, 6$) regions.}
-%     \label{fig:fluxoid}
-% \end{figure}
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{examples/images/fluxoid_combined.png}
+    \caption{Demonstration of the fluxoid properties listed in Section~\ref{section:examples:fluxoid} for a square ring with $\Lambda=1\,\mu\mathrm{m}$, inner side length $5\,\mu\mathrm{m}$, and outer side length $10\,\mu\mathrm{m}$, whose outline is shown with white lines in the left and middle columns, subject to a uniform applied field of 0.1 mT. The left and middle columns show the computed current density and out-of-plane-field, overlaid with several regions $S$ for which the fluxoids $\Phi^f_S$ are calculated using \inline{Solution.polygon_fluxoid()}. The corresponding fluxoids are shown in the right column. The colors of the paths in the left and middle columns correspond to the colors of the bars in the right column. Top row (a - c): The fluxoid $\Phi^f_S$ vanishes for all simply-connected regions containing no vortices. The errors in (c) are given by $|\Phi^f_S / \Phi^f_{S,\,\text{(flux part)}}|$. Middle row (d - f): For simply-connected regions containing a set of vortices $v$, each carrying flux $\Phi_v$, the fluxoid is given by $\sum_v\Phi_v$. In this case, the body of the square ring contains both ``positive'' ($\Phi_v=\Phi_0$, counter-clockwise circulating current) and ``negative'' ($\Phi_v=-\Phi_0$, clockwise circulating current) vortices, which appear in (e) as yellow and blue dots respectively. The expected value for the fluxoid for each region $S$ given in units of $\Phi_0$ by (number of yellow vortices lying inside $S$) - (number of blue vortices lying inside $S$), and the errors in (f) are reported relative to this expected value. Bottom row (g - i): Fluxoid path independence for the $n=0$ fluxoid state, shown here for both circular ($S = 0, 1, 2$) and square ($S=3, 4, 5$) paths. Here again, the errors are given by $|\Phi^f_S / \Phi^f_{S,\,\text{(flux part)}}|$.}
+    \label{fig:fluxoid}
+\end{figure}
 
 % \section{Scaling with number of layers}
 % \label{section:scaling-layers}
