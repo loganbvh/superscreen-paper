@@ -769,36 +769,27 @@ device = sc.Device(
     "film",
     layers=[sc.Layer("base", Lambda=0, z0=0)],
     films=[sc.Polygon("film", layer="base", points=sc.geometry.square(20))],
-    # Add an abstract_polygon near the vortex position so that
-    # that region will be meshed densely.
-    abstract_regions=[
-        sc.Polygon("circle", layer="base", points=sc.geometry.circle(0.25)),
-    ],
     length_units="um",
 )
-device.make_mesh(min_triangles=8000)
+device.make_mesh(min_triangles=8_000)
 # Specify the vortex position.
 vortices = [sc.Vortex(x=0, y=0, layer="base")]
 # Sweep Lambda, solve the model, and evaluate the field at the given coordinates.
 Lambdas = np.linspace(0, 2, 5) # [device.length_units]
-solutions = []
 for Lambda in Lambdas:
     device.layers["base"].Lambda = Lambda
-    solution = sc.solve(
-        device=device, vortices=vortices, field_units="Phi_0/um**2"
-    )[-1]
-    solutions.append(solution)
+    solution = sc.solve(device=device, vortices=vortices)[-1]
     # Use solution.field_at_position() to evaluate the magnetic field profile,
     # and Solution.polygon_fluxoid() to calculate fluxoids.
 \end{minted}
-\captionof{listing}{Calculates the magnetic field distribution near a vortex trapped in a uniform superconducting film as a function of the film's effective penetration depth, $\Lambda$ (see Figure~\ref{fig:pearl}).}
+\captionof{listing}{Creates a square superconducting film with side length $20\,\mu\mathrm{m}$ and calculates the magnetic field distribution near a vortex at the center of the film as a function of the the effective penetration depth, $\Lambda$ (see Figure~\ref{fig:pearl}).}
 \label{code:pearl-vortex}
 \end{code}
 
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{examples/images/pearl.pdf}
-    \caption{Vortex field profiles calculated with \SuperScreen agree to within a few percent with the analytical solution (Eq.~\ref{eq:pearl}). (a) The fluxoid $\Phi_S^f$ for a circular region in the film with radius $r=1\,\mu\mathrm{m}$ centered at the position of the vortex core, as a function of the film's effective penetration depth $\Lambda$. As $\Lambda$ increases, so to does the supercurrent contribution to the fluxoid. (b) Error in the total simulated fluxoid relative to $\Phi_0$: $(\Phi_S^f(\Lambda) - \Phi_0) / \Phi_0$. (c) Cross section along the $x$-axis of the out-of-plane magnetic field $\mu_0H_z$ from a vortex located at the origin, $x=y=z=0\,\mu\mathrm{m}$ in a superconducting film, evaluated at a vertical distance $z=1\,\mu\mathrm{m}$ above the film for several different effective penetration depths $\Lambda$. (d) Percentage difference between the $\mu_0H_z$ calculated with \SuperScreen and the Fourier transform method for the $x$-axis cut shown in (c). (e) Cross-section along the $z$-axis of $\mu_0H_z$ from a vortex located at the origin, evaluated at $x=y=0\,\mu\mathrm{m}$, directly above the center of the vortex (logarithmic $y$ axis scale). (f) Percentage difference between the $\mu_0H_z$ calculated with \SuperScreen and the Fourier transform method for the $z$-axis cut shown in (e). In (a) and (b), the results from \SuperScreen are shown as open circles and the results from the Fourier transform method are shown as solid lines. }
+    \caption{Vortex field profiles calculated with \SuperScreen agree with the analytical solution (Eq.~\ref{eq:pearl}) to within a few percent. Here, we model a vortex trapped at the center of a square superconducting film lying in the $x-y$ plane with side length $20\,\mu\mathrm{m}$ as a function of the film's effective penetration depth, $\Lambda$. (a) The fluxoid $\Phi_S^f$ for a circular region in the film with radius $r=1\,\mu\mathrm{m}$ centered on the vortex core. As $\Lambda$ increases, so to does the supercurrent contribution to the fluxoid. (b) Error in the total simulated fluxoid relative to $\Phi_0$: $(\Phi_S^f(\Lambda) - \Phi_0) / \Phi_0$. (c) Cross section along the $x$-axis of the out-of-plane magnetic field $\mu_0H_z$ from the vortex, evaluated at a vertical distance $z=1\,\mu\mathrm{m}$ above the film. (d) Percentage difference between the $\mu_0H_z$ calculated with \SuperScreen and the Fourier transform method for the $x$-axis cut shown in (c). (e) Cross-section along the $z$-axis of $\mu_0H_z$ directly above the center of the vortex (logarithmic $y$ axis scale). (f) Percentage difference between the $\mu_0H_z$ calculated with \SuperScreen and the Fourier transform method for the $z$-axis cut shown in (e). In (c) and (e), the results from \SuperScreen are shown as open circles and the results from the Fourier transform method are shown as solid lines. }
     \label{fig:pearl}
 \end{figure}
 
