@@ -573,39 +573,39 @@ solution.plot_currents()
 \label{code:device}
 \end{code}
 
-Once the layers, films, holes, and abstract regions have been defined, one can generate the computational mesh by calling \inline{Device.make_mesh()}. The region that is meshed is defined by the convex hull of the union of all polygons in the device. Mesh generation is a two step process. First, an initial Delaunay mesh is created using \inline{meshpy}~\cite{Klockner}, which is a Python interface to Triangle~\cite{Shewchuk1996-va, Shewchuk}, a fast compiled 2D mesh generation tool. Second (and optionally), the mesh is further optimized using \inline{optimesh}~\cite{Schlomer2021-ua}. The goal of the mesh optimization step is to improve the quality of each triangular element in the mesh, where quality is defined as twice the ratio of the incircle radius to the circumcircle radius (quality $\leq1$, with equality for equilateral triangles). The local density of triangles in the mesh is determined by the density of vertices in the device's polygons and the total number of triangles. Regions where there are many polygon vertices will be meshed more densely than regions with few polygon vertices. If no \inline{optimesh} optimization is done, then every polygon vertex is guaranteed to be a mesh vertex. See Code Block~\ref{code:device} for a demonstration of \inline{Device.make_mesh()} and Figure~\ref{fig:mesh} to view the resulting meshes both with and without \inline{optimesh} optimization. After the mesh has been generated, the geometry-dependent matrices and vectors described in Section~\ref{section:implementation} are computed and one can begin solving models.
+Once the layers, films, holes, and abstract regions have been defined, one can generate the computational mesh by calling \inline{Device.make_mesh()}. The region that is meshed is defined by the convex hull of the union of all polygons in the device. Mesh generation is a two step process. First, an initial Delaunay mesh is created using \inline{meshpy}~\cite{Klockner}, which is a Python interface to Triangle~\cite{Shewchuk1996-va, Shewchuk}, a fast compiled 2D mesh generation tool. Second (and optionally), the mesh is further optimized using \inline{optimesh}~\cite{Schlomer2021-ua}. The goal of the mesh optimization step is to improve the quality of each triangular element in the mesh, where quality is defined as twice the ratio of the incircle radius to the circumcircle radius (quality $\leq1$, with equality for equilateral triangles). The local density of triangles in the mesh is determined by the density of vertices in the device's polygons and the total number of triangles. Regions where there are many polygon vertices will be meshed more densely than regions with few polygon vertices. If no \inline{optimesh} optimization is done, then every polygon vertex is guaranteed to be a mesh vertex. See Code Block~\ref{code:device} for a demonstration of \inline{Device.make_mesh()} and Figure~\ref{fig:ring-with-slit} to view the resulting meshes both (a) with and (b) without \inline{optimesh} optimization. After the mesh has been generated, the geometry-dependent matrices and vectors described in Section~\ref{section:implementation} are computed and one can begin solving models.
 
-\begin{code}
-\begin{minted}[fontsize=\small]{python}
-import matplotlib.pyplot as plt
+% \begin{code}
+% \begin{minted}[fontsize=\small]{python}
+% import matplotlib.pyplot as plt
 
-fig, axes = plt.subplots(1, 4, figsize=(14, 5), constrained_layout=True)
-# Create the Devices
-ring = make_ring(square=False)
-square_ring = make_ring(square=True)
-# min_triangles specifies the minimum number of mesh elements.
-min_triangles = 12000
-# optimesh_steps specifies the the number of iterations of
-# optimesh optimization to perform.
-# Set optimesh_steps=None to disable optimesh optimization.
-optimesh_steps = (None, 40)
-# For more meshing options, see the docstring for Device.make_mesh().
-for row, device in zip(axes.reshape(2, 2), (ring, square_ring)):
-    for ax, opt_steps in zip(row, optimesh_steps):
-        # Generate and visualize the mesh
-        device.make_mesh(min_triangles=min_triangles, optimesh_steps=opt_steps)
-        device.plot_mesh(ax=ax, color="gray", linewidth=0.75)
-        device.plot_polygons(ax=ax, linewidth=3, legend=False)
-\end{minted}
-\captionof{listing}{Generating and visualizing the computational mesh. See Figure~\ref{fig:mesh} to view the resulting meshes.}
-\label{code:mesh_generation}
-\end{code}
+% fig, axes = plt.subplots(1, 4, figsize=(14, 5), constrained_layout=True)
+% # Create the Devices
+% ring = make_ring(square=False)
+% square_ring = make_ring(square=True)
+% # min_triangles specifies the minimum number of mesh elements.
+% min_triangles = 12000
+% # optimesh_steps specifies the the number of iterations of
+% # optimesh optimization to perform.
+% # Set optimesh_steps=None to disable optimesh optimization.
+% optimesh_steps = (None, 40)
+% # For more meshing options, see the docstring for Device.make_mesh().
+% for row, device in zip(axes.reshape(2, 2), (ring, square_ring)):
+%     for ax, opt_steps in zip(row, optimesh_steps):
+%         # Generate and visualize the mesh
+%         device.make_mesh(min_triangles=min_triangles, optimesh_steps=opt_steps)
+%         device.plot_mesh(ax=ax, color="gray", linewidth=0.75)
+%         device.plot_polygons(ax=ax, linewidth=3, legend=False)
+% \end{minted}
+% \captionof{listing}{Generating and visualizing the computational mesh. See Figure~\ref{fig:mesh} to view the resulting meshes.}
+% \label{code:mesh_generation}
+% \end{code}
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=\textwidth]{examples/images/mesh.pdf}
-    \caption{Computational meshes for (a, b) circular and (c, d) square rings, (a, c) without and (b, d) with \inline{optimesh} optimization, generated using Code Block~\ref{code:mesh_generation}. The bounding box (\inline{bbox}) is shown in purple, the ring's outer edge (\inline{ring}) is shown in red, and the ring's inner edge (\inline{hole}) is shown in blue. Note that optimizing the mesh does not change the total number of vertices or triangles, but does tend to make the triangle size and density more uniform across the mesh. In this case, all four meshes (a-d) contain around 6,000 points and 12,000 triangles.}
-    \label{fig:mesh}
+    \includegraphics[width=\textwidth]{examples/images/ring_with_slit.pdf}
+    \caption{}
+    \label{fig:ring-with-slit}
 \end{figure}
 
 \subsection{Solvers}
