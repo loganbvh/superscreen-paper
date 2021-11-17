@@ -38,7 +38,7 @@
 
 \newenvironment{code}{\captionsetup{type=listing}}{\hfill}
 \SetupFloatingEnvironment{listing}{name=Code Block}
-\BeforeBeginEnvironment{code}{\begin{minipage}{\textwidth}}
+\BeforeBeginEnvironment{code}{\vspace{10pt}\begin{minipage}{\textwidth}}
 \AfterEndEnvironment{code}{\end{minipage}}
 \captionsetup[listing]{skip=0pt}
 
@@ -529,6 +529,10 @@ In addition to superconducting films and holes, one may define ``abstract region
 % See Code Block~\ref{code:device} for an example of a function that creates a square or circular superconducting ring centered at the origin, with an effective penetration depth $\Lambda = 1\,\mu\mathrm{m}$.
 
 
+Once the layers, films, holes, and abstract regions have been defined, one can generate the computational mesh by calling \inline{Device.make_mesh()}. The region that is meshed is defined by the convex hull of the union of all polygons in the device. Mesh generation is a two step process. First, an initial Delaunay mesh is created using \inline{meshpy}~\cite{Klockner}, which is a Python interface to Triangle~\cite{Shewchuk1996-va, Shewchuk}, a fast compiled 2D mesh generation tool. Second (and optionally), the mesh is further optimized using \inline{optimesh}~\cite{Schlomer2021-ua}. The goal of the mesh optimization step is to improve the quality of each triangular element in the mesh, where quality measures how close a triangle is to equilateral (quality $\leq1$, with equality for equilateral triangles).
+% , where quality is defined as twice the ratio of the incircle radius to the circumcircle radius (quality $\leq1$, with equality for equilateral triangles).
+The local density of triangles in the mesh is determined by the density of vertices in the device's polygons and the total number of triangles. Regions where there are many polygon vertices will be meshed more densely than regions with few polygon vertices. If no \inline{optimesh} optimization is done, then every polygon vertex is guaranteed to be a mesh vertex. See Code Block~\ref{code:device} for a demonstration of \inline{Device.make_mesh()} and Figure~\ref{fig:ring-with-slit}(a) to view the resulting mesh. After the mesh has been generated, the geometry-dependent matrices and vectors described in Section~\ref{section:implementation} are computed and one can begin solving models.
+
 \begin{code}
 \begin{minted}[fontsize=\small]{python}
 import superscreen as sc
@@ -550,7 +554,7 @@ film = sc.Polygon.from_difference(
     [ring, slit, hole], name="ring_with_slit", layer="base"
 )
 bounding_box = sc.Polygon("bounding_box", layer="base", points=circle(1.2 * ro))
-# Define the Device and generate the computational mesh.
+# Create a Device and generate and plot the computational mesh.
 device = sc.Device(
     film.name,
     layers=[layer],
@@ -559,52 +563,22 @@ device = sc.Device(
     length_units=length_units,
 )
 device.make_mesh(min_triangles=8_000, optimesh_steps=None)
-# Solve for the device's response to a uniform applied field.
-solution = sc.solve(
-    device,
-    applied_field=sc.sources.ConstantField(10),
-    field_units="uT",
-)[-1]
+device.plot(mesh=True)
+# Calculate the device's response to a uniform applied field.
+applied_field = sc.sources.ConstantField(10)
+solution = sc.solve(device, applied_field=applied_field, field_units="uT")[-1]
 # Visualize the solution.
 solution.plot_fields()
 solution.plot_currents()
 \end{minted}
-\captionof{listing}{A function that creates a \inline{Device} representing a circular or square ring centered at the origin.}
+\captionof{listing}{The typical workflow for a \SuperScreen simulation: 1) Define device geometry and materials properties, 2) generate the computational mesh, 3) solve the model for a given applied field, and 4) visualize the results.}
 \label{code:device}
 \end{code}
-
-Once the layers, films, holes, and abstract regions have been defined, one can generate the computational mesh by calling \inline{Device.make_mesh()}. The region that is meshed is defined by the convex hull of the union of all polygons in the device. Mesh generation is a two step process. First, an initial Delaunay mesh is created using \inline{meshpy}~\cite{Klockner}, which is a Python interface to Triangle~\cite{Shewchuk1996-va, Shewchuk}, a fast compiled 2D mesh generation tool. Second (and optionally), the mesh is further optimized using \inline{optimesh}~\cite{Schlomer2021-ua}. The goal of the mesh optimization step is to improve the quality of each triangular element in the mesh, where quality is defined as twice the ratio of the incircle radius to the circumcircle radius (quality $\leq1$, with equality for equilateral triangles). The local density of triangles in the mesh is determined by the density of vertices in the device's polygons and the total number of triangles. Regions where there are many polygon vertices will be meshed more densely than regions with few polygon vertices. If no \inline{optimesh} optimization is done, then every polygon vertex is guaranteed to be a mesh vertex. See Code Block~\ref{code:device} for a demonstration of \inline{Device.make_mesh()} and Figure~\ref{fig:ring-with-slit} to view the resulting meshes both (a) with and (b) without \inline{optimesh} optimization. After the mesh has been generated, the geometry-dependent matrices and vectors described in Section~\ref{section:implementation} are computed and one can begin solving models.
-
-% \begin{code}
-% \begin{minted}[fontsize=\small]{python}
-% import matplotlib.pyplot as plt
-
-% fig, axes = plt.subplots(1, 4, figsize=(14, 5), constrained_layout=True)
-% # Create the Devices
-% ring = make_ring(square=False)
-% square_ring = make_ring(square=True)
-% # min_triangles specifies the minimum number of mesh elements.
-% min_triangles = 12000
-% # optimesh_steps specifies the the number of iterations of
-% # optimesh optimization to perform.
-% # Set optimesh_steps=None to disable optimesh optimization.
-% optimesh_steps = (None, 40)
-% # For more meshing options, see the docstring for Device.make_mesh().
-% for row, device in zip(axes.reshape(2, 2), (ring, square_ring)):
-%     for ax, opt_steps in zip(row, optimesh_steps):
-%         # Generate and visualize the mesh
-%         device.make_mesh(min_triangles=min_triangles, optimesh_steps=opt_steps)
-%         device.plot_mesh(ax=ax, color="gray", linewidth=0.75)
-%         device.plot_polygons(ax=ax, linewidth=3, legend=False)
-% \end{minted}
-% \captionof{listing}{Generating and visualizing the computational mesh. See Figure~\ref{fig:mesh} to view the resulting meshes.}
-% \label{code:mesh_generation}
-% \end{code}
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=\textwidth]{examples/images/ring_with_slit.pdf}
-    \caption{}
+    \caption{The output of Code Block~\ref{code:device}: Meissner screening of a uniform $10\,\mu\mathrm{T}$ out-of-plane field by a ring with inner diameter $1\,\mu\mathrm{m}$, outer diameter $3\,\mu\mathrm{m}$, and effective penetration depth $\Lambda=1\,\mu\mathrm{m}$, interrupted by a slit of width $0.5\,\mu\mathrm{m}$. a) Plot of the boundary of the ring (blue), circular bounding box (orange), and the computational mesh (gray), generated by \inline{Device.plot()}. b) The $z$-component of the magnetic field $\mu_0H_z$ evaluated at the plane of the ring, generated by \inline{Solution.plot_fields()}. c) Current density $\vec{J}$ in the ring, generated by \inline{Solution.plot_currents()}.}
     \label{fig:ring-with-slit}
 \end{figure}
 
