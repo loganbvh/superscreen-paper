@@ -576,8 +576,12 @@ device.plot(mesh=True)
 applied_field = sc.sources.ConstantField(10)
 solution = sc.solve(device, applied_field=applied_field, field_units="uT")[-1]
 # Visualize the solution.
+# Plot the magnetic field evaluated at each layer in the Device.
 solution.plot_fields()
+# Plot the current density evaluated at each layer in the Device.
 solution.plot_currents()
+# Plot the field evaluated at any points in space.
+solution.plot_field_at_positions(device.points, zs=0.5)
 \end{minted}
 \captionof{listing}{The typical workflow for a \SuperScreen simulation: 1) Define device geometry and materials properties, 2) generate the computational mesh, 3) solve the model for a given applied field, and 4) visualize the results.}
 \label{code:device}
@@ -591,7 +595,7 @@ The local density of triangles in the mesh is determined by the density of verti
 \begin{figure*}
     \centering
     \includegraphics[width=\textwidth]{examples/images/ring_with_slit.pdf}
-    \caption{The output of Code Block~\ref{code:device}: Meissner screening of a uniform $10\,\mu\mathrm{T}$ out-of-plane field by a ring with inner diameter $1\,\um$, outer diameter $3\,\um$, and effective penetration depth $\Lambda=1\,\um$, interrupted by a slit of width $0.5\,\um$. a) Plot of the boundary of the ring (blue), circular bounding box (orange), and the computational mesh (gray), generated with \inline{Device.plot()}. b) The $z$-component of the magnetic field $\mu_0H_z$ evaluated at the plane of the ring, generated with \inline{Solution.plot_fields()}. c) Current density $\vec{J}$ in the ring, generated with \inline{Solution.plot_currents()}.}
+    \caption{The output of Code Block~\ref{code:device}: Meissner screening of a uniform $10\,\mu\mathrm{T}$ out-of-plane field by a ring with inner diameter $1\,\um$, outer diameter $3\,\um$, and effective penetration depth $\Lambda=1\,\um$, interrupted by a slit of width $0.5\,\um$. a) Plot of the boundary of the ring (blue), circular bounding box (orange), and the computational mesh (gray), generated with \inline{Device.plot()}. b) The current density $\vec{J}$ in the ring, generated with \inline{Solution.plot_currents()}. c) The $z$-component of the magnetic field $\mu_0H_z$ evaluated at the plane of the ring, generated with \inline{Solution.plot_fields()}. d) The $z$-component of the magnetic field evaluated $z=0.5\,\um$ above the ring (generated using \inline{Solution.plot_field_at_positions()}.}
     \label{fig:ring-with-slit}
 \end{figure*}
 
@@ -796,7 +800,7 @@ for Lambda in Lambdas:
 \begin{figure*}[h]
     \centering
     \includegraphics[width=\textwidth]{examples/images/pearl.png}
-    \caption{Vortex field profiles calculated with \SuperScreen agree with the analytical solution (Eq.~\ref{eq:pearl}) to within a few percent. Here, we model a vortex trapped at the center of a square superconducting film lying in the $x-y$ plane with side length $20\,\um$ as a function of the film's effective penetration depth, $\Lambda$. (a) Cross section along the $x$-axis of the out-of-plane magnetic field $\mu_0H_z$ from the vortex, evaluated at a vertical distance $z=1\,\um$ above the film. The inset shows the vortex field profile for $\Lambda=0\,\um$ evaluated at $z=1\,\um$, with a dashed white line indicating the cross-sectiYeah on axis. (b) Percentage difference between the $\mu_0H_z$ calculated with \SuperScreen and the Fourier transform method for the $x$-axis cut shown in (a). (c) Cross-section along the $z$-axis of $\mu_0H_z$ directly above the center of the vortex (logarithmic $y$ axis scale). (d) Percentage difference between the $\mu_0H_z$ calculated with \SuperScreen and the Fourier transform method for the $z$-axis cut shown in (c). In (a) and (c), the results from \SuperScreen are shown as open circles and the results from the Fourier transform method are shown as solid lines. (e) The fluxoid $\Phi_S^f$ for a circular region in the film with radius $r=1\,\um$ centered on the vortex core. As $\Lambda$ increases, so to does the supercurrent contribution to the fluxoid. (f) Error in the total simulated fluxoid relative to $\Phi_0$: $(\Phi_S^f(\Lambda) - \Phi_0) / \Phi_0$.}
+    \caption{Vortex field profiles calculated with \SuperScreen agree with the analytical solution (Eq.~\ref{eq:pearl}) to within a few percent. Here, we model a vortex trapped at the center of a square superconducting film lying in the $x-y$ plane with side length $20\,\um$ as a function of the film's effective penetration depth, $\Lambda$. (a) Cross section along the $x$-axis of the out-of-plane magnetic field $\mu_0H_z$ from the vortex, evaluated at a vertical distance $z=1\,\um$ above the film. The inset shows the vortex field profile for $\Lambda=0\,\um$ evaluated at $z=1\,\um$, with a dashed white line indicating the cross-section axis. (b) Percentage difference between the $\mu_0H_z$ calculated with \SuperScreen and the Fourier transform method for the $x$-axis cut shown in (a). (c) Cross-section along the $z$-axis of $\mu_0H_z$ directly above the center of the vortex (logarithmic $y$ axis scale). (d) Percentage difference between the $\mu_0H_z$ calculated with \SuperScreen and the Fourier transform method for the $z$-axis cut shown in (c). In (a) and (c), the results from \SuperScreen are shown as open circles and the results from the Fourier transform method are shown as solid lines. (e) The fluxoid $\Phi_S^f$ for a circular region in the film with radius $r=1\,\um$ centered on the vortex core. As $\Lambda$ increases, so to does the supercurrent contribution to the fluxoid. (f) Error in the total simulated fluxoid relative to $\Phi_0$: $(\Phi_S^f(\Lambda) - \Phi_0) / \Phi_0$.}
     \label{fig:pearl}
 \end{figure*}
 
