@@ -866,6 +866,13 @@ W2 (top)    & 200            & Pickup loop shield, modulation coil \\ \hline
 \label{table:squid-layers}
 \end{table*}
 
+\begin{figure*}
+    \centering
+    \includegraphics[width=\textwidth]{examples/images/squid-mutuals.png}
+    \caption{Caption}
+    \label{fig:squid-mutuals}
+\end{figure*}
+
 To model a SQUID susceptometry measurement, we first calculate $M_0$, the mutual inductance between the field coil and pickup loop in the absence of the sample. This can be done by temporarily setting the sample layer effective penetration depth to a very large value such that it essentially does not screen the field from the field coil (in this case, we set $\Lambda = 10^5\,\um$). We then model the field from a known current flowing in the field coil following Section~\ref{section:model:holes} and self-consistently calculate the response of both the sample and the other superconducting layers of the SQUID sensor following Section~\ref{section:model:multilayer}. To ensure that the 2D current distribution in the field coil is approximately uniform (as we would expect for a real applied current), we set the field coil layer effective penetration depth to be greater than the width of the field coil conductor.
 
 Once $M_0$ is known, we can ``turn on" the sample's diamagnetic response by setting its effective penetration depth $\Lambda$ to the desired value and compute $M(z, \Lambda)$ for a given vertical distance $z$ between the sample and the SQUID as described in the previous paragraph. The SQUID susceptibility signal is then $M(z, \Lambda) - M_0$, the change in mutual inductance between the field coil and pickup loop due to the presence of the sample (usually given in units of $\Phi_0/\mathrm{A}$, where $\Phi_0$ is the superconducting flux quantum). The susceptibility can also be normalized to the bare mutual inductance $M_0$, giving a dimensionless susceptibility $\chi(z, \Lambda)=[M(z, \Lambda) - M_0] / M_0$.  
