@@ -224,7 +224,6 @@ A convenient method for solving this problem was introduced by Brandt and Clem i
 $\nabla\times\vec{j}(\vec{r})=-\vec{H}(\vec{r})/\lambda^2(\vec{r})$, where
 $\nabla=\left(\frac{\partial}{\partial x}, \frac{\partial}{\partial y}, \frac{\partial}{\partial z}\right)$. Brandt's model assumes that the current density $\vec{j}$ is approximately independent of $z$, such that  $\vec{j}(\vec{r}) = \vec{j}(x, y, z)\approx\vec{j}_{z_0}(x, y)$ for a film lying parallel to the $x-y$ plane at vertical position $z_0$. Working now with the thickness-integrated current density (sheet current) $\vec{J}(x, y)=\vec{j}_{z_0}(x, y)\cdot d$, where $d$
 is the thickness of the film, the second London equation reduces to
-
 \begin{equation}
     \label{eq:london}
     \nabla\times\vec{J}(x, y)=-\vec{H}(x, y)/\Lambda(x, y),
@@ -237,7 +236,6 @@ It is important to note that the assumption $\vec{j}(x, y, z)\approx\vec{j}_{z_0
 Because the sheet current has zero divergence inside the superconducting film ($\nabla\cdot\vec{J}=0$)
 except at small terminals where current can be injected, one can express the sheet current in terms
 of a scalar potential $g(x, y)$, called the stream function:
-
 \begin{equation}
     \label{eq:stream}
     \vec{J}(x, y) = -\hat{z}\times\nabla g
@@ -246,30 +244,27 @@ of a scalar potential $g(x, y)$, called the stream function:
 \end{equation}
 
 The stream function $g$ can be thought of as the local magnetization of the film, or the area density of magnetic dipole sources (see Ref.~\cite{Brandt2005-wj} for more interesting properties of the stream function). We can rewrite Eq.~\ref{eq:london}, which gives the magnetic field inside of a 2D film, in terms of $g$:
-
 \begin{align}
     \label{eq:london_stream}
     \begin{split}
         \vec{H}(x, y) &= -\Lambda\left[\nabla\times\vec{J}(x, y)\right]\\
         &= -\Lambda\left[\nabla\times\left(\nabla\times(g\hat{z})\right)\right]\\
         &= -\Lambda\left[\nabla(\nabla\cdot(g\hat{z}))-\nabla^2(g\hat{z})\right]\\
-        &=\Lambda\nabla^2g(x,y)\hat{z}
+        &=\Lambda\nabla^2g(x,y)\hat{z},
     \end{split}
 \end{align}
 where $\nabla^2=\nabla\cdot\nabla$ is the Laplace operator. (The last line follows from the fact that $\nabla\cdot\left[g(x,y)\hat{z}\right] = 0$). From Ampere's Law, the three components of the magnetic field $\vec{H}(\vec{r})$ at position $\vec{r}=(x, y, z)$ due to a sheet of current lying in the $x-y$ plane (at vertical position $z'$) with stream function $g(x', y')$ are given by:
-
 \begin{align}
     \label{eq:field_from_kernel}
     \begin{split}
         H_x(\vec{r}) &= \int_F Q_x(\vec{r},\vec{r}')g(x', y')\,\mathrm{d}^2r'\\
         H_y(\vec{r}) &= \int_F Q_y(\vec{r},\vec{r}')g(x', y')\,\mathrm{d}^2r'\\
         H_z(\vec{r}) &= H_{z,\,\mathrm{applied}}(\vec{r})
-        + \int_F Q_z(\vec{r},\vec{r}')g(x', y')\,\mathrm{d}^2r'  
+        + \int_F Q_z(\vec{r},\vec{r}')g(x', y')\,\mathrm{d}^2r'.  
     \end{split}
 \end{align}
 
 Here we assume an out-of-plane applied magnetic field $\vec{H}_\mathrm{applied}(\vec{r}')=H_\mathrm{z,\,\mathrm{applied}}(\vec{r}')\hat{z}$. $F$ is the film area (with $g = 0$ outside of the film), and $Q_x(\vec{r},\vec{r}')$, $Q_y(\vec{r},\vec{r}')$, and $Q_z(\vec{r},\vec{r}')$ are dipole kernel functions which give the respective component of the magnetic field at position $\vec{r}=(x, y, z)$ due to a dipole of unit strength at position $\vec{r}'=(x', y', z')$:
-
 \begin{align}
     \label{eq:kernels}
     \begin{split}
@@ -284,7 +279,6 @@ Here we assume an out-of-plane applied magnetic field $\vec{H}_\mathrm{applied}(
 where $\rho=\sqrt{(x-x')^2 + (y-y')^2}$.
 
 Comparing Eq.~\ref{eq:london_stream} and Eq.~\ref{eq:field_from_kernel}, we have in the plane of the film:
-
 \begin{align}
     \label{eq:integral_equation}
     \begin{split}
@@ -295,7 +289,6 @@ Comparing Eq.~\ref{eq:london_stream} and Eq.~\ref{eq:field_from_kernel}, we have
     \end{split}
 \end{align}
 where now $\vec{r}$ and $\vec{r}'$ are 2D vectors, i.e. $z-z'=0$ since the film is in the same plane as itself. From Eq.~\ref{eq:integral_equation}, we arrive at an integral equation relating the stream function $g$ for points inside the superconductor to the applied field $H_{z,\,\mathrm{applied}}$:
-
 \begin{align}
 \begin{split}
     \label{eq:applied_to_stream}
@@ -314,7 +307,6 @@ from Eqs.~\ref{eq:field_from_kernel} and \ref{eq:kernels}.
 \label{section:model:holes}
 
 In films that have holes (regions of vacuum completely surrounded by superconductor), each hole $k$ can contain a trapped flux $\Phi_k$, with an associated circulating current $I_{\mathrm{circ},\,k}$. The (hypothetical) applied field that would cause such a circulating current is given by Eq.~\ref{eq:applied_to_stream} if we set $g=I_{\mathrm{circ},\,k}$ for all points lying inside hole $k$:
-
 \begin{align}
 \begin{split}
     \label{eq:Heff}
@@ -326,7 +318,6 @@ In films that have holes (regions of vacuum completely surrounded by superconduc
 \end{align}
 
 In this case, we modify the left-hand side of Eq.~\ref{eq:applied_to_stream} as follows:
-
 \begin{align}
 \begin{split}
     \label{eq:Heff_sub}
@@ -341,19 +332,16 @@ In this case, we modify the left-hand side of Eq.~\ref{eq:applied_to_stream} as 
 \label{section:model:fluxoid}
 
 The fluxoid $\Phi^f_S$ for a 2D region $S$ with 1D boundary $\partial S$ is given by the sum of flux through $S$ and the line integral of sheet current around $\partial S$~\cite{Brandt2005-wj,Clem2005-ye,Tinkham2004-zn}:
-
 \begin{equation}
     \Phi^f_S = \underbrace{\int_S\mu_0H_z(\vec{r})\,\mathrm{d}^2r}_\text{``flux part''} + \underbrace{\oint_{\partial S}\mu_0\Lambda(\vec{r})\vec{J}(\vec{r})\cdot\mathrm{d}\vec{r}}_\text{``supercurrent part''}.
     \label{eq:fluxoid}
 \end{equation}
 
-The fluxoid vanishes for a region $S$ completely contained within a superconducting film that contains no holes or vortices, and has the same value for any region containing a given hole or collection of vortices in a superconducting film. This path-independence of the fluxoid follows from the static London equation (Eq.~\ref{eq:london}) on which the present model is based. Fluxoid quantization---the requirement that the fluxoid $\Phi^f_S=n\Phi_0$ where $n$ is an integer and $\Phi_0=h/2e$ is the magnetic flux quantum---is not automatically enforced by Eq.~\ref{eq:london}, however it can be included as an external constraint.
-% However, because Eq.~\ref{eq:london} does not relate the supercurrent density $\vec{J}$ to the phase of a complex order parameter as in Ginzburg-Landau theory, or invoke the semi-classical Bohr-Sommerfeld quantization rule as London did~\cite{Tinkham2004-zn}, within this model the fluxoid is not constrained to be an integer multiple of the flux quantum $\Phi_0=h/2e$.
+The fluxoid vanishes for a region $S$ completely contained within a superconducting film that contains no holes or vortices, and has the same value for any region containing a given hole or collection of vortices in a superconducting film. This path-independence of the fluxoid follows from the static London equation (Eq.~\ref{eq:london}) on which the present model is based. Fluxoid quantization---the requirement that the fluxoid $\Phi^f_S=n\Phi_0$ where $n$ is an integer and $\Phi_0=h/2e$ is the magnetic flux quantum---is not automatically enforced by Eq.~\ref{eq:london} for multiply-connected films, however it can be included as an external constraint.
 
 \subsection{Vortices}
 \label{section:model:vortices}
 In addition to being trapped in holes (see Section~\ref{section:model:holes}), flux may be trapped in a superconducting film in the form of vortices. The presence of vortices trapped in a film at positions $\vec{r}_v$ modifies Eq.~\ref{eq:Heff_sub} as follows:
-
 \begin{align}
 \begin{split}
     \label{eq:applied_to_stream_vortices}
@@ -411,7 +399,6 @@ denotes matrix multiplication, with $(\mathbf{A}\mathbf{B})_{ij}=\sum_{k=1}^\ell
 and $(\mathbf{A}\cdot\mathbf{v})_{ij}=(\mathbf{v}\cdot\mathbf{A})_{ij}=A_{ij}v_{i}$ for a matrix $\mathbf{A}$ and a column vector $\mathbf{v}$. $\mathbf{A}^T$ denotes the transpose of matrix $\mathbf{A}$.
 
 The discrete version of Eq.~\ref{eq:field_from_kernel} is
-
 \begin{align}
 \begin{split}
     \label{eq:field_from_kernel_num}
@@ -428,7 +415,6 @@ where for clarity we show both the matrix version of Eq.~\ref{eq:field_from_kern
 The $n\times n$ kernel matrix $\mathbf{Q}$ represents the kernel function $Q_z(\vec{r},\vec{r}')$ for all points lying in the plane of the film, and the $n\times 1$ weight vector $\mathbf{w}$, which assigns an effective area to each vertex in the mesh, represents the differential element $\mathrm{d}^2r'$. Both $\mathbf{Q}$ and $\mathbf{w}$ are solely determined by the geometry of the mesh, so they only need to be computed once for a given device. $\mathbf{h}_z$, $\mathbf{h}_{z,\,\mathrm{applied}}$, and $\mathbf{g}$ are all $n\times 1$ vectors, with each row representing the value of the quantity at the
 corresponding vertex in the mesh. The vector $\mathbf{w}$ is equal to the diagonal of the ``lumped mass matrix'' $\mathbf{M}$: $w_i=M_{ii} = \frac{1}{3}\sum_{t\in\mathcal{N}(i)}\mathrm{area}(t)$,
 where $\mathcal{N}(i)$ is the set of triangles $t$ adjacent to vertex $i$. The kernel matrix $\mathbf{Q}$ is given by
-
 \begin{equation}
     \label{eq:kernel_matrix}
     Q_{ij} = (\delta_{ij}-1)q_{ij}
@@ -437,7 +423,6 @@ where $\mathcal{N}(i)$ is the set of triangles $t$ adjacent to vertex $i$. The k
 where $q_{ij} = \left(4\pi|\vec{r}_i-\vec{r}_j|^3\right)^{-1}$
 (which is $\lim_{\Delta z\to 0}Q_z(\vec{r},\vec{r}')$ cf. Eq.~\ref{eq:kernels}),
 and $\delta_{ij}$ is the Kronecker delta function. The diagonal terms involving the $n\times 1$ vector $\mathbf{C}$ are meant to work around the fact that $q_{ii}$ diverge (see Ref.~\cite{Brandt2005-wj} for more details), and $\mathbf{C}$ is given by
-
 \begin{equation}
     \label{eq:C_vector}
     C_i = \frac{1}{4\pi}\sum_{p,q=\pm1}\sqrt{[\Delta x - p(x_i-\bar{x})]^{-2} + [\Delta y - q(y_i-\bar{y})]^{-2}},
@@ -445,7 +430,6 @@ and $\delta_{ij}$ is the Kronecker delta function. The diagonal terms involving 
 where $\Delta x=(x_\mathrm{max}-x_\mathrm{min})/2$ and $\Delta y=(y_\mathrm{max}-y_\mathrm{min})/2$ are half the side lengths of a rectangle bounding the modeled film and $(\bar{x}, \bar{y})$ are the coordinates of the center of the rectangle.
 
 The matrix version of Eq.~\ref{eq:Heff_sub} is
-
 \begin{equation}
     \label{eq:Heff_sub_num}
      \mathbf{h}_{z,\,\mathrm{applied}} - \sum_{\mathrm{holes}\, k}\mathbf{h}_{z,\,\mathrm{eff},\,k} = -(\mathbf{Q}\cdot\mathbf{w}^T-\mathbf{\nabla}^2\cdot \mathbf{\Lambda}^T)\mathbf{g},
@@ -456,7 +440,6 @@ is the Laplace operator, an $n\times n$ matrix defined such that $\mathbf{\nabla
 
 Eq.~\ref{eq:Heff_sub_num} is a matrix equation relating the applied field to the stream function
 inside a superconducting film, which can efficiently be solved (e.g. by Cholesky or LU decomposition) for the unknown vector $\mathbf{g}$, the stream function inside the film. Since the stream function outside the film and inside holes in the film is already known, solving Eq.~\ref{eq:Heff_sub_num} gives us the stream function for the full mesh. Defining $\mathbf{K} = \left(\mathbf{Q}\cdot\mathbf{w}^T-\mathbf{\nabla}^2\cdot\mathbf{\Lambda}^T\right)^{-1}$, we have
-
 \begin{equation}
     \label{eq:full_stream}
     \mathbf{g} = \begin{cases}
@@ -598,7 +581,7 @@ The local density of triangles in the mesh is determined by the density of verti
 \begin{figure*}
     \centering
     \includegraphics[width=\textwidth]{examples/images/ring_with_slit.pdf}
-    \caption{The output of Code Block~\ref{code:device}: Meissner screening of a uniform $10\,\mu\mathrm{T}$ out-of-plane field by a ring with inner diameter $1\,\um$, outer diameter $3\,\um$, and effective penetration depth $\Lambda=1\,\um$, interrupted by a slit of width $0.25\,\um$. a) Plot of the boundary of the ring (blue), circular bounding box (orange), and the computational mesh (gray), generated with \inline{Device.plot()}. b) The current density $\vec{J}$ in the ring, generated with \inline{Solution.plot_currents()}. c) The $z$-component of the magnetic field $\mu_0H_z$ evaluated at the plane of the ring, generated with \inline{Solution.plot_fields()}. d) The $z$-component of the magnetic field evaluated $z=0.5\,\um$ above the ring (generated using \inline{Solution.plot_field_at_positions()}.}
+    \caption{The output of Code Block~\ref{code:device}: Meissner screening of a uniform $10\,\mu\mathrm{T}$ out-of-plane field by a ring with inner diameter $1\,\um$, outer diameter $3\,\um$, and effective penetration depth $\Lambda=1\,\um$, interrupted by a slit of width $0.25\,\um$. a) Plot of the boundary of the ring (blue), circular bounding box (orange), and the computational mesh (gray), generated with \inline{Device.plot()}. b) The current density $\vec{J}$ in the ring, generated with \inline{Solution.plot_currents()}. c) The $z$-component of the magnetic field $\mu_0H_z$ evaluated at the plane of the ring, generated with \inline{Solution.plot_fields()}. d) The $z$-component of the magnetic field evaluated $z=0.5\,\um$ above the ring (generated using \inline{Solution.plot_field_at_positions()}).}
     \label{fig:ring-with-slit}
 \end{figure*}
 
@@ -978,7 +961,7 @@ By default, \SuperScreen uses half-cotangent weighting. The Laplacian matrix $\m
 \section{Spatially inhomogeneous $\Lambda$}
 \label{appendix:inhomogeneous}
 
-As mentioned in Section~\ref{section:overview:device}, the effective penetration depth $\Lambda$ of each layer can be specified as a numeric constant or as a \inline{superscreen.Parameter} that computes $\Lambda(x, y)$, the effective penetration depth as a function of position. As a (somewhat contrived) example, here we update the model of a ring with a slit from Code Block~\ref{code:device} and Figure~\ref{fig:ring-with-slit} such that the ring's penetration depth $\Lambda(x, y)$ increases linearly as a function of the angle that the vector $\vec{r} = (x, y)$ makes with the $-y$ axis (along which the slit lies).
+As mentioned in Section~\ref{section:overview:device}, the effective penetration depth $\Lambda$ of each layer can be specified as a numeric constant or as a \inline{superscreen.Parameter} that computes $\Lambda(x, y)$, the effective penetration depth as a function of position. As a (somewhat contrived) example, Code Block~\ref{code:inhomogeneous} demonstrates how to modify the model of a ring with a slit from Code Block~\ref{code:device} and Figure~\ref{fig:ring-with-slit} such that the ring's penetration depth $\Lambda(x, y)$ increases linearly as a function of the angle between the vector $\vec{r} = (x, y)$ and the $-y$ axis (along which the slit lies). The resulting current and field distributions are shown in Figure~\ref{fig:inhomogeneous}. Note that $\Lambda(x, y)$ must vary slowly on the scale of the spacing between mesh vertices in order for results to be reliable.
 
 \begin{code}
 \begin{minted}[fontsize=\small]{python}
@@ -1012,14 +995,14 @@ solution.plot_currents()
 # Plot the field evaluated at any points in space.
 solution.plot_field_at_positions(device.points, zs=0.5)
 \end{minted}
+\captionof{listing}{Simulating an inhomogeneous superconducting device. Here we modify the superconducting ring with a slit (Code Block~\ref{code:device} to have an effective penetration depth $\Lambda(x, y)$, which increases linearly from $0.1\,\um$ to $1\,\um$ as a function of the angle between the vector $\vec{r}=(x, y)$ and the $-y$ axis. See Figure~\ref{fig:inhomogeneous} for the resulting current and field distributions.}
 \label{code:inhomogeneous}
-\captionof{listing}{Simulating an inhomogeneous superconducting device. Here we modify the superconducting ring with a slit (Code Block~\ref{code:device} to have an effective penetration depth $\Lambda(x, y)$, which increases linearly from $0.1\,\um$ to $1\,\um$ as a function of the angle between the point $(x, y)$ and the $-y$ axis.}
 \end{code}
 
 \begin{figure*}[h]
     \centering
     \includegraphics[width=\textwidth]{examples/images/ring_with_slit_inhomogeneous.pdf}
-    \caption{The output of Code Block~\ref{code:inhomogeneous}: Screening of a uniform applied field of $10\,\mu\mathrm{T}$ by a ring with a slit in a superconducting film with inhomogeneous effective penetration depth $\Lambda(x, y)$}
+    \caption{The output of Code Block~\ref{code:inhomogeneous}: Meissner screening of a uniform applied field of $10\,\mu\mathrm{T}$ by a ring with a slit in a superconducting film with inhomogeneous effective penetration depth $\Lambda(x, y)$. a) The inhomogeneous effective penetration depth $\Lambda(x, y)$, with the ring's outline overlaid in orange. b) The current density $\vec{J}$ in the ring, generated with \inline{Solution.plot_currents()}. c) The $z$-component of the magnetic field $\mu_0H_z$ evaluated at the plane of the ring, generated with \inline{Solution.plot_fields()}. d) The $z$-component of the magnetic field evaluated $z=0.5\,\um$ above the ring (generated using \inline{Solution.plot_field_at_positions()}).}
     \label{fig:inhomogeneous}
 \end{figure*}
  
