@@ -417,13 +417,13 @@ The discrete version of Eq.~\ref{eq:field_from_kernel} is
     \label{eq:field_from_kernel_num}
     \underbrace{\mathbf{h}_z}_\text{total field}
     &= \underbrace{\mathbf{h}_{z,\,\mathrm{applied}}}_\text{applied field}
-    + \underbrace{\mathbf{Q}(\mathbf{g}\cdot\mathbf{w})}_\text{screening field}\\
-    &=\mathbf{h}_{z,\,\mathrm{applied}}
-    + (\mathbf{Q}\cdot\mathbf{w}^T)\mathbf{g}\\
-    h_{z, i} &= h_{z,\,\mathrm{applied}, i} + \sum_j Q_{ij}g_jw_j,
+    + \underbrace{(\mathbf{Q}\cdot\mathbf{w}^T)\mathbf{g}}_\text{screening field}\\
+    % &=\mathbf{h}_{z,\,\mathrm{applied}}
+    % + (\mathbf{Q}\cdot\mathbf{w}^T)\mathbf{g}\\
+    h_{z, i} &= h_{z,\,\mathrm{applied}, i} + \sum_j Q_{ij}w_jg_j,
 \end{split}
 \end{align}
-where for clarity we show both the matrix version of Eq.~\ref{eq:field_from_kernel} (top two lines) and the equivalent discrete sum version (bottom line).
+where for clarity we show both the matrix version of Eq.~\ref{eq:field_from_kernel} (top line) and the equivalent discrete sum version (bottom line).
 
 The $n\times n$ kernel matrix $\mathbf{Q}$ represents the kernel function $Q_z(\vec{r},\vec{r}')$ for all points lying in the plane of the film, and the $n\times 1$ weight vector $\mathbf{w}$, which assigns an effective area to each vertex in the mesh, represents the differential element $\mathrm{d}^2r'$. Both $\mathbf{Q}$ and $\mathbf{w}$ are solely determined by the geometry of the mesh, so they only need to be computed once for a given device. $\mathbf{h}_z$, $\mathbf{h}_{z,\,\mathrm{applied}}$, and $\mathbf{g}$ are all $n\times 1$ vectors, with each row representing the value of the quantity at the
 corresponding vertex in the mesh. The vector $\mathbf{w}$ is equal to the diagonal of the ``lumped mass matrix'' $\mathbf{M}$: $w_i=M_{ii} = \frac{1}{3}\sum_{t\in\mathcal{N}(i)}\mathrm{area}(t)$,
@@ -591,7 +591,7 @@ solution.plot_field_at_positions(device.points, zs=0.5)
 
 Once the layers, films, holes, and abstract regions have been defined, one can generate the computational mesh by calling \inline{Device.make_mesh()}. The region that is meshed is defined by the convex hull of the union of all polygons in the device. Mesh generation is a two step process. First, an initial Delaunay mesh is created using \inline{meshpy}~\cite{Klockner}, which is a Python interface to Triangle~\cite{Shewchuk1996-va, Shewchuk}, a fast compiled 2D mesh generation tool. Second (and optionally), the mesh is further optimized using \inline{optimesh}~\cite{Schlomer2021-ua}. The goal of the mesh optimization step is to improve the ``quality'' of each triangular element in the mesh, where quality measures how close a triangle is to equilateral (quality $\leq1$, with equality for equilateral triangles). In practice, the more \inline{optimesh} steps are performed, the more uniform in size and spatial density the triangles in the mesh become.
 % , where quality is defined as twice the ratio of the incircle radius to the circumcircle radius (quality $\leq1$, with equality for equilateral triangles).
-The local density of triangles in the mesh is determined by the density of vertices in the device's polygons and the total number of triangles. Regions where there are many polygon vertices will be meshed more densely than regions with few polygon vertices. If no \inline{optimesh} optimization is done, then every polygon vertex is guaranteed to be a mesh vertex. See Code Block~\ref{code:device} for a demonstration of the process of creating a \inline{Device}, and Figure~\ref{fig:ring-with-slit}(a) to view the resulting geometry and mesh. After the mesh has been generated, the geometry-dependent matrices and vectors described in Section~\ref{section:implementation} are computed and one can begin solving models.
+The local density of triangles in the mesh is determined by the density of vertices in the device's polygons and the total number of triangles. Regions where there are many polygon vertices will be meshed more densely than regions with few polygon vertices. If no \inline{optimesh} optimization is performed, then every polygon vertex is guaranteed to be a mesh vertex. See Code Block~\ref{code:device} for a demonstration of the process of creating a \inline{Device}, and Figure~\ref{fig:ring-with-slit}(a) to view the resulting geometry and mesh. After the mesh has been generated, the geometry-dependent matrices and vectors described in Section~\ref{section:implementation} are computed and one can begin solving models.
 
 \subsection{Solvers}
 \label{section:overview:solvers}
@@ -855,21 +855,21 @@ Analysis developed to interpret the results of scanning SQUID susceptometry meas
 % \label{fig:susceptometry}
 % \end{figure}
 
-Figure~\ref{fig:squid-mutuals}(a) shows \SuperScreen \inline{Device} models of the field coil and pickup loop region of four types of real SQUID susceptometers, with geometry taken from the layout artwork (GDS) files. In addition to the field coil and pickup loop, there are superconducting shields that limit the amount of magnetic flux that can penetrate the leads connecting the loops to the rest of the circuit (the rest of the circuit is not modeled). There are three relevant layers of superconducting films: the base electrode (``BE"), which is furthest from the sample contains the field coil; the first wiring layer (``W1"), which contains the pickup loop and a shield covering the field coil leads; and the second wiring layer (``W2"), which is closest to the sample and contains a shield covering the pickup loop leads. There are two insulating layers: $I1$, which separates BE and W1, and $I2$, which separates W1 and W2. Table~\ref{table:squid-layers}.
+Figure~\ref{fig:squid-mutuals}(a) shows \SuperScreen \inline{Device} models of the field coil and pickup loop region of four types of real SQUID susceptometers, with geometry taken from the layout artwork (GDS) files. In addition to the field coil and pickup loop, there are superconducting shields that limit the amount of magnetic flux that can penetrate the leads connecting the loops to the rest of the circuit (the rest of the circuit is not modeled). There are three relevant layers of superconducting films: the base electrode (``BE"), which is furthest from the sample contains the field coil; the first wiring layer (``W1"), which contains the pickup loop and a shield covering the field coil leads; and the second wiring layer (``W2"), which is closest to the sample and contains a shield covering the pickup loop leads. There are two insulating layers: I1, which separates BE and W1, and I2, which separates W1 and W2. Table~\ref{table:squid-layers}.
 
 \begin{table*}[]
 \centering
-\begin{tabular}{|l|l|l|}
+\begin{tabular}{|l|l|l|l|l|}
 \hline
-Layer name        & Thickness & Films located in layer \\ \hline
+Layer name & Material & Thickness & Vertical position, $z_0$ & Films located in layer \\ \hline
 \hline
-BE (bottom) & $d_\mathrm{BE} = 160\,\nm$            & Field coil, pickup loop shield      \\ \hline
-I1          & $d_\mathrm{I1} = 150\,\nm$            & ---                                 \\ \hline
-W1          & $d_\mathrm{W1}=100\,\nm$            & Pickup loop, field coil shield      \\ \hline
-I2          & $d_\mathrm{I2} = 130\,\nm$            & ---                                 \\ \hline
-W2 (top)    & $d_\mathrm{W2} = 200\,\nm$            & Pickup loop shield, modulation coil \\ \hline
+W2 & Nb & $d_\mathrm{W2} = 200\,\nm$ & $d_\mathrm{W2} / 2$ & Pickup loop shield, modulation coil \\ \hline
+I2 & SiO${}_2$ & $d_\mathrm{I2} = 130\,\nm$ & --- & --- \\ \hline
+W1 & Nb & $d_\mathrm{W1} = 100\,\nm$ & $d_\mathrm{W2} + d_\mathrm{I2} + d_\mathrm{W1} / 2$ & Pickup loop, field coil shield \\ \hline
+I1 & SiO${}_2$ & $d_\mathrm{I1} = 150\,\nm$ & --- & --- \\ \hline
+BE & Nb & $d_\mathrm{BE} = 160\,\nm$ & $d_\mathrm{W2} + d_\mathrm{I2} + d_\mathrm{W1} + d_\mathrm{I1} + d_\mathrm{BE} / 2$ & Field coil, pickup loop shield \\ \hline
 \end{tabular}
-\caption{Layer stackup for the SQUID susceptometers Section~\ref{section:examples:scanning-squid}. See Ref.~\cite{Kirtley2016-zz} for more details on the designed of the suscpetometers.}
+\caption{Layer stackup for the SQUID susceptometers Section~\ref{section:examples:scanning-squid}. W2 is located at the surface of the chip (deposited last, closest to the sample) and BE deepest below the chip's surface (deposited first). See Ref.~\cite{Kirtley2016-zz} for more details on the designed of the suscpetometers.}
 \label{table:squid-layers}
 \end{table*}
 
@@ -975,6 +975,47 @@ By default, \SuperScreen uses half-cotangent weighting. The Laplacian matrix $\m
 %     \label{fig:fluxoid}
 % \end{figure}
 
+\section{Spatially inhomogeneous $\Lambda$}
+\label{appendix:inhomogeneous}
+
+As mentioned in Section~\ref{section:overview:device}, the effective penetration depth $\Lambda$ of each layer can be specified as a numeric constant or as a \inline{superscreen.Parameter} that computes $\Lambda(x, y)$, the effective penetration depth as a function of position. As a (somewhat contrived) example, here we update the model of a ring with a slit from Code Block~\ref{code:device} and Figure~\ref{fig:ring-with-slit} such that the ring's penetration depth $\Lambda(x, y)$ increases linearly as a function of the angle that the vector $\vec{r} = (x, y)$ makes with the $-y$ axis (along which the slit lies).
+
+\begin{code}
+\begin{minted}[fontsize=\small]{python}
+def linear_vs_angle(
+    x: np.ndarray, y: np.ndarray, *, min_val: float, max_val: float
+) -> np.ndarray:
+    # Rotate the input coordinates so that theta = 0
+    # corresponds to the slit position (along the -y axis).
+    x, y = sc.geometry.rotate(
+        np.stack(np.atleast_1d(x, y), axis=1), np.degrees(-np.pi / 2)
+    ).T
+    # Calculate the angular position of each mesh vertex.
+    angles = np.arctan2(y, x) + np.pi  # range: [0, 2 * pi]
+    # Set Lambda to increase linearly from min_val to max_val
+    # as a function of angular position.
+    Lambdas = angles / (2 * np.pi) * (max_val- min_val) + min_val
+    return Lambdas
+
+# Define the Parameter and assign it as the Lambda of the superconducting layer.
+Lambda = sc.Parameter(linear_vs_angle, min_val=0.1, max_val=1.0)
+device.layers["base"].Lambda = Lambda
+# Everything below is identical to Code Block 1:
+# Calculate the device's response to a uniform applied field.
+applied_field = sc.sources.ConstantField(10)
+solution = sc.solve(device, applied_field=applied_field, field_units="uT")[-1]
+# Visualize the solution.
+# Plot the magnetic field evaluated at each layer in the Device.
+solution.plot_fields()
+# Plot the current density evaluated at each layer in the Device.
+solution.plot_currents()
+# Plot the field evaluated at any points in space.
+solution.plot_field_at_positions(device.points, zs=0.5)
+\end{minted}
+\label{code:inhomogeneous}
+\captionof{listing}{Simulating an inhomogeneous superconducting device. Here we modify the superconducting ring with a slit (Code Block~\ref{code:device} to have an effective penetration depth $\Lambda(x, y)$, which increases linearly from $0.1\,\um$ to $1\,\um$ as a function of the angle between the point $(x, y)$ and the $-y$ axis.}
+\end{code}
+ 
 \section{Numerical considerations}
 \label{appendix:numerics}
 While the numerical method described in Section~\ref{section:implementation} is generally quite robust, it can break down for certain extreme geometries. The stream function $g(x, y)$ represents the local magnetization or density of infinitesimal current loops. The $z$-component of the magnetic field at position $\vec{r}=(x, y, z)$ from a film $F$ with stream function $g$ lying in a plane parallel to the $x-y$ plane at vertical position $z'$ is given by (see Equations~\ref{eq:field_from_kernel} and \ref{eq:kernels}):
@@ -997,7 +1038,7 @@ and $\rho=\sqrt{(x-x')^2+(y-y')^2}$. Eq.~\ref{eq:hz-from-kernel} is exact for a 
 
 The limitation described above can be seen in the model of the largest SQUID susceptometer described in Section~\ref{section:examples:scanning-squid}, which has a field coil inner radius of $6\,\um$ and a total modeled area of roughly $600\,\um^2$. As shown in Figure~\ref{fig:xlarge-dz-dr}, \SuperScreen significantly underestimates the mutual inductance between the field coil and pickup loop when $\delta z <\delta r$ because, in that case, the discretized version of Eq.~\ref{eq:hz-from-kernel} does not correctly compute the magnetic field due the stream functions of the superconducting layers. For the sake of computing mutual inductance as in Section~\ref{section:examples:scanning-squid}, it is physically reasonable to artificially increase the vertical spacing between layers such that $\delta z\geq \delta r$ because we expect the magnetic field at the pickup loop, a vertical distance $\delta z$ away from the center of the field coil, to fall off roughly as $\left(\delta z^2 + R^2_\mathrm{FC}\right)^{-3/2}$, where $R_\mathrm{FC}\approx 6\,\um\gg\delta z$. However, in situations where $\delta z$ is a critical dimension (in the sense that increasing it would invalidate the physical model), one's only option is to decrease $\delta r$ by increasing the density of the mesh.
 
-For this reason, mutli-layer structures with closely-spaced layers are the most challenging class of problem to solve. The iterative method used described in Section~\ref{section:model:multilayer} is memory-intensive for models with a large mesh (many vertices $p$ and triangles $t$, with typically $p\approx t / 2$) and/or many layers $L$, because the average distance between vertices decreases slowly with increasing number of triangles, $\langle\delta r\rangle\sim t^{-1/2}$, whereas the size of the (dense floating-point) $p\times t$ matrix that represents the dipole kernel $Q_z(\vec{r},\vec{r}')$ in Eq.~\ref{eq:hz-from-kernel} increases roughly as $t^2$. The end result is that the memory footprint of kernel matrix scales roughly as $\langle\delta r\rangle^{-4}$, so decreasing the mean distance between vertices by a factor of 2 increases the memory required by a factor of 16. Furthermore, for a model with $L$ layers there are $\binom{L}{2} = L(L-1)/2$ such kernel matrices needed for each iteration of the calculation outlined in Section~\ref{section:model:multilayer}. In \inline{superscreen.solve()}, these $\binom{L}{2}$ matrices are computed during the first iteration and then cached in memory for use in subsequent iterations. One can force the kernel matrices to be cached to disk if they would otherwise occupy too large a fraction of the available system memory using the \inline{cache_kernel_memory_cutoff} argument, but this comes at a significant performance cost.
+For this reason, mutli-layer structures with closely-spaced layers are the most challenging class of problem to solve. The iterative method used described in Section~\ref{section:model:multilayer} is memory-intensive for models with a large mesh (many vertices $p$ and triangles $t$, with typically $p\approx t / 2$) and/or many layers $L$, because the average distance between vertices decreases slowly with increasing number of triangles, $\langle\delta r\rangle\sim t^{-1/2}$, whereas the size of the (dense floating-point) $p\times t$ matrix that represents the dipole kernel $Q_z(\vec{r},\vec{r}')$ in Eq.~\ref{eq:hz-from-kernel} increases roughly as $t^2$. The end result is that the memory footprint of kernel matrix scales roughly as $\langle\delta r\rangle^{-4}$, so decreasing the mean distance between vertices by a factor of 2 increases the memory required by a factor of 16. Furthermore, for a model with $L$ layers there are $\binom{L}{2} = L(L-1)/2$ such kernel matrices needed for each iteration of the calculation outlined in Section~\ref{section:model:multilayer}. In \inline{superscreen.solve()}, these $\binom{L}{2}$ matrices are computed during the first iteration and then cached in memory for use in subsequent iterations. One can force the kernel matrices to be cached to disk if they would otherwise occupy too large a fraction of the available system memory using the \inline{cache_kernel_memory_cutoff} argument, but this comes at a significant performance cost. In many cases, one can use lower-precision floating point numbers (e.g. using 32-bit single-precision floats instead of the default 64-bit double-precision floats by setting \inline{device.solve_dtype = "float32"}) to reduce memory requirements without significantly impacting solution accuracy.
 
 % As mentioned in Section~\ref{section:model:multilayer}, at each iteration of this process, we update the applied field $H_{z,\,\mathrm{applied}}(\vec{r}, z_\ell)$ at each layer $\ell$ based on the currents flowing in all other layers $m\neq\ell$, according to
 
