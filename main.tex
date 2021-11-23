@@ -147,7 +147,7 @@
 \address[GLAM]{Geballe Laboratory for Advanced Materials, Stanford University, Stanford, California 94305, USA}
 
 \begin{abstract}
-Quantitative understanding of the spatial distribution of magnetic fields and screening currents in two-dimensional (2D) superconductors and mesoscopic thin film superconducting devices is critical to interpreting the results of magnetic measurements of such systems. Here, we introduce \SuperScreen, an open-source Python package for simulating the magnetic response of 2D superconductors to applied time-independent magnetic fields. Given an applied magnetic field, \SuperScreen solves for the Meissner currents and magnetic fields in and around structures composed of one or more superconducting thin films of arbitrary geometry with spatially inhomogeneous magnetic penetration depth using an efficient matrix inversion method~\cite{Brandt2004-ew, Brandt2005-wj}. \SuperScreen can be used to model screening effects and calculate self- and mutual-inductance in superconducting circuits, and simulate the magnetic response of inhomogeneous 2D superconductors.
+Quantitative understanding of the spatial distribution of magnetic fields and Meissner screening currents in two-dimensional (2D) superconductors and mesoscopic thin film superconducting devices is critical to interpreting the results of magnetic measurements of such systems. Here, we introduce \SuperScreen, an open-source Python package for simulating the magnetic response of 2D superconductors to applied time-independent magnetic fields. Given an applied magnetic field, \SuperScreen solves for the Meissner currents and magnetic fields in and around structures composed of one or more superconducting thin films of arbitrary geometry with spatially inhomogeneous magnetic penetration depth using an efficient matrix inversion method~\cite{Brandt2004-ew, Brandt2005-wj}. \SuperScreen can be used to model screening effects and calculate self- and mutual-inductance in superconducting circuits, and simulate the magnetic response of inhomogeneous 2D superconductors.
 \end{abstract}
 
 \begin{keyword}
@@ -210,9 +210,9 @@ superconductivity\sep Meissner screening\sep thin film\sep London equations \sep
 
 \SuperScreen is a Python package developed to simulate the static magnetic response of structures composed of one or more layers containing superconducting thin films. \SuperScreen solves the coupled Maxwell's and London's equations in and around superconducting films with spatially-varying penetration depth in the presence of inhomogeneous applied magnetic fields, pinned vortices, and trapped flux using a matrix inversion method introduced by Brandt and Clem~\cite{Brandt2004-ew,Brandt2005-wj} and subsequently used by Kirtley, \emph{et al.} to model the magnetic response of scanning superconducting quantum interference device (SQUID) sensors.~\cite{Kirtley2016-zz, Kirtley2016-gt}
 
-There have been many previous numerical studies of magnetic screening and inductance extraction in thin film and two-dimensional (2D) superconducting devices~\cite{Jaycox1981-zl, Ketchen1982-at, Ketchen2012-mb, Hildebrandt1995-uw, Khapaev1997-kw, Khapaev2001-xq, Khapaev2001-pw, Babaei_Brojeny2003-la, Brandt2004-ew, Brandt2005-wj, Clem2005-ye, Muller2021-ci, Jackman2016-mf}. However, few software tools for this task exist and those that are available are closed-source, are written in low-level compiled languages like C, and/or require the use of specialized file formats or separate computer aided design (CAD) software for defining device geometries and model configurations.\footnote{A brief summary of existing tools can be found in \ref{appendix:other-tools}, and a more thorough overview in Ref.~\cite{Gaj1999-ls}.} Most of these tools are intended for use in the design of superconducting integrated circuits for single flux quantum (SFQ) logic and are primarily used for inductance extraction~\cite{Gaj1999-ls}. In contrast, \SuperScreen is an open-source, user-friendly, portable research tool designed to lower the barrier to entry to quantitative modeling of 2D superconductors, and to help interpret and inform measurements of superconducting thin films and devices.
+There have been many previous numerical studies of magnetic screening and inductance extraction in thin film and two-dimensional (2D) superconducting devices~\cite{Jaycox1981-zl, Ketchen1982-at, Ketchen2012-mb, Hildebrandt1995-uw, Khapaev1997-kw, Khapaev2001-xq, Khapaev2001-pw, Babaei_Brojeny2003-la, Brandt2004-ew, Brandt2005-wj, Clem2005-ye, Muller2021-ci, Jackman2016-mf}. However, few software tools for this task exist and those that are available are closed-source, are written in low-level compiled languages like C, and/or require the use of specialized file formats or separate computer aided design (CAD) software for defining device geometries and model configurations.\footnote{A brief summary of existing tools can be found in \ref{appendix:other-tools}, and a more thorough overview in Ref.~\cite{Gaj1999-ls}.} Most of these tools are intended for use in the design of superconducting integrated circuits for single flux quantum (SFQ) logic and are primarily used for inductance extraction~\cite{Gaj1999-ls}. \SuperScreen is an open-source, user-friendly, portable research tool designed to lower the barrier to entry to quantitative modeling of 2D superconductors, and to help interpret and inform measurements of superconducting thin films and devices.
 
-This introduction to \SuperScreen is organized as follows: In Section~\ref{section:model}, we outline the model and its assumptions and in Section~\ref{section:implementation}, we describe its numerical implementation. In Section~\ref{section:overview}, we provide an overview of the structure of the \SuperScreen package and discuss some important development details. In Section~\ref{section:examples}, we demonstrate how to perform several types of simulations using \SuperScreen and compare the results to previous numerical/analytical solutions and experimental results. Finally, in Section~\ref{section:conlusion}, we conclude by discussing applications, limitations, and possible extensions of the package.
+This introduction to \SuperScreen is organized as follows: In Section~\ref{section:model}, we outline the model and its assumptions and in Section~\ref{section:implementation}, we describe its numerical implementation. In Section~\ref{section:overview}, we provide an overview of the structure of the \SuperScreen package and discuss some important development details. In Section~\ref{section:examples}, we demonstrate how to perform several types of simulations using \SuperScreen and compare the results to analytical solutions and experimental results. Finally, in Section~\ref{section:conlusion}, we conclude by discussing applications, limitations, and possible extensions of the package.
 
 \section{The Model}
 \label{section:model}
@@ -472,10 +472,10 @@ At the time of writing, \SuperScreen requires Python version 3.6--3.9. The packa
 
 \SuperScreen has several important dependencies beyond the Python standard library: \inline{numpy}~\cite{Harris2020-xv} and \inline{scipy}~\cite{Virtanen2020-zz} for numerics, \inline{matplotlib}~\cite{Hunter2007-il} for visualization, \inline{pint}~\cite{Grecco} for handling physical units, \inline{shapely}~\cite{shapely} for creating and manipulating device geometries, \inline{meshpy}~\cite{Klockner, Shewchuk, Shewchuk1996-va} and \inline{optimesh}~\cite{Schlomer2021-ua} for mesh generation, and \inline{ray}~\cite{Moritz2018-mt,ray-docs} for parallel processing with shared memory (see~\ref{section:parallel}).
 
-\subsection{Parameters}
-\label{section:overview:parameter}
+% \subsection{Parameters}
+% \label{section:overview:parameter}
 
-A \inline{superscreen.Parameter} is a wrapper around a Python function that computes a scalar value as a function of position coordinates ($x$, $y$, and optionally $z$) based on some set of keyword arguments. Addition, subtraction, multiplication, division, and exponentiation between \inline{Parameters}, other \inline{Parameters}, and Python scalars (\inline{int} and \inline{float}) are supported. \inline{Parameters} can be used to conveniently define applied magnetic fields and penetration depths that depend on position, and make it possible to serialize wrapped Python functions for storage to disk or inter-process communication.
+% A \inline{superscreen.Parameter} is a wrapper around a Python function that computes a scalar value as a function of position coordinates ($x$, $y$, and optionally $z$) based on some set of keyword arguments. Addition, subtraction, multiplication, division, and exponentiation between \inline{Parameters}, other \inline{Parameters}, and Python scalars (\inline{int} and \inline{float}) are supported. \inline{Parameters} can be used to conveniently define applied magnetic fields and penetration depths that depend on position (see \ref{appendix:inhomogeneous}).
 
 % \begin{code}
 % \begin{minted}[fontsize=\small]{python}
@@ -518,14 +518,13 @@ A \inline{superscreen.Parameter} is a wrapper around a Python function that comp
 \label{table:polygon}
 \end{table*}
 
-Information about the geometry and penetration depth of a superconducting structure is described by an instance of the \inline{superscreen.Device} class. A \inline{Device} is made up of one or more superconducting layers, each represented by an instance of  \inline{superscreen.Layer}. Each layer sits in a specified plane parallel to the $x-y$ plane and has its own effective penetration depth $\Lambda$, which can either be a constant or a \inline{superscreen.Parameter} that defines $\Lambda(x, y)$, the effective penetration depth as a function of position. Alternatively, the effective penetration depth $\Lambda$ can be defined in terms of a layer's London penetration depth $\lambda$ and its thickness $d$: $\Lambda=\lambda^2/d$, in which case the London penetration depth can be either a constant or a \inline{superscreen.Parameter}.
+Information about the geometry and penetration depth of a superconducting structure is described by an instance of the \inline{superscreen.Device} class. A \inline{Device} is made up of one or more superconducting layers, each represented by an instance of  \inline{superscreen.Layer}. Each layer sits in a specified plane parallel to the $x-y$ plane and has its own effective penetration depth $\Lambda$, which can either be a constant or a \inline{superscreen.Parameter} that defines $\Lambda(x, y)$, the effective penetration depth as a function of position (see \ref{appendix:inhomogeneous}). Alternatively, the effective penetration depth $\Lambda$ can be defined in terms of a layer's London penetration depth $\lambda$ and its thickness $d$: $\Lambda=\lambda^2/d$, in which case the London penetration depth can be either a constant or a \inline{superscreen.Parameter}.
 
 Each layer can contain one or more superconducting \inline{films} which may have one or more \inline{holes} in them. Films and holes are represented by instances of the \inline{superscreen.Polygon} class. All polygons in a device must be simply-connected; a hole in a film is modeled as one \inline{Polygon} instance whose coordinates all lie within the \inline{Polygon} representing the film.
 % A \inline{Polygon} contains the name of the layer to which is belongs, an array specifying the coordinates of its vertices, and a method, \inline{Polygon.contains_points()}, which determines whether specified coordinates lie within the polygon or not.
 \inline{Polygons} can constructed and combined using set-theoretic operations. Table~\ref{table:polygon} shows the four methods available for combining a \inline{supercreen.Polygon} instance \inline{polygonA}, whose vertices lie in set $A$, with a polygon \inline{polygonB}, whose vertices lie in set $B$. Note that \inline{polygonB} can be another \inline{superscreen.Polygon}, an $n\times 2$ \inline{numpy} array of vertex coordinates, or one of several compatible types of objects from the \inline{shapely} package.
 
 In addition to superconducting films and holes, one may define ``abstract regions,'' which are polygons that need not correspond to a physical feature in the structure, but will still be meshed. Abstract regions can be used to define a ``bounding box" around a structure to be modeled, or to locally increase the density of the computational mesh in a given region. The \inline{superscreen.geometry} module provides functions for generating the underlying polygon vertices for simple shapes (ellipses and rectangles), which can be combined as described above to create more complicated geometries.
-
 \begin{code}
 \begin{minted}[fontsize=\small]{python}
 import superscreen as sc
@@ -555,7 +554,7 @@ device = sc.Device(
     abstract_regions=[bounding_box],
     length_units=length_units,
 )
-device.make_mesh(min_triangles=8_000, optimesh_steps=None)
+device.make_mesh(min_triangles=8000, optimesh_steps=None)
 device.plot(mesh=True)
 # Calculate the device's response to a uniform applied field.
 applied_field = sc.sources.ConstantField(10)
@@ -572,16 +571,14 @@ solution.plot_field_at_positions(device.points, zs=0.5)
 \label{code:device}
 \end{code}
 
-Once the layers, films, holes, and abstract regions have been defined, one can generate the computational mesh by calling \inline{Device.make_mesh()}. The region that is meshed is defined by the convex hull of the union of all polygons in the device. Mesh generation is a two step process. First, an initial Delaunay mesh is created using \inline{meshpy}~\cite{Klockner}, which is a Python interface to Triangle~\cite{Shewchuk1996-va, Shewchuk}, a fast compiled 2D mesh generation tool. Second (and optionally), the mesh is further optimized using \inline{optimesh}~\cite{Schlomer2021-ua}. The goal of the mesh optimization step is to improve the ``quality'' of each triangular element in the mesh, where quality measures how close a triangle is to equilateral (quality $\leq1$, with equality for equilateral triangles). In practice, the more \inline{optimesh} steps are performed, the more uniform in size and spatial density the triangles in the mesh become.
-% , where quality is defined as twice the ratio of the incircle radius to the circumcircle radius (quality $\leq1$, with equality for equilateral triangles).
-The local density of triangles in the mesh is determined by the density of vertices in the device's polygons and the total number of triangles. Regions where there are many polygon vertices will be meshed more densely than regions with few polygon vertices. If no \inline{optimesh} optimization is performed, then every polygon vertex is guaranteed to be a mesh vertex. See Code Block~\ref{code:device} for a demonstration of the process of creating a \inline{Device}, and Figure~\ref{fig:ring-with-slit}(a) to view the resulting geometry and mesh. After the mesh has been generated, the geometry-dependent matrices and vectors described in Section~\ref{section:implementation} are computed and one can begin solving models.
+Once the layers, films, holes, and abstract regions have been defined, one can generate the computational mesh by calling \inline{Device.make_mesh()}. The region that is meshed is defined by the convex hull of the union of all polygons in the device. Mesh generation is a two step process. First, an initial Delaunay mesh is created using \inline{meshpy}~\cite{Klockner}, which is a Python interface to Triangle~\cite{Shewchuk1996-va, Shewchuk}, a fast compiled 2D mesh generation tool. Second (and optionally), the mesh is further optimized using \inline{optimesh}~\cite{Schlomer2021-ua}. The goal of the mesh optimization step is to improve the ``quality'' of each triangular element in the mesh, where quality measures how close a triangle is to equilateral (quality $\leq1$, with equality for equilateral triangles). In practice, the more \inline{optimesh} steps are performed, the more uniform in size and spatial density the triangles in the mesh become. The local density of triangles in the mesh is determined by the density of vertices in the device's polygons and the total number of triangles. Regions where there are many polygon vertices will be meshed more densely than regions with few polygon vertices. If no \inline{optimesh} optimization is performed, then every polygon vertex is guaranteed to be a mesh vertex. See Code Block~\ref{code:device} for a demonstration of the process of creating a \inline{Device}, and Figure~\ref{fig:ring-with-slit}(a) to view the resulting geometry and mesh. After the mesh has been generated, the geometry-dependent matrices and vectors described in Section~\ref{section:implementation} are computed and one can begin solving models.
 
 \subsection{Solvers}
 \label{section:overview:solvers}
 \begin{figure*}
     \centering
     \includegraphics[width=\textwidth]{examples/images/ring_with_slit.pdf}
-    \caption{The output of Code Block~\ref{code:device}: Meissner screening of a uniform $10\,\mu\mathrm{T}$ out-of-plane field by a ring with inner diameter $1\,\um$, outer diameter $3\,\um$, and effective penetration depth $\Lambda=1\,\um$, interrupted by a slit of width $0.25\,\um$. a) Plot of the boundary of the ring (blue), circular bounding box (orange), and the computational mesh (gray), generated with \inline{Device.plot()}. b) The current density $\vec{J}$ in the ring, generated with \inline{Solution.plot_currents()}. c) The $z$-component of the magnetic field $\mu_0H_z$ evaluated at the plane of the ring, generated with \inline{Solution.plot_fields()}. d) The $z$-component of the magnetic field evaluated $z=0.5\,\um$ above the ring (generated using \inline{Solution.plot_field_at_positions()}).}
+    \caption{The output of Code Block~\ref{code:device}: Meissner screening of a uniform $10\,\mu\mathrm{T}$ out-of-plane field by a ring with inner diameter $1\,\um$, outer diameter $3\,\um$, and effective penetration depth $\Lambda=1\,\um$, interrupted by a slit of width $0.25\,\um$. (a) Plot of the boundary of the ring (blue), circular bounding box (orange), and the computational mesh (gray), generated with \inline{Device.plot()}. (b) The current density $\vec{J}$ in the ring, generated with \inline{Solution.plot_currents()}. (c) The $z$-component of the magnetic field $\mu_0H_z$ evaluated at the plane of the ring, generated with \inline{Solution.plot_fields()}. (d) The $z$-component of the magnetic field evaluated $z=0.5\,\um$ above the ring (generated using \inline{Solution.plot_field_at_positions()}).}
     \label{fig:ring-with-slit}
 \end{figure*}
 
@@ -642,10 +639,10 @@ The output of \inline{superscreen.solve()} is a \inline{list} of \inline{supersc
     \inline{Solution.field_at_position()}: Calculates the vector magnetic field at any point(s) in space due the applied field and the currents flowing the in the device using Eqs.~\ref{eq:field_from_kernel} and \ref{eq:kernels}.
     }
     \item{
-    \inline{Solution.interp_current_density()}: Evaluates the current density (sheet current) $\vec{J}(x, y)$ in each layer at arbitrary $(x, y)$ coordinates via interpolation.
+    \inline{Solution.interp_current_density()}: Evaluates the 2D current density $\vec{J}(x, y)$ in each layer at arbitrary $(x, y)$ coordinates via interpolation.
     }
     \item{
-    \inline{Solution.polygon_flux()}: Calculates the total flux through each polygon in the device (films, holes, and abstract regions).
+    \inline{Solution.polygon_flux()}: Calculates the total flux through each polygon in the device.
     }
     \item{
     \inline{Solution.polygon_fluxoid()}: Calculates the fluxoid for a specified polygonal region in the device. See Section~\ref{section:examples:fluxoid} for more details.
@@ -686,64 +683,6 @@ See Code Block~\ref{code:device} and  Figure~\ref{fig:ring-with-slit} for an exa
 
 Instances of \inline{superscreen.Device} and \inline{superscreen.Solution} can be saved to and loaded from disk using their respective \inline{to_file()} and \inline{from_file()} methods, making it straightforward to store and share models and simulation results. \inline{Layers}, \inline{Polygons}, and all metadata are serialized to JSON, a widely-used, human-readable plain text format. Functions and \inline{Parameters}, such as those that compute the applied field or penetration depth, are serialized in binary form using the \inline{dill} package~\cite{McKerns}. \inline{Numpy} arrays, such as the mesh itself and the computed stream functions and fields, are saved in the \inline{numpy} \inline{npz} file format. A \inline{list} of \inline{Solutions}, such as that returned by \inline{superscreen.solve()} can be saved/loaded all at once using \inline{save_solutions()} and \inline{load_solutions()}.
 
-% \section{Example application: Scanning SQUID magnetometry}
-% \label{section:application}
-% In scanning superconducting quantum interference device (SQUID) susceptometry, the diamagnetic susceptibility of a superconducting sample is measured by bringing the sample close to a pair of superconducting loops. The first loop, called the ``pickup loop" is attached to a SQUID circuit that sensitively measures the magnetic flux threading the loop. The second loop, called the ``field coil," carries a known current and applies a known magnetic field to both the pickup loop and the sample. The superconducting sample screens the magnetic field from the field coil, modifying the amount of flux threading the pickup loop. Thus the mutual inductance between the field coil and pickup loop provides a measure of the sample's diamagnetic susceptibility, which is in turn a measure of the sample's penetration depth.
-
-% Analysis developed to interpret the results of scanning SQUID susceptometry measurements makes several simplifying assumptions that are not always satisfied: 1) the sample's effective penetration depth $\Lambda$ (or Pearl length $2\Lambda$) is spatially homogeneous, 2) the sample is much larger than the field coil, and 3) the field coil and pickup loop can be approximated as one-dimensional coaxial, coplanar circular loops~\cite{Kirtley_Kalisky_2012}.
-
-% \begin{figure}[!h]
-% \centering
-% \begin{subfigure}{.35\textwidth}
-%   \centering
-%   \includegraphics[width=\linewidth]{examples/images/squid_susceptometry/squid_with_sample_mesh.png}
-%   \label{fig:squid_mesh}
-%   \caption{}
-% \end{subfigure}%
-% \hspace{10pt}
-% \begin{subfigure}{.5\textwidth}
-%   \centering
-%   \includegraphics[width=\linewidth]{examples/images/squid_susceptometry/squid_with_sample_M0_convergence.png}
-%   \label{fig:squid_convergence}
-%   \caption{}
-% %   \caption{Fractional change in flux though all polygons vs. solver iteration with a current of $1\,\mathrm{mA}$ flowing in the field coil (\inline{fc}). The mutual inductance $M_0$ is given by the flux through the pickup loop (\inline{pl_hull}) divided by the field coil current.}
-% \end{subfigure}%
-% \caption{(a): Device polygons and mesh for the SQUID susceptometer model. (b) Fractional change in flux though all polygons vs. solver iteration with a current of $1\,\mathrm{mA}$ flowing in the field coil (\inline{fc}). The mutual inductance $M_0$ is given by the flux through the pickup loop (\inline{pl_hull}) divided by the field coil current.}
-% \label{fig:susceptometry}
-% \end{figure}
-
-% Figure~\ref{fig:susceptometry}(a) shows a \inline{Device} representing field coil and pickup loop of an actual scanning SQUID sensor. In addition to the field coil and pickup loop, there are superconducting shields that limit the amount of magnetic flux that can penetrate the leads connecting the loops to the rest of the circuit (the rest of the circuit is not modeled). There are three relevant layers of superconducting films: the base electrode (``BE"), which is furthest from the sample contains the field coil; the first wiring layer (``W1"), which contains the pickup loop and a shield covering the field coil leads; and the second wiring layer (``W2"), which is closest to the sample and contains a shield covering the pickup loop leads. The device also contains a layer and film representing the superconducting sample.
-
-% To model a SQUID susceptometry measurement, we first calculate $M_0$, the mutual inductance between the field coil and pickup loop in the absence of the sample. This can be done by temporarily setting the sample layer effective penetration depth to a very large value such that it essentially does not screen the field from the field coil (in this case, we set $\Lambda = 10^5\,\um$). We then model the field from a known current flowing in the field coil following Section~\ref{section:model:holes} and self-consistently calculate the response of both the sample and the other superconducting layers of the SQUID sensor following Section~\ref{section:model:multilayer}. To ensure that the 2D current distribution in the field coil is approximately uniform (as we would expect for a real applied current), we set the field coil layer effective penetration depth to be greater than the width of the field coil conductor.
-
-% Once $M_0$ is known, we can ``turn on" the sample's diamagnetic response by setting its effective penetration depth $\Lambda$ to the desired value and compute $M(z, \Lambda)$ for a given vertical distance $z$ between the sample and the SQUID as described in the previous paragraph. The SQUID susceptibility signal is then $M(z, \Lambda) - M_0$, the change in mutual inductance between the field coil and pickup loop due to the presence of the sample (usually given in units of $\Phi_0/\mathrm{A}$, where $\Phi_0$ is the superconducting flux quantum). The susceptibility can also be normalized to the bare mutual inductance $M_0$, giving a dimensionless susceptibility $\chi(z, \Lambda)=[M(z, \Lambda) - M_0] / M_0$.  
-
-% % \begin{figure}[!h]
-% % \centering
-% % \begin{subfigure}{\textwidth}
-% %   \centering
-% %   \includegraphics[width=\linewidth]{examples/images/squid_susceptometry/squid_with_sample_currents_Lambda=1_00__um__z=-1_00__um.png}
-% % %   \caption{Device polygons and mesh for the SQUID susceptometer model.}
-% % %   \label{fig:squid_mesh}
-% % \end{subfigure}%
-% % \vspace{-15pt}
-% % \begin{subfigure}{\textwidth}
-% %   \centering
-% %   \includegraphics[width=\linewidth]{examples/images/squid_susceptometry/squid_with_sample_currents_Lambda=10_00__um__z=-1_00__um.png}
-% % %   \caption{Fractional change in flux though all polygons vs. solver iteration with a current of $1\,\mathrm{mA}$ flowing in the field coil (\inline{fc}). The mutual inductance $M_0$ is given by the flux through the pickup loop (\inline{pl_hull}) divided by the field coil current.}
-% % %   \label{fig:squid_convergence}
-% % \end{subfigure}%
-% % \vspace{-15pt}
-% % \begin{subfigure}{\textwidth}
-% %   \centering
-% %   \includegraphics[width=\linewidth]{examples/images/squid_susceptometry/squid_with_sample_currents_Lambda=1_00__um__z=-10_00__um.png}
-% % %   \caption{Fractional change in flux though all polygons vs. solver iteration with a current of $1\,\mathrm{mA}$ flowing in the field coil (\inline{fc}). The mutual inductance $M_0$ is given by the flux through the pickup loop (\inline{pl_hull}) divided by the field coil current.}
-% % %   \label{fig:squid_convergence}
-% % \end{subfigure}%
-% % \caption{Left: Device polygons and mesh for the SQUID susceptometer model. Right: Fractional change in flux though all polygons vs. solver iteration with a current of $1\,\mathrm{mA}$ flowing in the field coil (\inline{fc}). The mutual inductance $M_0$ is given by the flux through the pickup loop (\inline{pl_hull}) divided by the field coil current.}
-% % % \label{fig:susceptometry}
-% % \end{figure}
-
 \section{Examples}
 \label{section:examples}
 
@@ -756,31 +695,31 @@ Vortices trapped in 2D superconductors ($d\ll\lambda$, where $d$ is the film thi
 \end{equation}
 where $\mathcal{F}\{\cdot\}$ is the 2D Fourier transform, $\vec{k}=(k_x, k_y)$ are in-plane spatial frequencies, $z$ is the out-of-plane position at which the field is evaluated, and $2\Lambda = 2\lambda^2 / d$ is the Pearl length~\cite{Pearl1964-cl, Tafuri2004-ap}. The real-space magnetic field distribution near a Pearl vortex can be calculated numerically by taking the inverse Fourier transform of Eq.~\ref{eq:pearl}: $H_z(\vec{r}, z)=\mathcal{F}^{-1}\{\tilde{H}_z(\vec{k}, z)\}$.
 
-To include vortices in a \SuperScreen model, one can simply input a \inline{list} of \inline{superscreen.Vortex} objects when calling \inline{superscreen.solve()} (see Code Block~\ref{code:pearl-vortex}). A \inline{Vortex} object specifies the $x,y$ position for the vortex core, the name of the superconducting layer in which the vortex is pinned, and the number of flux quanta $\Phi_0$ contained in the vortex (which is 1 by default). The field distributions generated by \SuperScreen in the presence of vortices as described in Sections~\ref{section:model:vortices} and~\ref{section:implementation} agree to within a few percent with the distributions obtained using this Fourier transform method, as demonstrated in Code Block~\ref{code:pearl-vortex} and Figure~\ref{fig:pearl}(c-e). See Ref.~\cite{Brandt2005-wj} for a method to compute the self-energy and interaction energies of vortices in thin films.
+To include vortices in a \SuperScreen model, one can simply input a \inline{list} of \inline{superscreen.Vortex} objects when calling \inline{superscreen.solve()}. A \inline{Vortex} object specifies the $x,y$ position for the vortex core, the name of the superconducting layer in which the vortex is pinned, and the number of flux quanta $\Phi_0$ contained in the vortex (which is 1 by default). The field distributions generated by \SuperScreen in the presence of vortices as described in Sections~\ref{section:model:vortices} and~\ref{section:implementation} agree to within a few percent with the distributions obtained using this Fourier transform method, as demonstrated in Figure~\ref{fig:pearl}(c-e). See Ref.~\cite{Brandt2005-wj} for a method to compute the self-energy and interaction energies of vortices in thin films.
 
-\begin{code}
-\begin{minted}[fontsize=\small]{python}
-# Create a device representing square thin film.
-device = sc.Device(
-    "film",
-    layers=[sc.Layer("base", Lambda=0, z0=0)],
-    films=[sc.Polygon("film", layer="base", points=sc.geometry.box(20))],
-    length_units="um",
-)
-device.make_mesh(min_triangles=8_000)
-# Specify the vortex position.
-vortices = [sc.Vortex(x=0, y=0, layer="base")]
-# Sweep Lambda, solve the model, and evaluate the field at the given coordinates.
-Lambdas = np.linspace(0, 2, 5) # [device.length_units]
-for Lambda in Lambdas:
-    device.layers["base"].Lambda = Lambda
-    solution = sc.solve(device=device, vortices=vortices)[-1]
-    # Use solution.field_at_position() to evaluate the magnetic field profile,
-    # and solution.polygon_fluxoid() to calculate fluxoids.
-\end{minted}
-\captionof{listing}{Creates a square superconducting film with side length $20\,\um$ and calculates the magnetic field distribution near a vortex at the center of the film as a function of the the effective penetration depth, $\Lambda$ (see Figure~\ref{fig:pearl}).}
-\label{code:pearl-vortex}
-\end{code}
+% \begin{code}
+% \begin{minted}[fontsize=\small]{python}
+% # Create a device representing square thin film.
+% device = sc.Device(
+%     "film",
+%     layers=[sc.Layer("base", Lambda=0, z0=0)],
+%     films=[sc.Polygon("film", layer="base", points=sc.geometry.box(20))],
+%     length_units="um",
+% )
+% device.make_mesh(min_triangles=8_000)
+% # Specify the vortex position.
+% vortices = [sc.Vortex(x=0, y=0, layer="base")]
+% # Sweep Lambda, solve the model, and evaluate the field at the given coordinates.
+% Lambdas = np.linspace(0, 2, 5) # [device.length_units]
+% for Lambda in Lambdas:
+%     device.layers["base"].Lambda = Lambda
+%     solution = sc.solve(device=device, vortices=vortices)[-1]
+%     # Use solution.field_at_position() to evaluate the magnetic field profile,
+%     # and solution.polygon_fluxoid() to calculate fluxoids.
+% \end{minted}
+% \captionof{listing}{Creates a square superconducting film with side length $20\,\um$ and calculates the magnetic field distribution near a vortex at the center of the film as a function of the the effective penetration depth, $\Lambda$ (see Figure~\ref{fig:pearl}).}
+% \label{code:pearl-vortex}
+% \end{code}
 
 \begin{figure*}[h!]
     \centering
@@ -801,7 +740,7 @@ While the 2D London model doesn't ``know'' about fluxoid quantization, in the se
 \subsection{Application: scanning SQUID susceptometry}
 \label{section:examples:scanning-squid}
 
-In scanning superconducting quantum interference device (SQUID) susceptometry\cite{Gardner2001-gr, Huber2008-il, Kirtley_Kalisky_2012}, the diamagnetic susceptibility of a superconducting sample is measured by bringing the sample close to a pair of superconducting loops. The first loop, called the ``pickup loop" (PL) is attached to a SQUID circuit that sensitively measures the magnetic flux threading the loop. The second loop, called the ``field coil" (FC), carries a known current and applies a known magnetic field to both the pickup loop and the sample. The superconducting sample screens the magnetic field from the field coil, modifying the amount of flux threading the pickup loop. Thus the change in mutual inductance $M_\mathrm{PL-FC}$ between the field coil and pickup loop in the presence of a sample provides a measure of the sample's magnetic susceptibility. For superconducting samples, this diamagnetic response is a measure of the sample's penetration depth and therefore its superfluid density.
+In scanning superconducting quantum interference device (SQUID) susceptometry, the diamagnetic susceptibility of a superconducting sample is measured by bringing the sample close to a pair of superconducting loops~\cite{Gardner2001-gr, Huber2008-il, Kirtley_Kalisky_2012}. The first loop, called the ``pickup loop" (PL) is attached to a SQUID circuit that sensitively measures the magnetic flux threading the loop. The second loop, called the ``field coil" (FC), carries a known current $I_\mathrm{FC}$ and applies a known magnetic field to both the pickup loop and the sample. The superconducting sample screens the magnetic field from the field coil, modifying the amount of flux threading the pickup loop. Thus the mutual inductance $M_\mathrm{PL-FC}$ between the field coil and pickup loop in the presence of a sample provides a measure of the sample's magnetic susceptibility. For superconducting samples, this diamagnetic response is a measure of the sample's penetration depth and therefore its superfluid density.
 
 As shown in Ref.~\cite{Brandt2005-wj}, the mutual inductance $M_{ij}$ between holes $i$ and $j$ in a superconducting structure is given by
 \begin{equation}
@@ -809,58 +748,57 @@ As shown in Ref.~\cite{Brandt2005-wj}, the mutual inductance $M_{ij}$ between ho
 \end{equation}
 where $\Phi^f_{S_i}$ is the fluxoid for a region $S_i$ containing the hole $i$, and $I_j$ is the current circulating around hole $j$. The mutual inductance values for a set of holes form a mutual inductance matrix. The diagonals of the mutual inductance matrix are the hole self-inductances ($M_{ii}=L_i$, the self-inductance of hole $i$), and the matrix is symmetric ($M_{ij}=M_{ji}$) due to the reciprocity theorem. If the penetration depth of the film containing hole $i$ is $\Lambda = 0$, then no field penetrates the film and the fluxoid $\Phi^f_{S_i}$ is equal to $\Phi_i$, the flux through hole $i$. For a device with $N_h$ holes, the $N_h\times N_h$ mutual inductance matrix $\mathbf{M}$ can be computed using the $\inline{Device.mutual_inductance_matrix()}$ method.
 
-Figure~\ref{fig:squid-mutuals}(a) shows \SuperScreen \inline{Device} models of the field coil and pickup loop region of four types of real SQUID susceptometers, with geometry taken from the layout artwork (GDS) files. In addition to the field coil and pickup loop, there are superconducting shields that limit the amount of magnetic flux that can penetrate the leads connecting the loops to the rest of the circuit (the rest of the circuit is not modeled). There are three relevant layers of superconducting films: the base electrode (BE), which is furthest from the sample contains the field coil; the first wiring layer (W1), which contains the pickup loop and a shield covering the field coil leads; and the second wiring layer (W2), which is closest to the sample and contains a shield covering the pickup loop leads. There are two insulating layers: I1, which separates BE and W1, and I2, which separates W1 and W2. Table~\ref{table:squid-layers} shows the thickness $d$ of each layer in the real devices, as well as the vertical position of the 2D films used to model each layer. For the superconducting layers, which are made of Nb, we take the London penetration depth to be $\lambda = 80\,\nm$. It is important to note that because $\lambda < d$ for all three layers, the susceptometers are not in the 2D limit in which the model described in Section~\ref{section:model} is technically valid. Nevertheless, as shown in Figure~\ref{fig:squid-mutuals}, the field coil - pickup loop mutual inductances, $M_\mathrm{sim}$, computed by \SuperScreen lie within the range of mutual inductances measured in real devices, $M_\mathrm{exp}$ (taken from Ref.~\cite{Kirtley2016-zz} Table 1), for all four sizes of susceptometer.\footnote{The mutual inductance values are shown in units of $\Phi_0 / \mathrm{A}$, where $1\,\Phi_0 / \mathrm{A}\approx2.068\times10^{-3}\,\mathrm{pH}$.} This suggests that variation in current density along the thickness of each film (along the $z$-axis) is not critical in determining the mutual inductance. The convergence of $M_\mathrm{PL-FC}$ as a function of solver iteration (see Section~\ref{section:model:multilayer}) is shown in Figure~\ref{fig:squid-mutuals}(c).
-
-\begin{table*}
-\centering
-\begin{tabular}{|l|l|l|l|l|}
-\hline
-Layer name & Material & Thickness & Vertical position, $z_0$ & Films located in layer \\ \hline
-\hline
-W2 & Nb & $d_\mathrm{W2} = 200\,\nm$ & $d_\mathrm{W2} / 2$ & Pickup loop shield, modulation coil \\ \hline
-I2 & SiO${}_2$ & $d_\mathrm{I2} = 130\,\nm$ & --- & --- \\ \hline
-W1 & Nb & $d_\mathrm{W1} = 100\,\nm$ & $d_\mathrm{W2} + d_\mathrm{I2} + d_\mathrm{W1} / 2$ & Pickup loop, field coil shield \\ \hline
-I1 & SiO${}_2$ & $d_\mathrm{I1} = 150\,\nm$ & --- & --- \\ \hline
-BE & Nb & $d_\mathrm{BE} = 160\,\nm$ & $d_\mathrm{W2} + d_\mathrm{I2} + d_\mathrm{W1} + d_\mathrm{I1} + d_\mathrm{BE} / 2$ & Field coil, pickup loop shield \\ \hline
-\end{tabular}
-\caption{Layer stackup for the SQUID susceptometers discussed in Section~\ref{section:examples:scanning-squid}. W2 is located at the surface of the chip (deposited last, closest to the sample) and BE deepest below the chip's surface (deposited first). See Refs.~\cite{Kirtley2016-zz, Kirtley2016-gt} for more details on the designed of the suscpetometers.}
-\label{table:squid-layers}
-\end{table*}
-
-
-\begin{figure*}
+\begin{figure*}[t]
     \centering
     \includegraphics[width=\textwidth]{examples/images/squid-mutuals.png}
-    \caption{Calculating SQUID susceptometer mutual inductance, defined as the fluxoid induced in the SQUID pickup loop per unit current flowing in the field coil: $M_\mathrm{PL-FC}=\Phi^f_\mathrm{PL} / I_\mathrm{FC}$. Top row (a): Schematics of \SuperScreen models for the field coil and pickup loop region of four sizes of scanning SQUID susceptometer (generated using \inline{Device.draw()}) with pickup loop inner radii ranging from $0.1\,\um$ (``Small'') to $3\,\um$ (``X-Large''). The wiring layers BE, W1, and W2 are shown in blue, orange, and green respectively. Middle row (b): Simulated magnetic field $\mu_0H_z$ evaluated at the plane of layer W1, which contains the pickup loop, normalized by the current $I_\mathrm{FC}$ flowing in the field coil (which is located in layer BE). Bottom row (c): Convergence of the four models, defined as the fractional change in mutual inductance between subsequent iterations $i$. For all four models, the simulated mutual inductance, $M_\mathrm{sim}$, falls within the range of mutual inductance values measured in real devices, $M_\mathrm{exp}$, which were reported in Table 1 of Ref.~\cite{Kirtley2016-zz}. The meshes for the ``Small,'' ``Medium,'' and ``Large'' models consisted of approximately 5,000 vertices and 10,000 triangles, whereas the mesh for the ``X-Large'' model consisted of about 7,700 vertices and 15,000 triangles. The two smaller models converge more quickly than the two larger models for reasons discussed in \ref{appendix:numerics}. Note that for the ``X-Large'' model, we set the thicknesses of layers I1 and I2 both to 300 nm to ensure convergence (see \ref{appendix:numerics} and Figure~\ref{fig:xlarge-dz-dr}).}
+    \caption{Calculating SQUID susceptometer mutual inductance, defined as the fluxoid induced in the SQUID pickup loop per unit current flowing in the field coil: $M_\mathrm{PL-FC}=\Phi^f_\mathrm{PL} / I_\mathrm{FC}$. Top row (a): Schematics of \SuperScreen models for the field coil and pickup loop region of four sizes of scanning SQUID susceptometer (generated using \inline{Device.draw()}) with pickup loop inner radii ranging from $0.1\,\um$ (``Small'') to $3\,\um$ (``X-Large''). The wiring layers BE, W1, and W2 are shown in blue, orange, and green respectively. Middle row (b): Simulated magnetic field $\mu_0H_z$ evaluated at the plane of layer W1, which contains the pickup loop, normalized by the current $I_\mathrm{FC}$ flowing in the field coil (which is located in layer BE). Bottom row (c): Convergence of the four models, defined as the fractional change in mutual inductance between subsequent iterations $i$. For all four models, the simulated mutual inductance, $M_\mathrm{sim}$, falls within the range of mutual inductance values measured in real devices, $M_\mathrm{exp}$, which were reported in Table 1 of Ref.~\cite{Kirtley2016-zz}. The meshes for the ``Small,'' ``Medium,'' and ``Large'' models consisted of approximately 5,000 vertices and 10,000 triangles, whereas the mesh for the ``X-Large'' model consisted of about 7,700 vertices and 15,000 triangles. The two smaller models converge more quickly than the two larger models for reasons discussed in \ref{appendix:numerics}. Note that for the ``X-Large'' model, we set the thicknesses of layers I1 and I2 both to 300 nm (instead of the nominal values of 150 nm and 130 nm respectively), to ensure convergence (see \ref{appendix:numerics} and Figure~\ref{fig:xlarge-dz-dr}).}
     \label{fig:squid-mutuals}
 \end{figure*}
 
-Having established the value of the field coil - pickup loop mutual inductance $M_\mathrm{PL-FC}$ in the absence of a sample, we can simulate a scanning SQUID susceptometry measurement by calculating $M_\mathrm{PL-FC}$ in the presence of a superconducting sample as a function of the relative position of the pickup loop and the sample. For example, in Figure XX, we simulate a SQUID susceptometry image of of a ``Large'' susceptometer (the sample) measured with a ``Medium'' suceptometer (the sensor). Given a \inline{Device} representing the sensor and a \inline{Device} representing the sample, this calculation is performed in three steps:
+Figure~\ref{fig:squid-mutuals}(a) shows \SuperScreen \inline{Device} models of the field coil and pickup loop region of four types of real SQUID susceptometers, with geometry taken from the layout artwork (GDS) files. In addition to the field coil and pickup loop, there are superconducting shields that limit the amount of magnetic flux that can penetrate the leads connecting the loops to the rest of the circuit (the rest of the circuit is not modeled). There are three relevant layers of superconducting films: the base electrode (BE), which is furthest from the sample contains the field coil; the first wiring layer (W1), which contains the pickup loop and a shield covering the field coil leads; and the second wiring layer (W2), which is closest to the sample and contains a shield covering the pickup loop leads. There are two insulating layers: I1, which separates BE and W1, and I2, which separates W1 and W2.
+% Table~\ref{table:squid-layers} shows the thickness $d$ of each layer in the real devices, as well as the vertical position of the 2D films used to model each layer. 
+For the superconducting layers, which are made of Nb, we take the London penetration depth to be $\lambda = 80\,\nm$, and the layer thicknesses correspond to the real device design (see Table 1 of Ref.~\cite{Kirtley2016-gt} and Figure 8 of Ref.~\cite{Kirtley2016-zz}). It is important to note that because $\lambda < d$ for all three layers, the susceptometers are not in the 2D limit in which the model described in Section~\ref{section:model} is technically valid. Nevertheless, as shown in Figure~\ref{fig:squid-mutuals}, the field coil - pickup loop mutual inductances, $M_\mathrm{sim}$, computed by \SuperScreen lie within the range of mutual inductances measured in real devices, $M_\mathrm{exp}$ (taken from Ref.~\cite{Kirtley2016-zz} Table 1), for all four sizes of susceptometer, indicating that variation in current density along the thickness of each film is not critical in determining the mutual inductance in this case.\footnote{The mutual inductance values are shown in units of $\Phi_0 / \mathrm{A}$, where $1\,\Phi_0 / \mathrm{A}\approx2.068\times10^{-3}\,\mathrm{pH}$.} The convergence of $M_\mathrm{PL-FC}$ as a function of solver iteration (see Section~\ref{section:model:multilayer}) is shown in Figure~\ref{fig:squid-mutuals}(c).
+
+% \begin{table*}
+% \centering
+% \begin{tabular}{|l|l|l|l|l|}
+% \hline
+% Layer name & Material & Thickness & Vertical position, $z_0$ & Films located in layer \\ \hline
+% \hline
+% W2 & Nb & $d_\mathrm{W2} = 200\,\nm$ & $d_\mathrm{W2} / 2$ & Pickup loop shield, modulation coil \\ \hline
+% I2 & SiO${}_2$ & $d_\mathrm{I2} = 130\,\nm$ & --- & --- \\ \hline
+% W1 & Nb & $d_\mathrm{W1} = 100\,\nm$ & $d_\mathrm{W2} + d_\mathrm{I2} + d_\mathrm{W1} / 2$ & Pickup loop, field coil shield \\ \hline
+% I1 & SiO${}_2$ & $d_\mathrm{I1} = 150\,\nm$ & --- & --- \\ \hline
+% BE & Nb & $d_\mathrm{BE} = 160\,\nm$ & $d_\mathrm{W2} + d_\mathrm{I2} + d_\mathrm{W1} + d_\mathrm{I1} + d_\mathrm{BE} / 2$ & Field coil, pickup loop shield \\ \hline
+% \end{tabular}
+% \caption{Layer stackup for the SQUID susceptometers discussed in Section~\ref{section:examples:scanning-squid}. W2 is located at the surface of the chip (deposited last, closest to the sample) and BE deepest below the chip's surface (deposited first). See Refs.~\cite{Kirtley2016-zz, Kirtley2016-gt} for more details on the designed of the suscpetometers.}
+% \label{table:squid-layers}
+% \end{table*}
+
+Having established the value of the field coil - pickup loop mutual inductance $M_\text{PL-FC, no sample}$ in the absence of a sample, we can simulate a scanning SQUID susceptometry measurement by calculating $M_\mathrm{PL-FC}$ in the presence of a superconducting sample as a function of the relative position of the pickup loop and the sample. For example, in Figure~\ref{fig:squid-susc} we simulate a SQUID susceptometry measurement of a ``Large'' susceptometer (the sample) measured with a ``Medium'' suceptometer (the sensor). Given a \inline{Device} representing the sensor and a \inline{Device} representing the sample, this calculation is performed in three steps:
 \begin{enumerate}
-    \item{Simulate the sensor with some known current $I_\mathrm{FC}$ circulating in the field coil to get \inline{field_coil_solution}.}
-    \item{For a given relative position $(x_s, y_s)$ between the sensor and sample, simulate the sample with an applied field given by \inline{field_coil_solution.field_at_position()} to get \inline{sample_solution}.}
+    \item{Simulate the sensor with some known current $I_\mathrm{FC}$ circulating in the field coil to obtain \inline{field_coil_solution} and $M_\text{PL-FC, no sample}$.}
+    \item{For a given relative position $(x_s, y_s)$ between the sensor and sample, simulate the sample with an applied field given by \inline{field_coil_solution.field_at_position()} to obtain \inline{sample_solution}.}
     \item{Simulate the sensor again, this time with the applied field given by \inline{sample_solution.field_at_position()}, and evaluate the fluxoid $\Phi^f_\mathrm{PL}$ for the hole representing the sensor's pickup loop, and calculate the mutual inductance: $M_\mathrm{PL-FC}(x_s, y_s)=\Phi^f_\mathrm{PL} / I_\mathrm{FC}$.}
 \end{enumerate}
-These three steps are repeated for every desired $(x_s, y_s)$ to build up a susceptometry image. Note that in principle it is possible to combine the sensor and sample into a single \inline{Device} with 6 superconducting layers, however this is impractical because it would require generating a new mesh for each $(x_s, y_s)$ and, as discussed in detail in \ref{appendix:numerics}, the problem scales unfavorably with the number of layers in a device and with the total lateral extent of a device.
+These three steps are repeated for every desired $(x_s, y_s)$ to build up a susceptometry image. The susceptibility signal is reported as $M_\text{PL-FC}(x_s, y_s) - M_\text{PL-FC, no sample}$, where values that are more negative indicate a stronger diamagnetic response from the sample. Note that in principle it is possible to combine the sensor and sample into a single \inline{Device} with 6 superconducting layers, however this is impractical because it would require generating a new mesh for each $(x_s, y_s)$ and, as discussed in detail in \ref{appendix:numerics}, the problem scales unfavorably with the number of layers in a device and with the total lateral extent of a device.
 
-\begin{figure}
+\begin{figure}[t]
     \centering
     \includegraphics[width=\linewidth]{examples/images/squid-susc-simulation.pdf}
-    \caption{Simulation of a scanning SQUID susceptometry measurement. a) Geometry of the \inline{Device} representing the ``sensor'' SQUID. b) Geometry of the \inline{Device} representing the ``sample'' SQUID. c) Susceptibility of the sample SQUID measured at a temperature of 4.0 K. d) Simulated susceptibility assuming a vertical distance of 50 nm between the surfaces of the two SQUID chips. The pickup loop of the sample, which in reality is connected to a SQUID circuit that has a non-linear magnteic response, is modeled as a continuous superconducting loop in the $n=0$ fluxoid state (i.e. Meissner state). The scale bar in (a) applies to all four panels.}
+    \caption{Simulation of a scanning SQUID susceptometry measurement. (a) Geometry of the \inline{Device} representing the ``sensor'' SQUID. (b) Geometry of the \inline{Device} representing the ``sample'' SQUID. (c) Susceptibility of the sample SQUID measured at a temperature of 4.0 K. (d) Simulated susceptibility assuming a vertical distance of 50 nm between the surfaces of the two SQUID chips. The pickup loop of the sample, which in reality is connected to a SQUID circuit that has a non-linear magnteic response, is modeled as a continuous superconducting loop in the zero-fluxoid (i.e. Meissner) state. The susceptibility signal is defined as $M_\text{PL-FC} - M_\text{PL-FC, no sample}$. The scale bar in (a) applies to all four panels.}
     \label{fig:squid-susc}
 \end{figure}
 
-\subsection{Application: scanning SQUID magnetometry}
-\label{section:examples:magnetometry}
+% \subsection{Application: scanning SQUID magnetometry}
+% \label{section:examples:magnetometry}
 
 \section{Conclusion}
 \label{section:conlusion}
 
 The ability to model and visualize screening effects in inhomogeneous 2D superconductors and devices constructed from superconducting thin films can help to build intuition about these systems, aid in interpretation of measurement results, and enable optimization of measurement and device design. \SuperScreen is an open-source, user-friendly, portable, and efficient tool that solves this problem. Applications of the package include calculating self- and mutual-inductance in planar and multi-planar superconducting circuits, and modeling the magnetic interaction between inhomogeneous superconducting samples and superconducting sensors such as scanning SQUID susceptometers~\cite{Kirtley2016-zz}.
 
-There are several important limitations to the applicability of \SuperScreen and the matrix inversion method on which it is based~\cite{Brandt2004-ew,Brandt2005-wj}. First, strictly speaking all superconducting films should be in the 2D limit, with London penetration depth $\lambda$ less than film thickness $d$, such that the out-of-plane current density is approximately constant. There are cases where the model reproduces experimental results despite violation of this condition (e.g. the calculations and in Refs.~\cite{Kirtley2016-zz,Kirtley2016-gt}), but care must be taking in interpreting results in these cases. Second, the model assumes that all superconducting films behave linearly and without dissipation, and that the applied magnetic field and current density are well below the critical field and critical current density of all films in a device. 
-
-Third, \SuperScreen does not support ``terminal currents,'' i.e. currents flowing in one terminal of a device and out another terminal. This means that inductance calculations are limited to structures with holes, in which all applied currents are circulating currents associated with trapped flux (see Sections~\ref{section:model:holes} and~\ref{section:examples:scanning-squid}). Terminal currents can, however, be included in stream function-base models by setting appropriate boundary conditions~\cite{Khapaev1997-kw,Khapaev2001-xq,Khapaev2001-pw,Muller2021-ci}. Finally, care should be taken to ensure that for a given model the mesh is of sufficient density that, to within the desired precision, the results of simulations do not depend on mesh size (see \ref{appendix:numerics}).
+There are several important limitations to the applicability of \SuperScreen and the matrix inversion method on which it is based~\cite{Brandt2004-ew,Brandt2005-wj}. First, strictly speaking all superconducting films should be in the 2D limit, with London penetration depth $\lambda$ less than film thickness $d$, such that the out-of-plane current density is approximately constant. There are cases where the model reproduces experimental results despite violation of this condition (e.g. the calculations and in Refs.~\cite{Kirtley2016-zz,Kirtley2016-gt} and Section~\ref{section:examples:scanning-squid}), but care must be taking in interpreting results in these cases. Second, the model assumes that all superconducting films behave linearly and without dissipation, and that the applied magnetic field and current density are well below the critical field and critical current density of all films in a device. Third, \SuperScreen does not support ``terminal currents,'' i.e. currents flowing in one terminal of a device and out another terminal. This means that inductance calculations are limited to structures with holes, in which all applied currents are circulating currents associated with trapped flux. Terminal currents can, however, be included in stream function-base models by setting appropriate boundary conditions~\cite{Khapaev1997-kw,Khapaev2001-xq,Khapaev2001-pw,Muller2021-ci}. Finally, care should be taken to ensure that for a given model the mesh is of sufficient density that, to within the desired precision, the results of simulations do not depend on mesh size (see \ref{appendix:numerics}).
 
 Potential improvements to \SuperScreen include: support for terminal currents as discussed above, automated determination of solution convergence for models with multiple layers, more sophisticated mesh generation (e.g. automated local mesh refinement based on device geometry or adaptive mesh refinement based on solution convergence), integration with standard integrated circuit layout software and file formats, and further optimization for memory and CPU efficiency.
 
@@ -978,18 +916,17 @@ solution.plot_currents()
 # Plot the field evaluated at any points in space.
 solution.plot_field_at_positions(device.points, zs=0.5)
 \end{minted}
-\captionof{listing}{Simulating an inhomogeneous superconducting device. Here we modify the superconducting ring with a slit (Code Block~\ref{code:device} to have an effective penetration depth $\Lambda(x, y)$, which increases linearly from $0.1\,\um$ to $1\,\um$ as a function of the angle between the vector $\vec{r}=(x, y)$ and the $-y$ axis. See Figure~\ref{fig:inhomogeneous} for the resulting current and field distributions.}
+\captionof{listing}{Simulating an inhomogeneous superconducting device. Here we modify the superconducting ring with a slit from Code Block~\ref{code:device} and Figure~\ref{fig:ring-with-slit} to have an effective penetration depth $\Lambda(x, y)$, which increases linearly from $0.1\,\um$ to $1\,\um$ as a function of the angle between the vector $\vec{r}=(x, y)$ and the $-y$ axis. See Figure~\ref{fig:inhomogeneous} for the resulting current and field distributions.}
 \label{code:inhomogeneous}
 \end{code}
-
-As mentioned in Section~\ref{section:overview:device}, the effective penetration depth $\Lambda$ of each layer can be specified as a numeric constant or as a \inline{superscreen.Parameter} that computes $\Lambda(x, y)$, the effective penetration depth as a function of position. As a (somewhat contrived) example, Code Block~\ref{code:inhomogeneous} demonstrates how to modify the model of a ring with a slit from Code Block~\ref{code:device} and Figure~\ref{fig:ring-with-slit} such that the ring's penetration depth $\Lambda(x, y)$ increases linearly as a function of the angle between the vector $\vec{r} = (x, y)$ and the $-y$ axis (along which the slit lies). The resulting current and field distributions are shown in Figure~\ref{fig:inhomogeneous}. Note that $\Lambda(x, y)$ must vary slowly on the scale of the spacing between mesh vertices in order for results to be reliable.
-
 \begin{figure*}
     \centering
     \includegraphics[width=\textwidth]{examples/images/ring_with_slit_inhomogeneous.pdf}
-    \caption{The output of Code Block~\ref{code:inhomogeneous}: Meissner screening of a uniform applied field of $10\,\mu\mathrm{T}$ by a ring with a slit in a superconducting film with inhomogeneous effective penetration depth $\Lambda(x, y)$. a) The inhomogeneous effective penetration depth $\Lambda(x, y)$, with the ring's outline overlaid in orange. b) The current density $\vec{J}$ in the ring, generated with \inline{Solution.plot_currents()}. c) The $z$-component of the magnetic field $\mu_0H_z$ evaluated at the plane of the ring, generated with \inline{Solution.plot_fields()}. d) The $z$-component of the magnetic field evaluated $z=0.5\,\um$ above the ring (generated using \inline{Solution.plot_field_at_positions()}).}
+    \caption{The output of Code Block~\ref{code:inhomogeneous}: Meissner screening of a uniform applied field of $10\,\mu\mathrm{T}$ by a ring with a slit in a superconducting film with inhomogeneous effective penetration depth $\Lambda(x, y)$. (a) The inhomogeneous effective penetration depth $\Lambda(x, y)$, with the ring's outline overlaid in orange. (b) The current density $\vec{J}$ in the ring, generated with \inline{Solution.plot_currents()}. (c) The $z$-component of the magnetic field $\mu_0H_z$ evaluated at the plane of the ring, generated with \inline{Solution.plot_fields()}. (d) The $z$-component of the magnetic field evaluated $z=0.5\,\um$ above the ring (generated using \inline{Solution.plot_field_at_positions()}).}
     \label{fig:inhomogeneous}
 \end{figure*}
+
+As mentioned in Section~\ref{section:overview:device}, the effective penetration depth $\Lambda$ of each layer can be specified as a numeric constant or as a \inline{superscreen.Parameter} that computes $\Lambda(x, y)$, the effective penetration depth as a function of position. As a (somewhat contrived) example, Code Block~\ref{code:inhomogeneous} demonstrates how to modify the model of a ring with a slit from Code Block~\ref{code:device} and Figure~\ref{fig:ring-with-slit} such that the ring's penetration depth $\Lambda(x, y)$ increases linearly as a function of the angle between the vector $\vec{r} = (x, y)$ and the $-y$ axis (along which the slit lies). The resulting current and field distributions are shown in Figure~\ref{fig:inhomogeneous}. Note that $\Lambda(x, y)$ must vary slowly on the scale of the spacing between mesh vertices in order for results to be reliable.
  
 \section{Numerical considerations}
 \label{appendix:numerics}
