@@ -737,21 +737,23 @@ Figure~\ref{fig:pearl}(e) shows the fluxoid for a circular region $S$ with radiu
 
 While the 2D London model doesn't ``know'' about fluxoid quantization, in the sense that the quantization condition $\Phi^f_S=n\Phi_0$ is not automatically satisfied by solutions to Eq.~\ref{eq:london} for multiply-connected films, we can nevertheless calculate current and field distributions for different fluxoid states in multiply-connected superconductors by adjusting the currents circulating around each hole to realize a prescribed set of fluxoid values. For a structure with $N_h$ holes, we can specify $N_h$ fluxoids $\Phi^f_h$ and find the circulating currents $I_h$ by minimizing the deviation of each fluxoid from its desired value. This calculation is implemented in the \inline{superscreen.find_fluxoid_solution()} function.
 
+\subsection{Calculating inductance}
+\label{section:examples:inductance}
+
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{examples/images/inductance.pdf}
-    \caption{Self-inductance $L$ of a circular ring with inner radius $a$ and outer radius $b$, as a function of the ratio $a / b$ and the ring's effective penetration depth $\Lambda$. Filled circles indicate results from \SuperScreen, solid lines show numerical results from Ref.~\cite{Brandt2004-ew} (Figure 2), blue squares and diamonds show numerical results from Ref.~\cite{Khapaev_1997} (Figure 1), and the dashed line indicates the analytical solution, $L = 2\mu_0 a$, for $\Lambda=0$ in the limit $a/b\to 0$\cite{Ketchen2012-mb, Babaei_Brojeny2003-la}.}
+    \caption{Self-inductance $L$ of a circular ring with inner radius $a$ and outer radius $b$ (see inset), as a function of the ratio $a / b$ and the ring's effective penetration depth $\Lambda$. Filled circles indicate results from \SuperScreen, solid lines show numerical results from Ref.~\cite{Brandt2004-ew} (Figure 2), blue squares and diamonds show numerical results from Ref.~\cite{Khapaev1997-kw} (Figure 1), and the dashed line indicates the analytical solution, $L = 2\mu_0 a$, for $\Lambda=0$ in the limit $a/b\to 0$\cite{Ketchen2012-mb, Babaei_Brojeny2003-la}. The \SuperScreen results were generated using a mesh with approximately 4,000 vertices and 8,000 triangles.}
     \label{fig:inductance}
 \end{figure}
-
-\subsection{Calculating inductance}
-\label{section:examples:inductance}
 
 As shown in Ref.~\cite{Brandt2005-wj}, the mutual inductance $M_{ij}$ between holes $i$ and $j$ in a superconducting structure is given by
 \begin{equation}
     M_{ij}=\frac{\Phi^f_{S_i}}{I_j},
 \end{equation}
 where $\Phi^f_{S_i}$ is the fluxoid for a region $S_i$ containing the hole $i$, and $I_j$ is the current circulating around hole $j$. The mutual inductance values for a set of holes form a mutual inductance matrix. The diagonals of the mutual inductance matrix are the hole self-inductances ($M_{ii}=L_i$, the self-inductance of hole $i$), and the matrix is symmetric ($M_{ij}=M_{ji}$) due to the reciprocity theorem. If the penetration depth of the film containing hole $i$ is $\Lambda = 0$, then no field penetrates the film and the fluxoid $\Phi^f_{S_i}$ is equal to $\Phi_i$, the flux through hole $i$. For a device with $N_h$ holes, the $N_h\times N_h$ mutual inductance matrix $\mathbf{M}$ can be computed using the $\inline{Device.mutual_inductance_matrix()}$ method.
+
+The self-inductance $L$ of a 2D circular ring with inner radius $a$ and outer radius $b$ (see inset of Figure~\ref{fig:inductance}) has been used as an informal benchmark for superconducting inductance calculations. For a ring with effective penetration depth $\Lambda = 0$, it has been shown analytically that $L\to 2\mu_0 a$ in the limit $a/b\to 0$~\cite{Ketchen2012-mb, Babaei_Brojeny2003-la}. Khapaev calculated the inductance for $\Lambda = 0$ as a function of $a/b$~\cite{Khapaev1997-kw}, and Brandt and Clem calculated the inductance as a function of both $\Lambda$ and $a / b$~\cite{Brandt2004-ew}. Figure~\ref{fig:inductance} shows a comparison between these previous numerical results and the results from \SuperScreen. Note that the models used by Brandt and Clem (solid lines) and by the LCR2D software (blue diamonds) require a circularly symmetric film, whereas \SuperScreen (filled circles) and 3D-MLSI~\cite{Khapaev1997-kw, Khapaev2001-xq, Khapaev2001-pw} (blue squares) support arbitrary 2D geometry. 
 
 \subsection{Application: scanning SQUID susceptometry}
 \label{section:examples:scanning-squid}
@@ -800,8 +802,10 @@ These three steps are repeated for every desired $(x_s, y_s)$ to build up a susc
     \label{fig:squid-susc}
 \end{figure}
 
-% \subsection{Application: scanning SQUID magnetometry}
-% \label{section:examples:magnetometry}
+\subsection{Application: scanning SQUID magnetometry}
+\label{section:examples:magnetometry}
+
+Scanning SQUID susceptometers can also be used for magnetometry, i.e. measuring the magnetic flux above a sample's surface without applying a field to the sample with the field coil.
 
 \section{Conclusion}
 \label{section:conlusion}
