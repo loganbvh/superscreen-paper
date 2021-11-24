@@ -737,6 +737,13 @@ Figure~\ref{fig:pearl}(e) shows the fluxoid for a circular region $S$ with radiu
 
 While the 2D London model doesn't ``know'' about fluxoid quantization, in the sense that the quantization condition $\Phi^f_S=n\Phi_0$ is not automatically satisfied by solutions to Eq.~\ref{eq:london} for multiply-connected films, we can nevertheless calculate current and field distributions for different fluxoid states in multiply-connected superconductors by adjusting the currents circulating around each hole to realize a prescribed set of fluxoid values. For a structure with $N_h$ holes, we can specify $N_h$ fluxoids $\Phi^f_h$ and find the circulating currents $I_h$ by minimizing the deviation of each fluxoid from its desired value. This calculation is implemented in the \inline{superscreen.find_fluxoid_solution()} function.
 
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{examples/images/inductance.pdf}
+    \caption{Self-inductance $L$ of a circular ring with inner radius $a$ and outer radius $b$, as a function of the ratio $a / b$ and the ring's effective penetration depth $\Lambda$. Filled circles indicate results from \SuperScreen, solid lines show numerical results from Ref.~\cite{Brandt2004-ew} (Figure 2), blue squares and diamonds show numerical results from Ref.~\cite{Khapaev_1997} (Figure 1), and the dashed line indicates the analytical solution, $L = 2\mu_0 a$, for $\Lambda=0$ in the limit $a/b\to 0$\cite{Ketchen2012-mb, Babaei_Brojeny2003-la}.}
+    \label{fig:inductance}
+\end{figure}
+
 \subsection{Calculating inductance}
 \label{section:examples:inductance}
 
