@@ -276,7 +276,7 @@ Here we assume an out-of-plane applied magnetic field $\vec{H}_\mathrm{applied}(
         {4\pi[(z-z')^2+\rho^2]^{5/2}},
     \end{split}
 \end{align}
-where $\rho=\sqrt{(x-x')^2 + (y-y')^2}$.
+where $\rho=\sqrt{(x-x')^2 + (y-y')^2}$. Eq.~\ref{eq:field_from_kernel} can also be seen as the Biot-Savart Law formulated in terms of the stream function $g$.
 
 Comparing Eq.~\ref{eq:london_stream} and Eq.~\ref{eq:field_from_kernel}, we have in the plane of the film:
 \begin{align}
@@ -737,16 +737,19 @@ Figure~\ref{fig:pearl}(e) shows the fluxoid for a circular region $S$ with radiu
 
 While the 2D London model doesn't ``know'' about fluxoid quantization, in the sense that the quantization condition $\Phi^f_S=n\Phi_0$ is not automatically satisfied by solutions to Eq.~\ref{eq:london} for multiply-connected films, we can nevertheless calculate current and field distributions for different fluxoid states in multiply-connected superconductors by adjusting the currents circulating around each hole to realize a prescribed set of fluxoid values. For a structure with $N_h$ holes, we can specify $N_h$ fluxoids $\Phi^f_h$ and find the circulating currents $I_h$ by minimizing the deviation of each fluxoid from its desired value. This calculation is implemented in the \inline{superscreen.find_fluxoid_solution()} function.
 
-\subsection{Application: scanning SQUID susceptometry}
-\label{section:examples:scanning-squid}
-
-In scanning superconducting quantum interference device (SQUID) susceptometry, the diamagnetic susceptibility of a superconducting sample is measured by bringing the sample close to a pair of superconducting loops~\cite{Gardner2001-gr, Huber2008-il, Kirtley_Kalisky_2012}. The first loop, called the ``pickup loop" (PL) is attached to a SQUID circuit that sensitively measures the magnetic flux threading the loop. The second loop, called the ``field coil" (FC), carries a known current $I_\mathrm{FC}$ and applies a known magnetic field to both the pickup loop and the sample. The superconducting sample screens the magnetic field from the field coil, modifying the amount of flux threading the pickup loop. Thus the mutual inductance $M_\mathrm{PL-FC}$ between the field coil and pickup loop in the presence of a sample provides a measure of the sample's magnetic susceptibility. For superconducting samples, this diamagnetic response is a measure of the sample's penetration depth and therefore its superfluid density.
+\subsection{Calculating inductance}
+\label{section:examples:inductance}
 
 As shown in Ref.~\cite{Brandt2005-wj}, the mutual inductance $M_{ij}$ between holes $i$ and $j$ in a superconducting structure is given by
 \begin{equation}
     M_{ij}=\frac{\Phi^f_{S_i}}{I_j},
 \end{equation}
 where $\Phi^f_{S_i}$ is the fluxoid for a region $S_i$ containing the hole $i$, and $I_j$ is the current circulating around hole $j$. The mutual inductance values for a set of holes form a mutual inductance matrix. The diagonals of the mutual inductance matrix are the hole self-inductances ($M_{ii}=L_i$, the self-inductance of hole $i$), and the matrix is symmetric ($M_{ij}=M_{ji}$) due to the reciprocity theorem. If the penetration depth of the film containing hole $i$ is $\Lambda = 0$, then no field penetrates the film and the fluxoid $\Phi^f_{S_i}$ is equal to $\Phi_i$, the flux through hole $i$. For a device with $N_h$ holes, the $N_h\times N_h$ mutual inductance matrix $\mathbf{M}$ can be computed using the $\inline{Device.mutual_inductance_matrix()}$ method.
+
+\subsection{Application: scanning SQUID susceptometry}
+\label{section:examples:scanning-squid}
+
+In scanning superconducting quantum interference device (SQUID) susceptometry, the magnetic susceptibility of a sample is measured by bringing the sample close to a pair of superconducting loops~\cite{Gardner2001-gr, Huber2008-il, Kirtley_Kalisky_2012}. The first loop, called the ``pickup loop" (PL) is attached to a SQUID circuit that sensitively measures the magnetic flux threading the loop. The second loop, called the ``field coil" (FC), carries a known current $I_\mathrm{FC}$ and applies a known magnetic field to both the pickup loop and the sample. A superconducting sample will screen the magnetic field from the field coil, modifying the amount of flux threading the pickup loop and reducing the mutual inductance $M_\mathrm{PL-FC}$. The magnitude of this reduction in $M_\mathrm{PL-FC}$ is a measure of the sample's penetration depth and therefore its superfluid density.
 
 \begin{figure*}[t]
     \centering
@@ -775,7 +778,7 @@ For the superconducting layers, which are made of Nb, we take the London penetra
 % \label{table:squid-layers}
 % \end{table*}
 
-Having established the value of the field coil - pickup loop mutual inductance $M_\text{PL-FC, no sample}$ in the absence of a sample, we can simulate a scanning SQUID susceptometry measurement by calculating $M_\mathrm{PL-FC}$ in the presence of a superconducting sample as a function of the relative position of the pickup loop and the sample. For example, in Figure~\ref{fig:squid-susc} we simulate a SQUID susceptometry measurement of a ``Large'' susceptometer (the sample) measured with a ``Medium'' suceptometer (the sensor). Given a \inline{Device} representing the sensor and a \inline{Device} representing the sample, this calculation is performed in three steps:
+Having established the value of the field coil - pickup loop mutual inductance in the absence of a sample, $M_\text{PL-FC, no sample}$, we can simulate a scanning SQUID susceptometry measurement by calculating $M_\mathrm{PL-FC}$ in the presence of a superconducting sample as a function of the relative position of the pickup loop and the sample, $(x_s, y_s)$. For example, in Figure~\ref{fig:squid-susc} we simulate a SQUID susceptometry measurement of a ``Large'' susceptometer (the sample) measured with a ``Medium'' suceptometer (the sensor). Given a \inline{Device} representing the sensor and a \inline{Device} representing the sample, this calculation is performed in three steps:
 \begin{enumerate}
     \item{Simulate the sensor with some known current $I_\mathrm{FC}$ circulating in the field coil to obtain \inline{field_coil_solution} and $M_\text{PL-FC, no sample}$.}
     \item{For a given relative position $(x_s, y_s)$ between the sensor and sample, simulate the sample with an applied field given by \inline{field_coil_solution.field_at_position()} to obtain \inline{sample_solution}.}
@@ -801,6 +804,10 @@ The ability to model and visualize screening effects in inhomogeneous 2D superco
 There are several important limitations to the applicability of \SuperScreen and the matrix inversion method on which it is based~\cite{Brandt2004-ew,Brandt2005-wj}. First, strictly speaking all superconducting films should be in the 2D limit, with London penetration depth $\lambda$ less than film thickness $d$, such that the out-of-plane current density is approximately constant. There are cases where the model reproduces experimental results despite violation of this condition (e.g. the calculations and in Refs.~\cite{Kirtley2016-zz,Kirtley2016-gt} and Section~\ref{section:examples:scanning-squid}), but care must be taking in interpreting results in these cases. Second, the model assumes that all superconducting films behave linearly and without dissipation, and that the applied magnetic field and current density are well below the critical field and critical current density of all films in a device. Third, \SuperScreen does not support ``terminal currents,'' i.e. currents flowing in one terminal of a device and out another terminal. This means that inductance calculations are limited to structures with holes, in which all applied currents are circulating currents associated with trapped flux. Terminal currents can, however, be included in stream function-base models by setting appropriate boundary conditions~\cite{Khapaev1997-kw,Khapaev2001-xq,Khapaev2001-pw,Muller2021-ci}. Finally, care should be taken to ensure that for a given model the mesh is of sufficient density that, to within the desired precision, the results of simulations do not depend on mesh size (see \ref{appendix:numerics}).
 
 Potential improvements to \SuperScreen include: support for terminal currents as discussed above, automated determination of solution convergence for models with multiple layers, more sophisticated mesh generation (e.g. automated local mesh refinement based on device geometry or adaptive mesh refinement based on solution convergence), integration with standard integrated circuit layout software and file formats, and further optimization for memory and CPU efficiency.
+
+\section{Acknowledgements}
+\label{section:acknowledgements}
+Some of the computing for this project was performed on the Sherlock cluster. We would like to thank Stanford University and the Stanford Research Computing Center for providing computational resources and support that contributed to these research results. We acknowledge useful discussions with John R. Kirtley.
 
 %% The Appendices part is started with the command \appendix;
 %% appendix sections are then done as normal sections
@@ -951,22 +958,6 @@ and $\rho=\sqrt{(x-x')^2+(y-y')^2}$. Eq.~\ref{eq:hz-from-kernel} is exact for a 
 The limitation described above can be seen in the model of the largest SQUID susceptometer described in Section~\ref{section:examples:scanning-squid}, which has a field coil inner radius of $6\,\um$ and a total modeled area of roughly $600\,\um^2$. As shown in Figure~\ref{fig:xlarge-dz-dr}, \SuperScreen significantly underestimates the mutual inductance between the field coil and pickup loop when $\delta z <\delta r$ because, in that case, the discretized version of Eq.~\ref{eq:hz-from-kernel} does not correctly compute the magnetic field due the stream functions of the superconducting layers. For the sake of computing mutual inductance as in Section~\ref{section:examples:scanning-squid}, it is physically reasonable to artificially increase the vertical spacing between layers such that $\delta z\geq \delta r$ because we expect the magnetic field at the pickup loop, a vertical distance $\delta z$ away from the center of the field coil, to fall off roughly as $\left(\delta z^2 + R^2_\mathrm{FC}\right)^{-3/2}$, where $R_\mathrm{FC}\approx 6\,\um\gg\delta z$. However, in situations where $\delta z$ is a critical dimension (in the sense that increasing it would invalidate the physical model), one's only option is to decrease $\delta r$ by increasing the density of the mesh.
 
 For this reason, mutli-layer structures with closely-spaced layers are the most challenging class of problem to solve. The iterative method used described in Section~\ref{section:model:multilayer} is memory-intensive for models with a large mesh (many vertices $p$ and triangles $t$, with typically $p\approx t / 2$) and/or many layers $L$, because the average distance between vertices decreases slowly with increasing number of triangles, $\langle\delta r\rangle\sim t^{-1/2}$, whereas the size of the (dense floating-point) $p\times t$ matrix that represents the dipole kernel $Q_z(\vec{r},\vec{r}')$ in Eq.~\ref{eq:hz-from-kernel} increases roughly as $t^2$. The end result is that the memory footprint of kernel matrix scales roughly as $\langle\delta r\rangle^{-4}$, so decreasing the mean distance between vertices by a factor of 2 increases the memory required by a factor of 16. Furthermore, for a model with $L$ layers there are $\binom{L}{2} = L(L-1)/2$ such kernel matrices needed for each iteration of the calculation outlined in Section~\ref{section:model:multilayer}. In \inline{superscreen.solve()}, these $\binom{L}{2}$ matrices are computed during the first iteration and then cached in memory for use in subsequent iterations. One can force the kernel matrices to be cached to disk if they would otherwise occupy too large a fraction of the available system memory using the \inline{cache_kernel_memory_cutoff} argument, but this comes at a significant performance cost. In many cases, one can use lower-precision floating point numbers (e.g. using 32-bit single-precision floats instead of the default 64-bit double-precision floats by setting \inline{device.solve_dtype = "float32"}) to reduce memory requirements without significantly impacting solution accuracy.
-
-% As mentioned in Section~\ref{section:model:multilayer}, at each iteration of this process, we update the applied field $H_{z,\,\mathrm{applied}}(\vec{r}, z_\ell)$ at each layer $\ell$ based on the currents flowing in all other layers $m\neq\ell$, according to
-
-% \begin{align}
-% \begin{split}
-%     &H_{z,\,\mathrm{applied}}(\vec{r}, z_\ell) \to\\
-%     &H_{z,\,\mathrm{applied}}(\vec{r}, z_\ell)
-%     + \sum_{m\neq\ell}
-%     \int_{S_m} Q_z(\vec{r},\vec{r}')g_m(\vec{r}')\,\mathrm{d}^2r',
-%     \label{eq:iterative}
-% \end{split}
-% \end{align}
-% where $S_m$ is surface of all films in layer $m$ and $g_m$ is the stream function for layer $m$.
-% Furthermore, for a model with $L$ layers, at each iteration, Eq.~\ref{eq:iterative} requires the calculation of $\binom{L}{2} = L(L-1)/2$ such kernel matrices. representing $Q_z(\vec{r},\vec{r}')$ in Eq.~\ref{eq:hz-from-kernel}, each of which is a dense $p\times t$ floating point matrix. Typically the number of mesh vertices is approximately half the number of triangles ($p\approx t / 2$), so for a mesh with $t=10,000$ triangles, each of these $\mathbf{Q_z}$ matrices is roughly 400 MB (200 MB) if using 64-bit double-precision floats (32-bit single-precision floats). Furthermore, each iteration requires performing $2\binom{L}{2} = L(L-1)$ sums involving $\mathbf{Q_z}\cdot\mathbf{g}_m$, where $\mathbf{g}_m$ is the $n\times1$ vector defining the stream function in layer $m$ evaluated at the center of each triangle in the mesh.
-
-% To avoid redundant computation at each iteration and running out of memory during the iterative process, the $\mathbf{Q_z}$ matrices are computed once during the first iteration, cached to a temporary directory on disk, and loaded from disk during subsequent iterations, such that only a single $\mathbf{Q_z}$ is in memory at any given time. If running \SuperScreen on a machine with both hard disk (HDD) and solid state disk (SSD) storage, one should ensure that Python uses a temporary directory located on a solid state disk to avoid a significant performance penalty due to hard disk read/write speeds. See the documentation for the \inline{tempfile} module of the Python standard library for more details. Both the amount of computation needed per iteration and the number of iterations required to reach a certain level of convergence (quantified, for example, by the fractional change in flux through each polygon in the model from one iteration to the next)
 
 \section{Parallel processing}
 \label{section:parallel}
