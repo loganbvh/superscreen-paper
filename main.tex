@@ -212,7 +212,7 @@ superconductivity\sep Meissner screening\sep thin film\sep London equations \sep
 
 There have been many previous numerical studies of magnetic screening and inductance extraction in thin film and two-dimensional (2D) superconducting devices~\cite{Jaycox1981-zl, Ketchen1982-at, Ketchen2012-mb, Hildebrandt1995-uw, Khapaev1997-kw, Khapaev2001-xq, Khapaev2001-pw, Babaei_Brojeny2003-la, Brandt2004-ew, Brandt2005-wj, Clem2005-ye, Muller2021-ci, Jackman2016-mf}. However, few software tools for this task exist and those that are available are closed-source, are written in low-level compiled languages like C, and/or require the use of specialized file formats or separate computer aided design (CAD) software for defining device geometries and model configurations.\footnote{A brief summary of existing tools can be found in \ref{appendix:other-tools}, and a more thorough overview in Ref.~\cite{Gaj1999-ls}.} Most of these tools are intended for use in the design of superconducting integrated circuits for single flux quantum (SFQ) logic and are primarily used for inductance extraction~\cite{Gaj1999-ls}. \SuperScreen is an open-source, user-friendly, portable research tool designed to lower the barrier to entry to quantitative modeling of 2D superconductors, and to help interpret and inform measurements of superconducting thin films and devices.
 
-This introduction to \SuperScreen is organized as follows: In Section~\ref{section:model}, we outline the model and its assumptions and in Section~\ref{section:implementation}, we describe its numerical implementation. In Section~\ref{section:overview}, we provide an overview of the structure of the \SuperScreen package and discuss some important development details. In Section~\ref{section:examples}, we demonstrate how to perform several types of simulations using \SuperScreen and compare the results to analytical solutions and experimental results. Finally, in Section~\ref{section:conlusion}, we conclude by discussing applications, limitations, and possible extensions of the package.
+This introduction to \SuperScreen is organized as follows: In Section~\ref{section:model}, we outline the model and its assumptions and in Section~\ref{section:implementation}, we describe its numerical implementation. In Section~\ref{section:overview}, we provide an overview of the structure of the \SuperScreen package and discuss some important development details. In Section~\ref{section:examples}, we demonstrate how to perform several types of simulations using \SuperScreen and compare the results to analytical solutions and experimental results. Finally, in Section~\ref{section:conlusion}, we conclude by discussing applications, limitations, and possible extensions of the package. Python scripts and Jupyter notebooks used to generate all figures presented below can be found in the GitHub repository accompanying this manuscript [ref.].
 
 \section{The Model}
 \label{section:model}
@@ -622,7 +622,7 @@ A \SuperScreen model consists of 1) a \inline{Device} with a mesh, 2) a function
 
 % \begin{figure}
 %     \centering
-%     \includegraphics[width=\textwidth]{examples/images/square_ring_results.png}
+%     \includegraphics[width=\textwidth]{examples/images/square_ring_results.jpg}
 %     \caption{Sheet current $\vec{J}(x, y)$ and out-of-plane magnetic field $\mu_0H_z(x, y)$ evaluated in the plane of a square ring with effective penetration depth $\Lambda=1\,\um$ subject to (a, b) a uniform applied field of 0.5 mT or (c, d) trapped flux inducing a circulating current of 1 mA. The sub-figures show the output of (a, c) \inline{Solution.plot_currents()} and (b, d) \inline{Solution.plot_fields()}, as shown in Code Block~\ref{code:ring_circulating_current}. For the current plots (a, c), the color-scale indicates the magnitude of the sheet current (or current density), $|\vec{J}|$, and the direction is indicated by the white streamlines.}
 %     \label{fig:square-ring-results}
 % \end{figure}
@@ -723,7 +723,7 @@ To include vortices in a \SuperScreen model, one can simply input a \inline{list
 
 \begin{figure*}[h!]
     \centering
-    \includegraphics[width=\textwidth]{examples/images/pearl.png}
+    \includegraphics[width=\textwidth]{examples/images/pearl.jpg}
     \caption{Vortex field profiles calculated with \SuperScreen agree with the analytical solution (Eq.~\ref{eq:pearl}) to within a few percent. Here, we model a vortex trapped at the center of a square superconducting film lying in the $x-y$ plane with side length $20\,\um$ as a function of the film's effective penetration depth, $\Lambda$. (a) Cross section along the $x$-axis of the out-of-plane magnetic field $\mu_0H_z$ from the vortex, evaluated at a vertical distance $z=1\,\um$ above the film. The inset shows the vortex field profile for $\Lambda=0\,\um$ evaluated at $z=1\,\um$, with a dashed white line indicating the cross-section axis. (b) Percentage difference between the $\mu_0H_z$ calculated with \SuperScreen and the Fourier transform method for the $x$-axis cut shown in (a). (c) Cross-section along the $z$-axis of $\mu_0H_z$ directly above the center of the vortex (logarithmic $y$ axis scale). (d) Percentage difference between the $\mu_0H_z$ calculated with \SuperScreen and the Fourier transform method for the $z$-axis cut shown in (c). In (a) and (c), the results from \SuperScreen are shown as open circles and the results from the Fourier transform method are shown as solid lines. (e) The fluxoid $\Phi_S^f$ for a circular region in the film with radius $r=1\,\um$ centered on the vortex core. As $\Lambda$ increases, so to does the supercurrent contribution to the fluxoid. (f) Error in the total simulated fluxoid relative to $\Phi_0$: error = $(\Phi_S^f(\Lambda) - \Phi_0) / \Phi_0$.}
     \label{fig:pearl}
 \end{figure*}
@@ -762,7 +762,7 @@ In scanning superconducting quantum interference device (SQUID) susceptometry, t
 
 \begin{figure*}[t]
     \centering
-    \includegraphics[width=\textwidth]{examples/images/squid-mutuals.png}
+    \includegraphics[width=\textwidth]{examples/images/squid-mutuals.jpg}
     \caption{Calculating SQUID susceptometer mutual inductance, defined as the fluxoid induced in the SQUID pickup loop per unit current flowing in the field coil: $M_\mathrm{PL-FC}=\Phi^f_\mathrm{PL} / I_\mathrm{FC}$. Top row (a): Schematics of \SuperScreen models for the field coil and pickup loop region of four sizes of scanning SQUID susceptometer (generated using \inline{Device.draw()}) with pickup loop inner radii ranging from $0.1\,\um$ (``Small'') to $3\,\um$ (``X-Large''). The wiring layers BE, W1, and W2 are shown in blue, orange, and green respectively. Middle row (b): Simulated magnetic field $\mu_0H_z$ evaluated at the plane of layer W1, which contains the pickup loop, normalized by the current $I_\mathrm{FC}$ flowing in the field coil (which is located in layer BE). Bottom row (c): Convergence of the four models, defined as the fractional change in mutual inductance between subsequent iterations $i$. For all four models, the simulated mutual inductance, $M_\mathrm{sim}$, falls within the range of mutual inductance values measured in real devices, $M_\mathrm{exp}$, which were reported in Table 1 of Ref.~\cite{Kirtley2016-zz}. The meshes for the ``Small,'' ``Medium,'' and ``Large'' models consisted of approximately 5,000 vertices and 10,000 triangles, whereas the mesh for the ``X-Large'' model consisted of about 7,700 vertices and 15,000 triangles. The two smaller models converge more quickly than the two larger models for reasons discussed in \ref{appendix:numerics}. Note that for the ``X-Large'' model, we set the thicknesses of layers I1 and I2 both to 300 nm (instead of the nominal values of 150 nm and 130 nm respectively), to ensure convergence (see \ref{appendix:numerics} and Figure~\ref{fig:xlarge-dz-dr}).}
     \label{fig:squid-mutuals}
 \end{figure*}
@@ -818,7 +818,8 @@ Potential improvements to \SuperScreen include: support for terminal currents as
 
 \section{Acknowledgements}
 \label{section:acknowledgements}
-Some of the computing for this project was performed on the Sherlock cluster. We would like to thank Stanford University and the Stanford Research Computing Center for providing computational resources and support that contributed to these research results. We acknowledge useful discussions with John R. Kirtley.
+We acknowledge useful discussions with John R. Kirtley. This work is supported by the Department of Energy,  Office of Science, Basic Energy Sciences, Materials Sciences and Engineering Division, under Contract DE-AC02-76SF00515. Some of the computing for this project was performed on the Sherlock cluster. We would like to thank Stanford University and the Stanford Research Computing Center for providing computational resources and support that contributed to these research results.
+
 
 %% The Appendices part is started with the command \appendix;
 %% appendix sections are then done as normal sections
@@ -894,7 +895,7 @@ By default, \SuperScreen uses half-cotangent weighting. The Laplacian matrix $\m
 
 % \begin{figure}
 %     \centering
-%     \includegraphics[width=\textwidth]{examples/images/fluxoid_combined.png}
+%     \includegraphics[width=\textwidth]{examples/images/fluxoid_combined.jpg}
 %     \caption{Demonstration of the fluxoid properties listed in Section~\ref{section:examples:fluxoid} for a square ring with $\Lambda=1\,\um$, inner side length $5\,\um$, and outer side length $10\,\um$, whose outline is shown with white lines in the left and middle columns, subject to a uniform applied field of 0.1 mT. The left and middle columns show the computed current density and out-of-plane-field, overlaid with several regions $S$ for which the fluxoids $\Phi^f_S$ are calculated using \inline{Solution.polygon_fluxoid()}. The corresponding fluxoids are shown in the right column. The colors of the paths in the left and middle columns correspond to the colors of the bars in the right column. Top row (a - c): The fluxoid $\Phi^f_S$ vanishes for all simply-connected regions containing no vortices. The errors in (c) are given by $|\Phi^f_S / \Phi^f_{S,\,\text{(flux part)}}|$. Middle row (d - f): For simply-connected regions containing a set of vortices $v$, each carrying flux $\Phi_v$, the fluxoid is given by $\sum_v\Phi_v$. In this case, the body of the square ring contains both ``positive'' ($\Phi_v=\Phi_0$, counter-clockwise circulating current) and ``negative'' ($\Phi_v=-\Phi_0$, clockwise circulating current) vortices, which appear in (e) as yellow and blue dots respectively. The expected value for the fluxoid for each region $S$ given in units of $\Phi_0$ by (number of yellow vortices lying inside $S$) - (number of blue vortices lying inside $S$), and the errors in (f) are reported relative to this expected value. Bottom row (g - i): Fluxoid path independence for the $n=0$ fluxoid state, shown here for both circular ($S = 0, 1, 2$) and square ($S=3, 4, 5$) paths. Here again, the errors are given by $|\Phi^f_S / \Phi^f_{S,\,\text{(flux part)}}|$.}
 %     \label{fig:fluxoid}
 % \end{figure}
@@ -961,7 +962,7 @@ and $\rho=\sqrt{(x-x')^2+(y-y')^2}$. Eq.~\ref{eq:hz-from-kernel} is exact for a 
 
 \begin{figure}
     \centering
-    \includegraphics[width=\linewidth]{examples/images/xlarge-dz-dr.png}
+    \includegraphics[width=\linewidth]{examples/images/xlarge-dz-dr.jpg}
     \caption{\SuperScreen results may be unreliable for multi-layer models where the spacing between layers is smaller than the typical vertex-to-vertex distance, $\delta r$. (a) Field coil - pickup loop mutual inductance for the largest SQUID suscepometer modeled in Section~\ref{section:examples:scanning-squid} as a function of the minimum vertical spacing between layers, $\delta z$. The simulated mutual inductance is shown with blue circles, and a histogram of the mesh vertex-to-vertex distances $\delta r$ is shown in orange (arb. $y$ axis units). When $\delta z\lesssim\delta r$, the model significantly underestimates the mutual inductance. (b) and (c): Out-of-plane magnetic field $\mu_0H_z$ evaluated at the plane of the pickup loop (W1 layer) for (b) the nominal layer spacing with $\delta z<\delta 2$ (indicated with a black $\times$ in (a)) and (c) $\delta z > \delta r$ (indicated with a black $+$ in (a)). For $\delta r\lesssim\delta z$, the magnet field calculated using Eq.~\ref{eq:hz-from-kernel} resembles that of a discrete set of isolated dipoles rather than a continuous sheet of current.}
     \label{fig:xlarge-dz-dr}
 \end{figure}
