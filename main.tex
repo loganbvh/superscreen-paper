@@ -744,6 +744,13 @@ For the superconducting layers, which are made of Nb, we take the London penetra
 % \label{table:squid-layers}
 % \end{table*}
 
+\begin{figure*}
+    \centering
+    \includegraphics[width=\linewidth]{examples/images/squid-susc-simulation.pdf}
+    \caption{Simulation of a scanning SQUID susceptometry measurement. (a) Geometry of the \inline{Device} representing the ``sensor'' SQUID. (b) Geometry of the \inline{Device} representing the ``sample'' SQUID. (c) Susceptibility of the sample SQUID measured at a temperature of 4.0 K. (d) Simulated susceptibility assuming a vertical distance of 50 nm between the surfaces of the two SQUID chips. The pickup loop of the sample, which in reality is connected to a SQUID circuit that has a non-linear magnteic response, is modeled as a continuous superconducting loop in the zero-fluxoid (i.e. Meissner) state. The susceptibility signal is defined as $M_\text{PL-FC} - M_\text{PL-FC, no sample}$. The scale bar in (a) applies to all four panels.}
+    \label{fig:squid-susc}
+\end{figure*}
+
 Having established the value of the field coil - pickup loop mutual inductance in the absence of a sample, $M_\text{PL-FC, no sample}$, we can simulate a scanning SQUID susceptometry measurement by calculating $M_\mathrm{PL-FC}$ in the presence of a superconducting sample as a function of the relative position of the pickup loop and the sample, $(x_s, y_s)$. For example, in Figure~\ref{fig:squid-susc} we simulate a SQUID susceptometry measurement of a ``Large'' susceptometer (the sample) measured with a ``Medium'' suceptometer (the sensor). Given a \inline{Device} representing the sensor and a \inline{Device} representing the sample, this calculation is performed in three steps:
 \begin{enumerate}
     \item{Simulate the sensor with some known current $I_\mathrm{FC}$ circulating in the field coil to obtain \inline{field_coil_solution} and $M_\text{PL-FC, no sample}$.}
@@ -751,13 +758,6 @@ Having established the value of the field coil - pickup loop mutual inductance i
     \item{Simulate the sensor again, this time with the applied field given by \inline{sample_solution.field_at_position()}, and evaluate the fluxoid $\Phi^f_\mathrm{PL}$ for the hole representing the sensor's pickup loop, and calculate the mutual inductance: $M_\mathrm{PL-FC}(x_s, y_s)=\Phi^f_\mathrm{PL} / I_\mathrm{FC}$.}
 \end{enumerate}
 These three steps are repeated for every desired $(x_s, y_s)$ to build up a susceptometry image. The susceptibility signal is reported as $M_\text{PL-FC}(x_s, y_s) - M_\text{PL-FC, no sample}$, where values that are more negative indicate a stronger diamagnetic response from the sample. Note that in principle it is possible to combine the sensor and sample into a single \inline{Device} with 6 superconducting layers, however this is impractical because it would require generating a new mesh for each $(x_s, y_s)$ and, as discussed in detail in \ref{appendix:numerics}, the problem scales unfavorably with the number of layers in a device and with the total lateral extent of a device.
-
-\begin{figure}[t]
-    \centering
-    \includegraphics[width=\linewidth]{examples/images/squid-susc-simulation.pdf}
-    \caption{Simulation of a scanning SQUID susceptometry measurement. (a) Geometry of the \inline{Device} representing the ``sensor'' SQUID. (b) Geometry of the \inline{Device} representing the ``sample'' SQUID. (c) Susceptibility of the sample SQUID measured at a temperature of 4.0 K. (d) Simulated susceptibility assuming a vertical distance of 50 nm between the surfaces of the two SQUID chips. The pickup loop of the sample, which in reality is connected to a SQUID circuit that has a non-linear magnteic response, is modeled as a continuous superconducting loop in the zero-fluxoid (i.e. Meissner) state. The susceptibility signal is defined as $M_\text{PL-FC} - M_\text{PL-FC, no sample}$. The scale bar in (a) applies to all four panels.}
-    \label{fig:squid-susc}
-\end{figure}
 
 \subsection{Application: scanning SQUID magnetometry}
 \label{section:examples:magnetometry}
