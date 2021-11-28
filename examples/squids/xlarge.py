@@ -10,8 +10,8 @@ from .layers import ibm_squid_layers
 def make_squid(
     interp_points: int = 301,
     align_layers: str = "middle",
-    d_I1: float = 0.3,
-    d_I2: float = 0.3,
+    d_I1: float = 0.4,
+    d_I2: float = 0.4,
 ) -> sc.Device:
     pl_length = 11.5
     ri_pl = 3.0
@@ -103,7 +103,7 @@ def make_squid(
     )
 
     bbox = sc.Polygon(
-        "bounding_box", layer="BE", points=sc.geometry.box(24, 26, center=(2, -3.5))
+        "bounding_box", layer="BE", points=sc.geometry.box(24, 28, center=(2, -3.5))
     )
 
     films = [fc_shield, fc, pl_shield1, pl_shield2, pl]
