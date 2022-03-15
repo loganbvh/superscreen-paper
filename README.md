@@ -1,7 +1,8 @@
 # superscreen-paper
 
+- [LaTeX source](main.tex), [references](references.bib), and [figures](examples/images)
+- [Jupyter notebooks](examples/notebooks) and [Python scripts](examples/scripts) used to generate the [data](examples/data) presented in the figures
+
 ## Dependencies
 
-- `SuperScreen` (and its dependencies)
-- `Jupyter`
-- `Pandas`
+See [requirements.txt](requirements.txt).
