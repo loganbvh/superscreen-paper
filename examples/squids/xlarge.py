@@ -8,7 +8,7 @@ from .layers import ibm_squid_layers
 
 
 def make_squid(
-    interp_points: int = 301,
+    interp_points: int = 310,
     align_layers: str = "middle",
     d_I1: float = 0.4,
     d_I2: float = 0.4,
