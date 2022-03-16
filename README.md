@@ -9,7 +9,7 @@ Source material for an article on the [SuperScreen package](https://github.com/l
 
 ## Dependencies
 
-See [requirements.txt](requirements.txt).
+- [SuperScreen v0.4.0](https://pypi.org/project/superscreen/0.4.0/)
 
 ## Execute online
 
