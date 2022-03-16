@@ -1,5 +1,7 @@
 # superscreen-paper
 
+[![DOI](https://zenodo.org/badge/386788353.svg)](https://zenodo.org/badge/latestdoi/386788353)
+
 Source material for an article on the [SuperScreen package](https://github.com/loganbvh/superscreen).
 
 - [LaTeX source](main.tex), [references](references.bib), and [figures](examples/images)
