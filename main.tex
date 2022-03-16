@@ -464,7 +464,7 @@ If there is a vortex containing flux $\Phi_j$ located in a film at position $\ve
 Once the stream function $\mathbf{g}$ is known for the full mesh,
 the supercurrent flowing in the film can be computed from Eq.~\ref{eq:stream}, the $z$-component of the total field in the plane of the film can be computed
 from Eq.~\ref{eq:field_from_kernel_num}, and the full vector magnetic field $\vec{H}(x, y, z)$
-at any point in space can be computed from Eqs.~\ref{eq:field_from_kernel} and ~\ref{eq:kernels}. Multi-layer structures are  iteratively as described in Section \ref{section:model:multilayer}.
+at any point in space can be computed from Eqs.~\ref{eq:field_from_kernel} and ~\ref{eq:kernels}. Multi-layer structures are solved iteratively as described in Section \ref{section:model:multilayer}.
 
 \section{Package Overview}
 \label{section:overview}
@@ -474,7 +474,7 @@ In this section we give a high-level overview of the \SuperScreen package. Furth
 \subsection{Development Details}
 \label{section:overview:development}
 
-At the time of writing, \SuperScreen requires Python version 3.6--3.9. The package is located in a public repository on GitHub~\cite{superscreen, BishopVanHorn2021-bd}, and a suite of unit tests is run automatically via the GitHub Actions continuous integration (CI) tool whenever a change or proposed change (Pull Request) is made to the \inline{main} branch of the repository. At the time of writing, the test suite is executed using Python versions 3.6 through 3.9, and the test coverage is $>95\%$. Any changes to the \inline{main} branch of the repository also trigger an automatic re-build of the online documentation~\cite{superscreen-rtd}. Stable versions of the package are tagged on GitHub and uploaded to PyPI, the Python Package Index. The source code and documentation are provided under the MIT License.\footnote{\href{https://opensource.org/licenses/MIT}{https://opensource.org/licenses/MIT}}
+At the time of writing, \SuperScreen requires Python version 3.7--3.9. The package is located in a public repository on GitHub~\cite{superscreen, BishopVanHorn2021-bd}, and a suite of unit tests is run automatically via the GitHub Actions continuous integration (CI) tool whenever a change or proposed change (Pull Request) is made to the \inline{main} branch of the repository. At the time of writing, the test suite is executed using Python versions 3.7 through 3.9, and the test coverage is $>95\%$. Any changes to the \inline{main} branch of the repository also trigger an automatic re-build of the online documentation~\cite{superscreen-rtd}. Stable versions of the package are tagged on GitHub and uploaded to PyPI, the Python Package Index. The source code and documentation are provided under the MIT License.\footnote{\href{https://opensource.org/licenses/MIT}{https://opensource.org/licenses/MIT}}
 
 \SuperScreen has several important dependencies beyond the Python standard library: \inline{numpy}~\cite{Harris2020-xv} and \inline{scipy}~\cite{Virtanen2020-zz} for numerics, \inline{matplotlib}~\cite{Hunter2007-il} for visualization, \inline{pint}~\cite{Grecco} for handling physical units, \inline{shapely}~\cite{shapely} for creating and manipulating device geometries, \inline{meshpy}~\cite{Klockner, Shewchuk, Shewchuk1996-va} and \inline{optimesh}~\cite{Schlomer2021-ua} for mesh generation, and \inline{Ray}~\cite{Moritz2018-mt,ray-docs} for parallel processing with shared memory (see~\ref{section:parallel}).
 
