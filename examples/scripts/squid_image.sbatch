@@ -25,7 +25,7 @@ mkdir -p $outdir/logs
 
 python squid_image_row.py \
     --outdir=$outdir \
-    --squid-height=-0.035 \
+    --squid-height=-0.045 \
     --min-points=6750 \
     --optimesh-steps=20 \
     --x-range="-4, 4" \
