@@ -3,4 +3,4 @@ matplotlib
 numpy
 pandas
 scipy
-superscreen
+superscreen==0.4.0
