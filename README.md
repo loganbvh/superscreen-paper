@@ -9,7 +9,9 @@ Source material for an article on the [SuperScreen package](https://github.com/l
 
 ## Dependencies
 
-- [SuperScreen v0.4.0](https://pypi.org/project/superscreen/0.4.0/)
+`SuperScreen v0.4.0`: view on [PyPI](https://pypi.org/project/superscreen/0.4.0/), [GitHub](https://github.com/loganbvh/superscreen/releases/tag/v0.4.0), or [Zenodo](https://doi.org/10.5281/zenodo.6360917).
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6360917.svg)](https://doi.org/10.5281/zenodo.6360917)
 
 ## Execute online
 
