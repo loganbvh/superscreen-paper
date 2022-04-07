@@ -22,14 +22,14 @@
 % \documentclass[final,5p,times]{elsarticle}
 % \documentclass[final,5p,times,twocolumn]{elsarticle}
 
+
 \usepackage{subcaption}
-\usepackage[newfloat]{minted}
+\usepackage[newfloat]{minted} 
 \usepackage{hyperref}
 \usepackage{tcolorbox}
 \usepackage{etoolbox}
 \BeforeBeginEnvironment{minted}{\begin{center}\begin{tcolorbox}[width=\linewidth]}
 \AfterEndEnvironment{minted}{\end{tcolorbox}\end{center}}
-% \usemintedstyle[python]{vs}
 \usepackage{caption}
 \usepackage{xspace}
 \usepackage[toc,page]{appendix}
@@ -135,7 +135,7 @@
 %% \address{Address\fnref{label3}}
 %% \fntext[label3]{}
 
-\title{SuperScreen: An open-source package for simulating the magnetic response of two-dimensional superconducting devices}
+\title{\SuperScreen: An open-source package for simulating the magnetic response of two-dimensional superconducting devices}
 
 %% use optional labels to link authors explicitly to addresses:
 %% \author[label1,label2]{<author name>}
