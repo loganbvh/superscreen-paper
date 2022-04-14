@@ -494,7 +494,7 @@ At the time of writing, \SuperScreen requires Python version 3.7--3.9. The packa
 
 Information about the geometry and penetration depth of a superconducting structure is described by an instance of the \inline{superscreen.Device} class. A \inline{Device} is made up of one or more superconducting layers, each represented by an instance of  \inline{superscreen.Layer}. Each layer sits in a specified plane parallel to the $x-y$ plane and has its own effective penetration depth $\Lambda$. Alternatively, the effective penetration depth $\Lambda$ can be defined in terms of a layer's London penetration depth $\lambda$ and its thickness $d$: $\Lambda=\lambda^2/d$.
 
-Each layer can contain one or more superconducting \inline{films} which may have one or more \inline{holes} in them. Films and holes are represented by instances of the \inline{superscreen.Polygon} class. All polygons in a device must be simply-connected; a hole in a film is modeled as one \inline{Polygon} instance whose coordinates all lie within the \inline{Polygon} representing the film. \inline{Polygons} can constructed and combined using set-theoretic operations. Table~\ref{table:polygon} shows the four methods available for combining a \inline{supercreen.Polygon} instance \inline{polygonA}, whose vertices lie in set $A$, with a polygon \inline{polygonB}, whose vertices lie in set $B$. Note that \inline{polygonB} can be a \inline{superscreen.Polygon}, an $n\times 2$ \inline{numpy} array of vertex coordinates, or a \inline{LineString}, \inline{LinearRing}, or \inline{Polygon} from the \inline{shapely} package~\cite{shapely}.
+Each layer can contain one or more superconducting \inline{films} which may have one or more \inline{holes} in them. Films and holes are represented by instances of the \inline{superscreen.Polygon} class. All polygons in a device must be simply-connected; a hole in a film is modeled as one \inline{Polygon} instance whose coordinates all lie within the \inline{Polygon} representing the film. \inline{Polygons} can be constructed and combined using set-theoretic operations. Table~\ref{table:polygon} shows the four methods available for combining a \inline{supercreen.Polygon} instance \inline{polygonA}, whose vertices lie in set $A$, with a polygon \inline{polygonB}, whose vertices lie in set $B$. Note that \inline{polygonB} can be a \inline{superscreen.Polygon}, an $n\times 2$ \inline{numpy} array of vertex coordinates, or a \inline{LineString}, \inline{LinearRing}, or \inline{Polygon} from the \inline{shapely} package~\cite{shapely}.
 
 In addition to superconducting films and holes, one may define ``abstract regions,'' which are polygons that do not necessarily correspond to a physical feature in the structure, but will still be meshed. Abstract regions can be used to define a ``bounding box" around a structure to be modeled, or to locally increase the density of the computational mesh in a given region. The \inline{superscreen.geometry} module provides functions for generating the underlying polygon vertices for simple shapes (ellipses and rectangles), which can be combined as described above to create more complicated geometries.
 
@@ -618,7 +618,7 @@ Instances of \inline{superscreen.Device} and \inline{superscreen.Solution} can b
 
 \SuperScreen allows one to calculate the fluxoid $\Phi^f_S$ for any polygonal region $S$ whose boundary $\partial S$ lies completely within a superconducting film using the method \inline{Solution.polygon_fluxoid()} (see Section~\ref{section:model:fluxoid}, Eq.~\ref{eq:fluxoid}). The ``flux part''  $\int_S\mu_0H_z(\vec{r})\,\mathrm{d}^2r$ is calculated using \inline{Solution.polygon_flux()}, which computes the flux through a polygon representing a region $S$ as $\Phi_S=\sum_{i\in S} \mu_0H_{z,i}w_i$, where $H_{z,i}$ is the magnetic field at vertex $i$ (recall that $w_i$ assigns an effective area to mesh vertex $i$). The ``supercurrent part'' $\oint_S\mu_0\Lambda\vec{J}(\vec{r})\cdot\mathrm{d}\vec{r}$ is calculated by evaluating the vector current density $\vec{J}$ at each point in the path $\partial S$ using \inline{Solution.interp_current_density()}, then computing the line integral along the path using the trapezoid rule. The sum of these two terms gives the fluxoid $\Phi^f_S$.
 
-While the 2D London model doesn't ``know'' about fluxoid quantization, in the sense that the quantization condition $\Phi^f_S=n\Phi_0$ is not automatically satisfied by solutions to Eq.~\ref{eq:london} for multiply-connected films, we can nevertheless calculate current and field distributions for different fluxoid states in multiply-connected superconductors by adjusting the currents circulating around each hole to realize a prescribed set of fluxoid values. For a structure with $N_h$ holes, we can specify $N_h$ fluxoids $\Phi^f_h$ and find the circulating currents $I_h$ by minimizing the deviation of each fluxoid from its desired value. This calculation is implemented in the \inline{superscreen.find_fluxoid_solution()} function. For $N_h=1$, it is treated as a root-finding problem, which can be solved with typically only three calls to \inline{superscreen.solve()}. For $N_h>1$, it is a least-squares minimization problem with $N_h$ free parameters. Code Block~\ref{code:fluxoid} demonstrates how to model a device with one or more holes, each in the $n=0$ fluxoid state, subject to a uniform applied field, and Figure~\ref{fig:fluxoid} shows the field and current distributions for a rectangular superconducting film with $\Lambda=0.25\,\um$, which has one rectangular and one elliptical hole. The least-squares minimization for the model shown in Figure~\ref{fig:fluxoid}, with $N_h=2$, required 18 total calls to \inline{superscreen.solve()}. It is important to note that while \SuperScreen can calculate the field and current distributions or a given fluxoid state, the model does not capture transitions between fluxoid states.
+While the 2D London model doesn't ``know'' about fluxoid quantization, in the sense that the quantization condition $\Phi^f_S=n\Phi_0$ is not automatically satisfied by solutions to Eq.~\ref{eq:london} for multiply-connected films, we can nevertheless calculate current and field distributions for different fluxoid states in multiply-connected superconductors by adjusting the currents circulating around each hole to realize a prescribed set of fluxoid values. For a structure with $N_h$ holes, we can specify $N_h$ fluxoids $\Phi^f_h$ and find the circulating currents $I_h$ by minimizing the deviation of each fluxoid from its desired value. This calculation is implemented in the \inline{superscreen.find_fluxoid_solution()} function. For $N_h=1$, it is treated as a root-finding problem, which can be solved with typically only three calls to \inline{superscreen.solve()}. For $N_h>1$, it is a least-squares minimization problem with $N_h$ free parameters. Code Block~\ref{code:fluxoid} demonstrates how to model a device with one or more holes, each in the $n=0$ fluxoid state, subject to a uniform applied field, and Figure~\ref{fig:fluxoid} shows the field and current distributions for a rectangular superconducting film with $\Lambda=0.25\,\um$, which has one rectangular and one elliptical hole. The least-squares minimization for the model shown in Figure~\ref{fig:fluxoid}, with $N_h=2$, required 18 total calls to \inline{superscreen.solve()}. It is important to note that while \SuperScreen can calculate the field and current distributions for a given fluxoid state, the model does not capture transitions between fluxoid states.
 
 \begin{code-onecol}
 \begin{minted}[fontsize=\small]{python}
@@ -763,7 +763,7 @@ Here, we briefly describe existing software tools for modeling the magnetic resp
 \section{Mesh Laplace and gradient operators}
 \label{appendix:laplace}
 
-The definitions of the Laplace operator $\mathbf{\nabla}^2$ (also called the Laplace-Beltrami operator) and the gradient operator $\vec{\nabla}=(\nabla_x, \nabla_y)^T$ deserve special attention, as these two operators reduce problem of solving a partial differential equation to the problem of solving a matrix equation~\cite{Reuter2009-hr}.  Given a mesh consisting of $p$ vertices and $t$ triangles, and a scalar field $f(x, y)$ represented by a $p\times 1$ vector $\mathbf{f}$ containing the values of the field at the mesh vertices, the goal is to construct matrices $\nabla^2$ and $\vec{\nabla}=(\nabla_x, \nabla_y)^T$ such that the matrix products $\nabla^2\mathbf{f}$ and $\vec{\nabla}\mathbf{f}$ approximate the Laplacian $\left(\frac{\partial^2f}{\partial x^2}+\frac{\partial^2f}{\partial y^2}\right)$ and the gradient $\left(\frac{\partial f}{\partial x}, \frac{\partial f}{\partial y}\right)$ and  of $f(x, y)$ at the mesh vertices.
+The definitions of the Laplace operator $\mathbf{\nabla}^2$ (also called the Laplace-Beltrami operator) and the gradient operator $\vec{\nabla}=(\nabla_x, \nabla_y)^T$ deserve special attention, as these two operators reduce the problem of solving a partial differential equation to the problem of solving a matrix equation~\cite{Reuter2009-hr}.  Given a mesh consisting of $p$ vertices and $t$ triangles, and a scalar field $f(x, y)$ represented by a $p\times 1$ vector $\mathbf{f}$ containing the values of the field at the mesh vertices, the goal is to construct matrices $\nabla^2$ and $\vec{\nabla}=(\nabla_x, \nabla_y)^T$ such that the matrix products $\nabla^2\mathbf{f}$ and $\vec{\nabla}\mathbf{f}$ approximate the Laplacian $\left(\frac{\partial^2f}{\partial x^2}+\frac{\partial^2f}{\partial y^2}\right)$ and the gradient $\left(\frac{\partial f}{\partial x}, \frac{\partial f}{\partial y}\right)$  of $f(x, y)$ at the mesh vertices.
 
 As described in Ref.~\cite{Crane_Vouga_2014}, the Laplace operator $\mathbf{\nabla}^2$ for a mesh is defined in terms of two matrices, the mass matrix $\mathbf{M}$ and the
 weak Laplacian matrix $\mathbf{L}$: $\mathbf{\nabla}^2 = \mathbf{M}^{-1}\mathbf{L}$. In a 2D mesh, the mass matrix $\mathbf{M}$ gives an effective area to each vertex in the mesh. Here we use a ``lumped" mass matrix, which is diagonal with elements $M_{ii} = \frac{1}{3}\sum_{t\in\mathcal{N}(i)}\mathrm{area}(t)$,
@@ -807,12 +807,12 @@ where $\mathcal{N}(i)$ is the set of triangles $t$ adjacent to vertex $i$. The w
 
 By default, \SuperScreen uses half-cotangent weighting. The Laplacian matrix $\mathbf{L}$ is defined in terms of the weight matrix $\mathbf{W}$: $L_{ij} = W_{ij} - \delta_{ij}\sum_{\ell}W_{i\ell}$. Finally, the Laplace operator is given by $\mathbf{\nabla}^2 = \mathbf{M}^{-1}\mathbf{L}$.
 
-We construct the two $p\times p$ gradient matrices $\nabla_x$ and $\nabla_y$, using the ``average gradient on a star" (or AGS) approach~\cite{Mancinelli2019-ci}. Briefly, we first construct two $t\times p$ matrices, $\vec{\nabla}_t=(\nabla_{t,x}, \nabla_{t,y})^T$ using ``per-cell linear estimation'' (or PCE)~\cite{Mancinelli2019-ci}, where $\nabla_{t,x}\mathbf{f}$ maps the field values at the vertices $\mathbf{f}$ to an estimate of the $x$-component of the gradient at the triangle centroids (centers-of-mass). The matrices $\nabla_x$ and $\nabla_y$ are then computed by, for each vertex $i$, taking the weighted average of $\nabla_{t,x}$ and $\nabla_{t,y}$ over adjacent triangles $t\in\mathcal{N}(i)$, with weights given by the angle between the two sides of the triangle adjacent to the vertex. The resulting $\vec{\nabla}=(\nabla_x, \nabla_y)^T$ is a $2\times p\times p$ stack of matrices defined such that $\vec{\nabla}\mathbf{f}$ produces a $2\times p$ matrix representing the gradient of $f(x, y)$ at the mesh vertices, with the first and second rows of $\vec{\nabla}\mathbf{f}$ containing the $x$ and $y$ components of the gradient, respectively
+We construct the two $p\times p$ gradient matrices $\nabla_x$ and $\nabla_y$, using the ``average gradient on a star" (or AGS) approach~\cite{Mancinelli2019-ci}. Briefly, we first construct two $t\times p$ matrices, $\vec{\nabla}_t=(\nabla_{t,x}, \nabla_{t,y})^T$ using ``per-cell linear estimation'' (or PCE)~\cite{Mancinelli2019-ci}, where $\nabla_{t,x}\mathbf{f}$ maps the field values at the vertices $\mathbf{f}$ to an estimate of the $x$-component of the gradient at the triangle centroids (centers-of-mass). The matrices $\nabla_x$ and $\nabla_y$ are then computed by, for each vertex $i$, taking the weighted average of $\nabla_{t,x}$ and $\nabla_{t,y}$ over adjacent triangles $t\in\mathcal{N}(i)$, with weights given by the angle between the two sides of the triangle adjacent to the vertex. The resulting $\vec{\nabla}=(\nabla_x, \nabla_y)^T$ is a $2\times p\times p$ stack of matrices defined such that $\vec{\nabla}\mathbf{f}$ produces a $2\times p$ matrix representing the gradient of $f(x, y)$ at the mesh vertices, with the first and second rows of $\vec{\nabla}\mathbf{f}$ containing the $x$ and $y$ components of the gradient, respectively.
 
 \section{Spatially inhomogeneous $\lambda$}
 \label{appendix:inhomogeneous}
 
-One can write out the ``inhomogeneous second London equation'' for a superconductor with spatially-varying London penetration depth $\lambda(\vec{r})$~\cite{Kogan2011-zn}:
+The London equation (Equation~\ref{eq:london}) is valid only under the assumption that the London penetration depth $\lambda$, a proxy for the superfluid density, is constant as a function of position~\cite{Tinkham2004-zn}. In cases where the superfluid density varies as a function of position, Ginzburg-Landau theory provides a more accurate description of the magnetic response of the system. Nevertheless, in an effort to model inhomogeneous superconductors using London theory, one can write out the ``inhomogeneous second London equation'' for a superconductor with spatially-varying London penetration depth $\lambda(\vec{r})$~\cite{Cave1986-js, Kogan2011-zn}:
 \begin{align}
 \begin{split}
     \label{eq:london_inhomogeneous_3d}
@@ -827,12 +827,12 @@ In the 2D limit, i.e. a thin film with thickness $d\ll\lambda(x, y)$ lying paral
     \label{eq:london_inhomogeneous_2d}
     \vec{H}(x, y)&=-\vec{\nabla}\times(\Lambda\vec{J})\\
     &=-\left(\Lambda\vec{\nabla}\times\vec{J}+\vec{\nabla}\Lambda\times\vec{J}\,\right)\\
-    &=\left(\Lambda\nabla^2g+\vec{\nabla}\Lambda\cdot\vec{\nabla}g\right)\hat{z}
+    &=\left(\Lambda\nabla^2g+\vec{\nabla}\Lambda\cdot\vec{\nabla}g\right)\hat{z},
 \end{split}
 \end{align}
 where $\Lambda=\Lambda(x, y)$, $g=g(x, y)$, $\vec{\nabla}=\left(\frac{\partial}{\partial x},\frac{\partial}{\partial y}\right)$, and $\vec{J}=\vec{J}(x, y)=\vec{\nabla}\times(g\hat{z})$.
 
-If one defines an inhomogeneous effective penetration depth $\Lambda(x, y)$ in a \SuperScreen model, Equation~\ref{eq:london_inhomogeneous_2d} is solved numerically as follows. For a mesh with $p$ vertices, the penetration depth is represented by a $p\times 1$ vector $\mathbf{\Lambda}$. Equations~\ref{eq:Heff_sub_num} and \ref{eq:full_stream} are updated according to:
+If one defines an inhomogeneous effective penetration depth $\Lambda(x, y)$ in a \SuperScreen model, Equation~\ref{eq:london_inhomogeneous_2d}, rather than Equation~\ref{eq:london}, is solved numerically as follows. For a mesh with $p$ vertices, the effective penetration depth is represented by a $p\times 1$ vector $\mathbf{\Lambda}$. Equations~\ref{eq:Heff_sub_num} and \ref{eq:full_stream} are updated according to:
 \begin{align}
 \begin{split}
     \label{eq:Heff_inhomogeneous}
@@ -840,56 +840,56 @@ If one defines an inhomogeneous effective penetration depth $\Lambda(x, y)$ in a
     &\mathbf{Q}.\mathbf{w}^T-\mathbf{\Lambda}^T.\mathbf{\nabla}^2-\vec{\nabla}\mathbf{\Lambda}\cdot\vec{\nabla}
 \end{split}
 \end{align}
-The notation $\vec{\nabla}\mathbf{f}\cdot\vec{\nabla}$ indicates an inner (dot) product over the two spatial dimensions, resulting in a $p\times p$ matrix such that $(\vec{\nabla}\mathbf{f}\cdot\vec{\nabla})\mathbf{g}$ computes $(\vec{\nabla}f(x, y))\cdot(\vec{\nabla}g(x, y))$.
+The notation $\vec{\nabla}\mathbf{f}\cdot\vec{\nabla}$ indicates an inner (dot) product over the two spatial dimensions, resulting in a $p\times p$ matrix such that $(\vec{\nabla}\mathbf{f}\cdot\vec{\nabla})\mathbf{g}$ computes $(\vec{\nabla}f(x, y))\cdot(\vec{\nabla}g(x, y))$ (see~\ref{appendix:laplace}).
 
-Note that, unlike Equation~\ref{eq:london} in which $\Lambda$ is assumed to be constant as a function of position $\pvec{r}$, solutions to Equation~\ref{eq:london_inhomogeneous_2d} with $\vec{\nabla}\Lambda\neq0$ do not necessarily satisfy the fluxoid quantization condition $\Phi^f_S=0$ for a simply-connected superconducting region $S$, where
+Note that, unlike Equation~\ref{eq:london} in which $\Lambda$ is assumed to be constant as a function of position $\pvec{r}$, solutions to Equation~\ref{eq:london_inhomogeneous_2d} do not necessarily satisfy the fluxoid quantization condition $\Phi^f_S=0$ for simply-connected superconducting regions $S$ in which $\vec{\nabla}\Lambda(\pvec{r})\neq0$ , where
 \begin{equation}
 	\Phi^f_S=\underbrace{\int_S\mu_0H_z(\pvec{r})\,\mathrm{d}^2r}_{\text{``flux part''}} + \underbrace{\oint_S\mu_0\Lambda(\pvec{r})\vec{J}(\pvec{r})\cdot\mathrm{d}\pvec{r}}_{\text{``supercurrent part''}}.
 \end{equation}
-As a (somewhat contrived) example, Code Block~\ref{code:inhomogeneous} demonstrates how to modify the model of a ring with a slit from Code Block~\ref{code:device} and Figure~\ref{fig:ring-with-slit} such that the ring's penetration depth $\Lambda(x, y)$ increases linearly as a function of the angle between the vector $\vec{r} = (x, y)$ and the $-y$ axis (along which the slit lies). The resulting current and field distributions, and the deviation from perfect fluxoid quantization, are shown in Figure~\ref{fig:inhomogeneous}.
+%As a (somewhat contrived) example, Code Block~\ref{code:inhomogeneous} demonstrates how to modify the model of a ring with a slit from Code Block~\ref{code:device} and Figure~\ref{fig:ring-with-slit} such that the ring's penetration depth $\Lambda(x, y)$ increases linearly as a function of the angle between the vector $\vec{r} = (x, y)$ and the $-y$ axis (along which the slit lies). The resulting current and field distributions, and the deviation from perfect fluxoid quantization, are shown in Figure~\ref{fig:inhomogeneous}.
 %Note that $\Lambda(x, y)$ must vary slowly on the scale of the spacing between mesh vertices in order for results to be reliable. For example, the simulated supercurrent density near a point-like defect (i.e small compared to the triangles in the mesh) associated with a penetration depth $\Lambda_\text{defect}$ in an otherwise uniform film with penetration depth $\Lambda_0\ll\Lambda_\text{defect}$ will depend strongly on the specifics of the mesh near the defect. One can avoid this problem by increasing the density of the mesh in regions of fast-varying $\Lambda$ by adding one or more ``abstract regions" to the \inline{Device} as described in Section~\ref{section:overview:device}.
 
- \begin{code}
- \begin{minted}[fontsize=\small]{python}
- def linear_vs_angle(
-     x: np.ndarray, y: np.ndarray, *, min_val: float, max_val: float
- ) -> np.ndarray:
-     # Rotate the input coordinates so that theta = 0
-     # corresponds to the slit position (along the -y axis).
-     x, y = sc.geometry.rotate(
-         np.stack(np.atleast_1d(x, y), axis=1), np.degrees(-np.pi / 2)
-     ).T
-     # Calculate the angular position of each mesh vertex.
-     angles = np.arctan2(y, x) + np.pi  # range: [0, 2 * pi]
-     # Set Lambda to increase linearly from min_val to max_val
-     # as a function of angular position.
-     Lambdas = angles / (2 * np.pi) * (max_val- min_val) + min_val
-     return Lambdas
-
- # Define the Parameter and assign it as the Lambda of the superconducting layer.
- Lambda = sc.Parameter(linear_vs_angle, min_val=0.1, max_val=1.0)
- device.layers["base"].Lambda = Lambda
- # Everything below is identical to Code Block 1:
- # Calculate the device's response to a uniform applied field.
- applied_field = sc.sources.ConstantField(1)
- solution = sc.solve(device, applied_field=applied_field, field_units="mT")[-1]
- # Visualize the solution.
- # Plot the current density evaluated at each layer in the Device.
- solution.plot_currents()
- # Plot the magnetic field evaluated at each layer in the Device.
- solution.plot_fields()
- # Plot the field evaluated at any points in space.
- solution.plot_field_at_positions(device.points, zs=0.5)
- \end{minted}
- \captionof{listing}{Simulating an inhomogeneous superconducting device. Here we modify the superconducting ring with a slit from Code Block~\ref{code:device} and Figure~\ref{fig:ring-with-slit} to have an effective penetration depth $\Lambda(x, y)$, which increases linearly from $0.1\,\um$ to $1\,\um$ as a function of the angle between the vector $\vec{r}=(x, y)$ and the $-y$ axis. See Figure~\ref{fig:inhomogeneous} for the resulting current and field distributions.}
- \label{code:inhomogeneous}
- \end{code}
- \begin{figure*}[h!]
-     \centering
-     \includegraphics[width=\textwidth]{examples/images/ring_with_slit_inhomogeneous.pdf}
-     \caption{The output of Code Block~\ref{code:inhomogeneous}: Meissner screening of a uniform applied field of $1\,\mathrm{mT}$ by a ring with a slit in a superconducting film with inhomogeneous effective penetration depth $\Lambda(x, y)$. ({\bf a}) The inhomogeneous effective penetration depth $\Lambda(x, y)$, with the ring's outline overlaid in pink. Dashed squares indicate regions $S$ for which we calculate the fluxoid $\Phi^f_S$ in panel ({\bf e}). ({\bf b}) The current density $\vec{J}$ in the ring, generated with \inline{Solution.plot_currents()}. ({\bf c}) The $z$-component of the magnetic field $\mu_0H_z$ evaluated at the plane of the ring, generated with \inline{Solution.plot_fields()}. ({\bf d}) The $z$-component of the magnetic field evaluated $z=0.5\,\um$ above the ring (generated using \inline{Solution.plot_field_at_positions()}). ({\bf e}) The fluxoid $\Phi^f_S$ for each of the six square fluxoid regions, $S$, shown with dotted lines in ({\bf a}). Unlike Equation~\ref{eq:london} (where $\Lambda$ is constant as a function of position), solutions to Equation~\ref{eq:london_inhomogeneous_2d} do not necessarily satisfy fluxoid quantization, $\Phi^f_S=0$ for simply-connected superconducting regions $S$. $\Delta=\Phi^f_S / \int_S\mu_0H_z(\vec{r})\,\mathrm{d}^2r$ is the deviation from perfect quantization, i.e. the total fluxoid expressed as a percentage of the flux part. In general we expect $\Delta$ to be largest in regions $S$ in which the gradient of the effective penetration depth $\vec{\nabla}\Lambda$ is large.}
-     \label{fig:inhomogeneous}
- \end{figure*}
+% \begin{code}
+% \begin{minted}[fontsize=\small]{python}
+% def linear_vs_angle(
+%     x: np.ndarray, y: np.ndarray, *, min_val: float, max_val: float
+% ) -> np.ndarray:
+%     # Rotate the input coordinates so that theta = 0
+%     # corresponds to the slit position (along the -y axis).
+%     x, y = sc.geometry.rotate(
+%         np.stack(np.atleast_1d(x, y), axis=1), np.degrees(-np.pi / 2)
+%     ).T
+%     # Calculate the angular position of each mesh vertex.
+%     angles = np.arctan2(y, x) + np.pi  # range: [0, 2 * pi]
+%     # Set Lambda to increase linearly from min_val to max_val
+%     # as a function of angular position.
+%     Lambdas = angles / (2 * np.pi) * (max_val- min_val) + min_val
+%     return Lambdas
+%
+% # Define the Parameter and assign it as the Lambda of the superconducting layer.
+% Lambda = sc.Parameter(linear_vs_angle, min_val=0.1, max_val=1.0)
+% device.layers["base"].Lambda = Lambda
+% # Everything below is identical to Code Block 1:
+% # Calculate the device's response to a uniform applied field.
+% applied_field = sc.sources.ConstantField(1)
+% solution = sc.solve(device, applied_field=applied_field, field_units="mT")[-1]
+% # Visualize the solution.
+% # Plot the current density evaluated at each layer in the Device.
+% solution.plot_currents()
+% # Plot the magnetic field evaluated at each layer in the Device.
+% solution.plot_fields()
+% # Plot the field evaluated at any points in space.
+% solution.plot_field_at_positions(device.points, zs=0.5)
+% \end{minted}
+% \captionof{listing}{Simulating an inhomogeneous superconducting device. Here we modify the superconducting ring with a slit from Code Block~\ref{code:device} and Figure~\ref{fig:ring-with-slit} to have an effective penetration depth $\Lambda(x, y)$, which increases linearly from $0.1\,\um$ to $1\,\um$ as a function of the angle between the vector $\vec{r}=(x, y)$ and the $-y$ axis. See Figure~\ref{fig:inhomogeneous} for the resulting current and field distributions.}
+% \label{code:inhomogeneous}
+% \end{code}
+% \begin{figure*}[h!]
+%     \centering
+%     \includegraphics[width=\textwidth]{examples/images/ring_with_slit_inhomogeneous.pdf}
+%     \caption{The output of Code Block~\ref{code:inhomogeneous}: Meissner screening of a uniform applied field of $1\,\mathrm{mT}$ by a ring with a slit in a superconducting film with inhomogeneous effective penetration depth $\Lambda(x, y)$. ({\bf a}) The inhomogeneous effective penetration depth $\Lambda(x, y)$, with the ring's outline overlaid in pink. Dashed squares indicate regions $S$ for which we calculate the fluxoid $\Phi^f_S$ in panel ({\bf e}). ({\bf b}) The current density $\vec{J}$ in the ring, generated with \inline{Solution.plot_currents()}. ({\bf c}) The $z$-component of the magnetic field $\mu_0H_z$ evaluated at the plane of the ring, generated with \inline{Solution.plot_fields()}. ({\bf d}) The $z$-component of the magnetic field evaluated $z=0.5\,\um$ above the ring (generated using \inline{Solution.plot_field_at_positions()}). ({\bf e}) The fluxoid $\Phi^f_S$ for each of the six square fluxoid regions, $S$, shown with dotted lines in ({\bf a}). Unlike Equation~\ref{eq:london} (where $\Lambda$ is constant as a function of position), solutions to Equation~\ref{eq:london_inhomogeneous_2d} do not necessarily satisfy fluxoid quantization, $\Phi^f_S=0$ for simply-connected superconducting regions $S$. $\Delta=\Phi^f_S / \int_S\mu_0H_z(\vec{r})\,\mathrm{d}^2r$ is the deviation from perfect quantization, i.e. the total fluxoid expressed as a percentage of the flux part. In general we expect $\Delta$ to be largest in regions $S$ in which the gradient of the effective penetration depth $\vec{\nabla}\Lambda$ is large.}
+%     \label{fig:inhomogeneous}
+% \end{figure*}
 
 % As mentioned in Section~\ref{section:overview:device}, the effective penetration depth $\Lambda$ of each layer can be specified as a numeric constant or as a \inline{superscreen.Parameter} that computes $\Lambda(x, y)$, the effective penetration depth as a function of position. As a (somewhat contrived) example, Code Block~\ref{code:inhomogeneous} demonstrates how to modify the model of a ring with a slit from Code Block~\ref{code:device} and Figure~\ref{fig:ring-with-slit} such that the ring's penetration depth $\Lambda(x, y)$ increases linearly as a function of the angle between the vector $\vec{r} = (x, y)$ and the $-y$ axis (along which the slit lies). The resulting current and field distributions are shown in Figure~\ref{fig:inhomogeneous}. Note that $\Lambda(x, y)$ must vary slowly on the scale of the spacing between mesh vertices in order for results to be reliable. For example, the simulated supercurrent density near a point-like defect (i.e small compared to the triangles in the mesh) associated with a penetration depth $\Lambda_\text{defect}$ in an otherwise uniform film with penetration depth $\Lambda_0\ll\Lambda_\text{defect}$ will depend strongly on the specifics of the mesh near the defect. One can avoid this problem by increasing the density of the mesh in regions of fast-varying $\Lambda$ by adding one or more ``abstract regions" to the \inline{Device} as described in Section~\ref{section:overview:device}.
  
