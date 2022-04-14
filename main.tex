@@ -466,7 +466,7 @@ at any point in space can be computed from Eqs.~\ref{eq:field_from_kernel} and ~
 \section{Package Overview}
 \label{section:overview}
 
-In this section we give a high-level overview of the \SuperScreen package. Further details can be found in the online documentation~\cite{superscreen-rtd}. The specific version of the package corresponding to this manuscript is \texttt{v0.4.0}.
+In this section we give a high-level overview of the \SuperScreen package. Further details can be found in the online documentation~\cite{superscreen-rtd}. The specific version of the package corresponding to this manuscript is \texttt{v0.5.0}.
 
 \subsection{Development Details}
 \label{section:overview:development}
@@ -846,52 +846,6 @@ Note that, unlike Equation~\ref{eq:london} in which $\Lambda$ is assumed to be c
 \begin{equation}
 	\Phi^f_S=\underbrace{\int_S\mu_0H_z(\pvec{r})\,\mathrm{d}^2r}_{\text{``flux part''}} + \underbrace{\oint_S\mu_0\Lambda(\pvec{r})\vec{J}(\pvec{r})\cdot\mathrm{d}\pvec{r}}_{\text{``supercurrent part''}}.
 \end{equation}
-%As a (somewhat contrived) example, Code Block~\ref{code:inhomogeneous} demonstrates how to modify the model of a ring with a slit from Code Block~\ref{code:device} and Figure~\ref{fig:ring-with-slit} such that the ring's penetration depth $\Lambda(x, y)$ increases linearly as a function of the angle between the vector $\vec{r} = (x, y)$ and the $-y$ axis (along which the slit lies). The resulting current and field distributions, and the deviation from perfect fluxoid quantization, are shown in Figure~\ref{fig:inhomogeneous}.
-%Note that $\Lambda(x, y)$ must vary slowly on the scale of the spacing between mesh vertices in order for results to be reliable. For example, the simulated supercurrent density near a point-like defect (i.e small compared to the triangles in the mesh) associated with a penetration depth $\Lambda_\text{defect}$ in an otherwise uniform film with penetration depth $\Lambda_0\ll\Lambda_\text{defect}$ will depend strongly on the specifics of the mesh near the defect. One can avoid this problem by increasing the density of the mesh in regions of fast-varying $\Lambda$ by adding one or more ``abstract regions" to the \inline{Device} as described in Section~\ref{section:overview:device}.
-
-% \begin{code}
-% \begin{minted}[fontsize=\small]{python}
-% def linear_vs_angle(
-%     x: np.ndarray, y: np.ndarray, *, min_val: float, max_val: float
-% ) -> np.ndarray:
-%     # Rotate the input coordinates so that theta = 0
-%     # corresponds to the slit position (along the -y axis).
-%     x, y = sc.geometry.rotate(
-%         np.stack(np.atleast_1d(x, y), axis=1), np.degrees(-np.pi / 2)
-%     ).T
-%     # Calculate the angular position of each mesh vertex.
-%     angles = np.arctan2(y, x) + np.pi  # range: [0, 2 * pi]
-%     # Set Lambda to increase linearly from min_val to max_val
-%     # as a function of angular position.
-%     Lambdas = angles / (2 * np.pi) * (max_val- min_val) + min_val
-%     return Lambdas
-%
-% # Define the Parameter and assign it as the Lambda of the superconducting layer.
-% Lambda = sc.Parameter(linear_vs_angle, min_val=0.1, max_val=1.0)
-% device.layers["base"].Lambda = Lambda
-% # Everything below is identical to Code Block 1:
-% # Calculate the device's response to a uniform applied field.
-% applied_field = sc.sources.ConstantField(1)
-% solution = sc.solve(device, applied_field=applied_field, field_units="mT")[-1]
-% # Visualize the solution.
-% # Plot the current density evaluated at each layer in the Device.
-% solution.plot_currents()
-% # Plot the magnetic field evaluated at each layer in the Device.
-% solution.plot_fields()
-% # Plot the field evaluated at any points in space.
-% solution.plot_field_at_positions(device.points, zs=0.5)
-% \end{minted}
-% \captionof{listing}{Simulating an inhomogeneous superconducting device. Here we modify the superconducting ring with a slit from Code Block~\ref{code:device} and Figure~\ref{fig:ring-with-slit} to have an effective penetration depth $\Lambda(x, y)$, which increases linearly from $0.1\,\um$ to $1\,\um$ as a function of the angle between the vector $\vec{r}=(x, y)$ and the $-y$ axis. See Figure~\ref{fig:inhomogeneous} for the resulting current and field distributions.}
-% \label{code:inhomogeneous}
-% \end{code}
-% \begin{figure*}[h!]
-%     \centering
-%     \includegraphics[width=\textwidth]{examples/images/ring_with_slit_inhomogeneous.pdf}
-%     \caption{The output of Code Block~\ref{code:inhomogeneous}: Meissner screening of a uniform applied field of $1\,\mathrm{mT}$ by a ring with a slit in a superconducting film with inhomogeneous effective penetration depth $\Lambda(x, y)$. ({\bf a}) The inhomogeneous effective penetration depth $\Lambda(x, y)$, with the ring's outline overlaid in pink. Dashed squares indicate regions $S$ for which we calculate the fluxoid $\Phi^f_S$ in panel ({\bf e}). ({\bf b}) The current density $\vec{J}$ in the ring, generated with \inline{Solution.plot_currents()}. ({\bf c}) The $z$-component of the magnetic field $\mu_0H_z$ evaluated at the plane of the ring, generated with \inline{Solution.plot_fields()}. ({\bf d}) The $z$-component of the magnetic field evaluated $z=0.5\,\um$ above the ring (generated using \inline{Solution.plot_field_at_positions()}). ({\bf e}) The fluxoid $\Phi^f_S$ for each of the six square fluxoid regions, $S$, shown with dotted lines in ({\bf a}). Unlike Equation~\ref{eq:london} (where $\Lambda$ is constant as a function of position), solutions to Equation~\ref{eq:london_inhomogeneous_2d} do not necessarily satisfy fluxoid quantization, $\Phi^f_S=0$ for simply-connected superconducting regions $S$. $\Delta=\Phi^f_S / \int_S\mu_0H_z(\vec{r})\,\mathrm{d}^2r$ is the deviation from perfect quantization, i.e. the total fluxoid expressed as a percentage of the flux part. In general we expect $\Delta$ to be largest in regions $S$ in which the gradient of the effective penetration depth $\vec{\nabla}\Lambda$ is large.}
-%     \label{fig:inhomogeneous}
-% \end{figure*}
-
-% As mentioned in Section~\ref{section:overview:device}, the effective penetration depth $\Lambda$ of each layer can be specified as a numeric constant or as a \inline{superscreen.Parameter} that computes $\Lambda(x, y)$, the effective penetration depth as a function of position. As a (somewhat contrived) example, Code Block~\ref{code:inhomogeneous} demonstrates how to modify the model of a ring with a slit from Code Block~\ref{code:device} and Figure~\ref{fig:ring-with-slit} such that the ring's penetration depth $\Lambda(x, y)$ increases linearly as a function of the angle between the vector $\vec{r} = (x, y)$ and the $-y$ axis (along which the slit lies). The resulting current and field distributions are shown in Figure~\ref{fig:inhomogeneous}. Note that $\Lambda(x, y)$ must vary slowly on the scale of the spacing between mesh vertices in order for results to be reliable. For example, the simulated supercurrent density near a point-like defect (i.e small compared to the triangles in the mesh) associated with a penetration depth $\Lambda_\text{defect}$ in an otherwise uniform film with penetration depth $\Lambda_0\ll\Lambda_\text{defect}$ will depend strongly on the specifics of the mesh near the defect. One can avoid this problem by increasing the density of the mesh in regions of fast-varying $\Lambda$ by adding one or more ``abstract regions" to the \inline{Device} as described in Section~\ref{section:overview:device}.
  
 \section{Numerical considerations}
 \label{appendix:numerics}
