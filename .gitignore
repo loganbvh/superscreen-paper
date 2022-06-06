@@ -4,13 +4,10 @@ __pycache__
 results
 .ipynb_checkpoints
 
-# LaTeX outputs
 _minted-main
-main.log
-main.synctex.gz
-main.aux
-main.bbl
-main.blg
-main.out
-main.spl
-references.log
+*.aux
+*.blg
+*.log
+*.out
+*.spl
+*.synctex.gz

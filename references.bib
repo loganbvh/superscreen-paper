@@ -317,6 +317,31 @@
               lines;Equations;Dielectrics;Superconducting epitaxial layers"
 }
 
+
+@ARTICLE{Khapaev2002-ev,
+  title     = "Current distribution simulation for superconducting
+               multi-layered structures",
+  author    = "Khapaev, M M and Yu Kupriyanov, M and Goldobin, E and Siegel, M",
+  abstract  = "The software package 3D-MLSI is developed, which allows us to
+               calculate the current distribution and to extract inductances
+               from multi-layered high-Tc and low-Tc superconducting circuits.
+               Both kinetic and magnetic inductances as well as the
+               three-dimensional distribution of the magnetic field are taken
+               into account. We discuss the numerical approach used in 3D-MLSI
+               and some new features such as visualization of sheet currents
+               and analysis of circuits with holes. As an example, we present a
+               simulation of a high-Tc double-layer transformer.",
+  journal   = "Supercond. Sci. Technol.",
+  publisher = "IOP Publishing",
+  volume    =  16,
+  number    =  1,
+  pages     = "24",
+  month     =  nov,
+  year      =  2002,
+  language  = "en"
+}
+
+
 % The entry below contains non-ASCII chars that could not be converted
 % to a LaTeX equivalent.
 @ARTICLE{Tolpygo2015-cj,
@@ -328,7 +353,7 @@
   abstract = "Inductance of superconducting thin-film inductors and structures
               with linewidth down to 250 nm has been experimentally evaluated.
               The inductors include various striplines and microstrips, their
-              90� bends and meanders, interlayer vias, etc., typically used in
+              90° bends and meanders, interlayer vias, etc., typically used in
               superconducting digital circuits. The circuits have been
               fabricated by a fully planarized process with 8 niobium layers,
               developed at MIT Lincoln Laboratory for very-large-scale
@@ -793,6 +818,48 @@
               equation (VIE)"
 }
 
+% The entry below contains non-ASCII chars that could not be converted
+% to a LaTeX equivalent.
+@ARTICLE{Fourie2012-gv,
+  title     = "Experimentally verified inductance extraction and parameter
+               study for superconductive integrated circuit wires crossing
+               ground plane holes",
+  author    = "Fourie, Coenrad J and Wetzstein, Olaf and Kunert, Juergen and
+               Toepfer, Hannes and Meyer, Hans-Georg",
+  abstract  = "As the complexity of rapid single flux quantum (RSFQ) circuits
+               increases, both current and power consumption of the circuits
+               become important design criteria. Various new concepts such as
+               inductive biasing for energy efficient RSFQ circuits and
+               inductively coupled RSFQ cells for current recycling have been
+               proposed to overcome increasingly severe design problems. Both
+               of these techniques use ground plane holes to increase the
+               inductance or coupling factor of superconducting integrated
+               circuit wires. New design tools are consequently required to
+               handle the new topographies. One important issue in such circuit
+               design is the accurate calculation of networks of inductances
+               even in the presence of finite holes in the ground plane. We
+               show how a fast network extraction method using InductEx, which
+               is a pre- and post-processor for the magnetoquasistatic field
+               solver FastHenry, is used to calculate the inductances of a set
+               of SQUIDs (superconducting quantum interference devices) with
+               ground plane holes of different sizes. The results are compared
+               to measurements of physical structures fabricated with the IPHT
+               Jena 1 kA cmâ2 RSFQ niobium process to verify accuracy. We then
+               do a parameter study and derive empirical equations for fast and
+               useful estimation of the inductance of wires surrounded by
+               ground plane holes. We also investigate practical circuits and
+               show excellent accuracy.",
+  journal   = "Supercond. Sci. Technol.",
+  publisher = "IOP Publishing",
+  volume    =  26,
+  number    =  1,
+  pages     = "015016",
+  month     =  nov,
+  year      =  2012,
+  language  = "en"
+}
+
+
 
 @ARTICLE{Tafuri2004-ap,
   title    = "Magnetic imaging of pearl vortices in artificially layered
@@ -921,6 +988,78 @@
   year    =  2019
 }
 
+@ARTICLE{Tolpygo2021-jz,
+  title     = "Inductance of superconductor integrated circuit features with
+               sizes down to 120 nm",
+  author    = "Tolpygo, Sergey K and Golden, Evan B and Weir, Terence J and
+               Bolkhovsky, Vladimir",
+  abstract  = "Data are presented on the inductance of various features used in
+               superconductor digital integrated circuits: microstrip and
+               stripline inductors with linewidths down to 120 nm and different
+               combinations of ground plane layers, effect of perforations of
+               various sizes in the ground planes and their distance to the
+               inductors on inductance, inductance of vias of various sizes
+               between adjacent layers, inductance of composite vias between
+               distant superconducting layers. Test circuits used for the
+               measurements were fabricated in a new 150 nm node of a fully
+               planarized process with eight niobium layers developed at MIT
+               Lincoln Laboratory for superconductor electronics as well as in
+               our standard SFQ5ee and SC1 fabrication processes with 250 nm
+               minimum feature size. The new SC2 process utilizes 193 nm
+               photolithography in combination with plasma etching and chemical
+               mechanical planarization of interlayer dielectrics to define
+               inductors with linewidth down to about 100 nm on critical
+               layers. The standard processes use 248 nm photolithography. The
+               measured data are compared with the results of inductance
+               extraction using software packages InductEx and wxLC. Variations
+               of circuit inductors caused by the fabrication processes are
+               discussed. Magnetic flux trapping in ground plane moats and its
+               coupling to nearby inductors are discussed for circuit cooling
+               in a residual field of several configurations.",
+  journal   = "Supercond. Sci. Technol.",
+  publisher = "IOP Publishing",
+  volume    =  34,
+  number    =  8,
+  pages     = "085005",
+  month     =  jun,
+  year      =  2021,
+  language  = "en"
+}
+
+ @misc{
+    inductex_user_manual_2020,
+    title={InductEx 6.0 User Manual},
+    url={https://www.sun-magnetics.com/wp-content/uploads/2020/06/Inductex-User-Manual.pdf},
+    journal={InductEx 6.0 User Manual},
+    publisher={SUN Magnetics},
+    year={2020},
+    month={Jun}
+} 
+
+
+@ARTICLE{Khapaev1996-uu,
+  title     = "Extraction of inductances of a multi-superconductor transmission
+               line",
+  author    = "Khapaev, Jr, M M",
+  abstract  = "The problem of developing an efficient numerical method for
+               inductance extraction of superconducting microstrip transmission
+               lines is considered. The new method which is based on an
+               accurate boundary reduction of the differential equation problem
+               is suggested and compared with known techniques. For this
+               method, the computer program and results of computations are
+               presented. The new algorithm and it's computer realization are
+               faster, less memory consuming, more stable, more precise and can
+               be implemented to transmission lines with arbitrary
+               cross-sections.",
+  journal   = "Supercond. Sci. Technol.",
+  publisher = "IOP Publishing",
+  volume    =  9,
+  number    =  9,
+  pages     = "729",
+  month     =  sep,
+  year      =  1996,
+  language  = "en"
+}
 
 @ARTICLE{Cave1986-js,
   title    = "Critical temperature profile determination using a modified
@@ -943,5 +1082,4 @@
   month    =  apr,
   year     =  1986
 }
-
 
