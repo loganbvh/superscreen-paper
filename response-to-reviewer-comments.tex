@@ -2,7 +2,7 @@
 
 \usepackage{geometry} % This package allows the editing of the page layout
 \usepackage{amsmath}  % This package allows the use of a large range of mathematical formula, commands, and symbols
-\usepackage{graphicx}  % This package allows the importing of images
+\usepackage{ulem,xcolor}
 
 \title{Response to reviewer comments}
 \author{Logan Bishop-Van Horn}
@@ -10,6 +10,8 @@
 
 \begin{document}
 \maketitle
+
+In the revised manuscript, text that should be removed is shown in \textcolor{red}{red} with a strikethough, \textcolor{red}{\sout{like this}}, and text that has been modified or added is shown in \textcolor{blue}{blue, like this}.
 
 \section{Reviewer 1}
 
@@ -27,7 +29,7 @@
     \item{
     {\bf Reviewer comment:} ``The reference to [16] for a review of inductance extraction is a bit old -- newer tools and methods and publications exist.''
     
-    {\bf Author response:} Reference [16] (Gaj, \emph{et al.}) is indeed a bit old. We have added more recent references about inductance extraction tools to Appendix A. In particular, Tolpygo, \emph{et al.} 2021 Supercond. Sci. Technol. {\bf 34} 085005 (which is now cited as reference [20]) and references [8--25] therein provide a thorough and up-to-date survey of inductance extraction software.
+    {\bf Author response:} Reference [16] (Gaj, \textit{et al.}) is indeed a bit old. We have added more recent references about inductance extraction tools to Appendix A. In particular, Tolpygo, \textit{et al.} 2021 Supercond. Sci. Technol. {\bf 34} 085005 (which is now cited as reference [20]) and references [8--25] therein provide a thorough and up-to-date survey of inductance extraction software.
     }
     \item{
     {\bf Reviewer comment:} ``P.4, Left Column, Line 53: `though' should be `through'.''
@@ -46,7 +48,7 @@
     \item{
     {\bf Reviewer comment:} ``As there are many other similar works available, please provide a strong literature survey.''
     
-    {\bf Author response:} The introductory section provides a survey of the literature of numerical modeling of 2D superconductors (references 1--20). In terms of surveying available software tools, we have added more recent references about inductance extraction tools to Appendix A. In particular, Tolpygo, \emph{et al.} 2021 Supercond. Sci. Technol. {\bf 34} 085005 (which is now cited as reference [20]) and references [8--25] therein provide a thorough and up-to-date survey of inductance extraction software.
+    {\bf Author response:} The introductory section provides a survey of the literature of numerical modeling of 2D superconductors (references 1--20). In terms of surveying available software tools, we have added more recent references about inductance extraction tools to Appendix A. In particular, Tolpygo, \textit{et al.} 2021 Supercond. Sci. Technol. {\bf 34} 085005 (which is now cited as reference [20]) and references [8--25] therein provide a thorough and up-to-date survey of inductance extraction software.
     }
     \item{
     {\bf Reviewer comment:} ``A comparison of the work with state of the art is necessary.''
@@ -57,9 +59,9 @@
     }
 \end{itemize}
 
-\section{Inhomogeneous films}
+\section{Inhomogeneous films (Appendix C)}
 
 After submitting the manuscript and posting the submitted version to arXiv.org, Dr. Vladimir G. Kogan brought to our attention his work on London modeling of superconductors with inhomogeneous penetration depth (V. G. Kogan \& J. R. Kirtley, Phys. Rev. B {\bf 83}, 214521 (2011)) and pointed out the existence of an additional term in the 2nd London equation for inhomogeneous superconductors, which is proportional to the gradient of the effective penetration depth, $\vec{\nabla}\Lambda$.
 
-We have modified the software so that this term is included if the user specifies an inhomogeneous penetration depth and have moved all discussion of inhomogeneous films from the main text into Appendix C, where we have clarified the applicability of the London model to films with inhomogeneous penetration depth based on V. G. Kogan \& J. R. Kirtley, Phys. Rev. B {\bf 83}, 214521 (2011) and J. R. Cave \& J. E. Evetts, Journal of Low Temperature Physics {\bf 63}, 35–55 (1986) (references [52] and [51] respectively in the revised manuscript). We also removed from Appendix C the example code (Code Block 3: Simulating an inhomogeneous superconducting device) and the accompanying Figure C.7. The main results of the manuscript are completely unchanged.
+We have modified the software so that this term is included if the user specifies an inhomogeneous penetration depth and have moved all discussion of inhomogeneous films from the main text into Appendix C, where we have clarified the applicability of the London model to films with inhomogeneous penetration depth based on V. G. Kogan \& J. R. Kirtley, Phys. Rev. B {\bf 83}, 214521 (2011) and J. R. Cave \& J. E. Evetts, Journal of Low Temperature Physics {\bf 63}, 35–55 (1986) (references [52] and [51] respectively in the revised manuscript). We also removed from Appendix C the example code (Code Block 3: Simulating an inhomogeneous superconducting device) and the accompanying Figure C.7. The main results of the manuscript are unchanged.
 \end{document}
