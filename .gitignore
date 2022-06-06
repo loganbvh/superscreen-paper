@@ -3,3 +3,10 @@ __pycache__
 .vscode
 results
 .ipynb_checkpoints
+_minted-main
+*.aux
+*.blg
+*.log
+*.out
+*.spl
+*.synctex.gz
